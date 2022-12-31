@@ -114,7 +114,7 @@
 <p>当然这个协议完全可以不去遵守，即不调用release()，这是C++灵活之处，编译器不会强制你遵守这个协议。但不按约定去做，右值引用存在就没有意义了。C++标准库都遵守右值引用的协议。</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">std::string <span class="title">s</span><span class="params">(<span class="string">&quot;hello world!&quot;</span>)</span></span>;</span><br><span class="line"><span class="function">std::string <span class="title">d</span><span class="params">(std::move(s))</span></span>;</span><br><span class="line"></span><br><span class="line">std::cout &lt;&lt; <span class="string">&quot;d = &quot;</span> &lt;&lt; d &lt;&lt; std::endl;</span><br><span class="line">std::cout &lt;&lt; <span class="string">&quot;s = &quot;</span> &lt;&lt; s &lt;&lt; std::endl;</span><br></pre></td></tr></table></figure>
 
-<p>例如，上面的这段代码，s会变成长度为0的空字符串。</p>
+<p>例如，上面的这段代码，s会变成长度为0的空字符串。相比我写的MyString这样更安全，也达到了资源传递的语义目的。</p>
 <p>后面研究一下万能引用，这又是另一个话题。</p>
 
       
