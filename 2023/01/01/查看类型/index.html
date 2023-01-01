@@ -4,13 +4,17 @@
   <meta charset="utf-8">
   
   
-  <title>Jack Huang的技术生活</title>
+  <title>查看类型 | Jack Huang的技术生活</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="Jack Huang的技术生活">
-<meta property="og:url" content="https://www.jackhuang.cc/index.html">
+  <meta name="description" content="在进一步研究右值引用或者说&amp;&amp;符号之前，先稍微说一下C++中如何查看一个变量的类型。 获取变量的类型只需要用关键字decltype既可以拿到关键字的类型，例如下面的代码，d和s的类型都一样，都是const std::string： 12const std::string s(&quot;hello world!&quot;);decltype(s) d(&quot;hello ru">
+<meta property="og:type" content="article">
+<meta property="og:title" content="查看类型">
+<meta property="og:url" content="https://www.jackhuang.cc/2023/01/01/%E6%9F%A5%E7%9C%8B%E7%B1%BB%E5%9E%8B/index.html">
 <meta property="og:site_name" content="Jack Huang的技术生活">
+<meta property="og:description" content="在进一步研究右值引用或者说&amp;&amp;符号之前，先稍微说一下C++中如何查看一个变量的类型。 获取变量的类型只需要用关键字decltype既可以拿到关键字的类型，例如下面的代码，d和s的类型都一样，都是const std::string： 12const std::string s(&quot;hello world!&quot;);decltype(s) d(&quot;hello ru">
 <meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-01-01T06:33:22.000Z">
+<meta property="article:modified_time" content="2023-01-01T10:15:12.679Z">
 <meta property="article:author" content="Jack Huang">
 <meta property="article:tag" content="C&#x2F;C++,RUST,Python,nodejs,Java,Mysql">
 <meta name="twitter:card" content="summary">
@@ -74,9 +78,7 @@
 </header>
 
       <div class="outer">
-        <section id="main">
-  
-    <article id="post-查看类型" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+        <section id="main"><article id="post-查看类型" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/2023/01/01/%E6%9F%A5%E7%9C%8B%E7%B1%BB%E5%9E%8B/" class="article-date">
   <time class="dt-published" datetime="2023-01-01T06:33:22.000Z" itemprop="datePublished">2023-01-01</time>
@@ -93,8 +95,8 @@
       <header class="article-header">
         
   
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2023/01/01/%E6%9F%A5%E7%9C%8B%E7%B1%BB%E5%9E%8B/">查看类型</a>
+    <h1 class="p-name article-title" itemprop="headline name">
+      查看类型
     </h1>
   
 
@@ -151,116 +153,19 @@
     </footer>
   </div>
   
-</article>
-
-
-
+    
+<nav id="article-nav">
   
-    <article id="post-快速说一下右值引用" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2022/12/31/%E5%BF%AB%E9%80%9F%E8%AF%B4%E4%B8%80%E4%B8%8B%E5%8F%B3%E5%80%BC%E5%BC%95%E7%94%A8/" class="article-date">
-  <time class="dt-published" datetime="2022-12-31T12:43:52.000Z" itemprop="datePublished">2022-12-31</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/C/">C++</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
   
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2022/12/31/%E5%BF%AB%E9%80%9F%E8%AF%B4%E4%B8%80%E4%B8%8B%E5%8F%B3%E5%80%BC%E5%BC%95%E7%94%A8/">快速说一下右值引用</a>
-    </h1>
+    <a href="/2022/12/31/%E5%BF%AB%E9%80%9F%E8%AF%B4%E4%B8%80%E4%B8%8B%E5%8F%B3%E5%80%BC%E5%BC%95%E7%94%A8/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">后一篇</strong>
+      <div class="article-nav-title">快速说一下右值引用</div>
+    </a>
   
+</nav>
 
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p>什么是右值引用：右值引用即资源传递，右值引用后，引用方会获得资源，被引用方，如同右值那样，被销毁，处于invalid状态。</p>
-<p>为什么需要右值引用：在语义上表达资源传递。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">MyString</span>&#123;</span><br><span class="line">    <span class="type">char</span>* s_&#123;<span class="literal">nullptr</span>&#125;;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="built_in">MyString</span>(<span class="type">const</span> <span class="type">char</span>* other) &#123;</span><br><span class="line">        <span class="built_in">copy</span>(other);</span><br><span class="line">    &#125;</span><br><span class="line">    ~<span class="built_in">MyString</span>() &#123;</span><br><span class="line">        <span class="built_in">release</span>();</span><br><span class="line">    &#125;</span><br><span class="line">  </span><br><span class="line">    <span class="comment">// 左值引用构造函数</span></span><br><span class="line">    <span class="built_in">MyString</span>(<span class="type">const</span> MyString&amp; other) &#123;</span><br><span class="line">        <span class="built_in">copy</span>(other.s_);</span><br><span class="line">    &#125;</span><br><span class="line">  </span><br><span class="line">    <span class="comment">// 右值引用构造函数</span></span><br><span class="line">    <span class="built_in">MyString</span>(MyString&amp;&amp; other) &#123;</span><br><span class="line">        <span class="built_in">copy</span>(other.s_);</span><br><span class="line">        other.<span class="built_in">release</span>();</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="type">const</span> <span class="type">char</span>* <span class="title">what</span><span class="params">()</span> <span class="type">const</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> s_;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">release</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">delete</span>[] s_;</span><br><span class="line">        s_ = <span class="literal">nullptr</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">copy</span><span class="params">(<span class="type">const</span> <span class="type">char</span>* other)</span> </span>&#123;</span><br><span class="line">        <span class="built_in">release</span>();</span><br><span class="line">        <span class="type">int</span> len = (<span class="type">int</span>)<span class="built_in">strlen</span>(other);</span><br><span class="line">        s_ = <span class="keyword">new</span> <span class="type">char</span>[len + <span class="number">1</span>];</span><br><span class="line">        <span class="built_in">strncpy</span>(s_, other, len);</span><br><span class="line">        s_[len] = <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 实现输出</span></span><br><span class="line">std::ostream&amp; <span class="keyword">operator</span>&lt;&lt;(std::ostream&amp; out, <span class="type">const</span> MyString&amp; s) &#123;</span><br><span class="line">    out &lt;&lt; s.<span class="built_in">what</span>();</span><br><span class="line">    <span class="keyword">return</span> out;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>例如上面的MyString类，构造函数分为左值引用构造函数和右值引用构造函数。</p>
-<p>右值引用构造函数的实现中，需要release调other的指针，因为根据右值引用的协议，被引用的对象应该处于被销毁的状态。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">MyString <span class="title">s</span><span class="params">(<span class="string">&quot;hello world!&quot;</span>)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function">MyString <span class="title">d</span><span class="params">(std::move(s))</span></span>;</span><br><span class="line"></span><br><span class="line">std::cout &lt;&lt; <span class="string">&quot;d = &quot;</span> &lt;&lt; d &lt;&lt; std::endl;</span><br><span class="line"><span class="comment">// panic!</span></span><br><span class="line">std::cout &lt;&lt; <span class="string">&quot;s = &quot;</span> &lt;&lt; s &lt;&lt; std::endl;</span><br></pre></td></tr></table></figure>
-
-<p>例如执行以上的代码，std::move是强制把s转为右值，从而触发调用MyString的右值引用构造函数，之后，s将会变成invalid状态，此时打印s会出现未定义状态现象。</p>
-<p>当然这个协议完全可以不去遵守，即MyString的右值引用构造函数中不调用release()，这是C++灵活之处，编译器不会强制你遵守这个协议。但不按约定去做，右值引用存在就没有意义了。C++标准库都遵守右值引用的协议。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">std::string <span class="title">s</span><span class="params">(<span class="string">&quot;hello world!&quot;</span>)</span></span>;</span><br><span class="line"><span class="function">std::string <span class="title">d</span><span class="params">(std::move(s))</span></span>;</span><br><span class="line"></span><br><span class="line">std::cout &lt;&lt; <span class="string">&quot;d = &quot;</span> &lt;&lt; d &lt;&lt; std::endl;</span><br><span class="line">std::cout &lt;&lt; <span class="string">&quot;s = &quot;</span> &lt;&lt; s &lt;&lt; std::endl;</span><br></pre></td></tr></table></figure>
-
-<p>例如上面这段代码，s会变成长度为0的空字符串。相比我写的MyString这样更安全，也达到了资源传递的语义目的。</p>
-<p>后面研究一下万能引用，这又是另一个话题。</p>
-<p>新年快乐！</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://www.jackhuang.cc/2022/12/31/%E5%BF%AB%E9%80%9F%E8%AF%B4%E4%B8%80%E4%B8%8B%E5%8F%B3%E5%80%BC%E5%BC%95%E7%94%A8/" data-id="clcc15uof0000mkul426yf6ok" data-title="快速说一下右值引用" class="article-share-link">分享</a>
-      
-      
-      
-    </footer>
-  </div>
   
 </article>
-
-
-
-  
-    <article id="post-今后要好好做的一些事情" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2022/12/30/%E4%BB%8A%E5%90%8E%E8%A6%81%E5%A5%BD%E5%A5%BD%E5%81%9A%E7%9A%84%E4%B8%80%E4%BA%9B%E4%BA%8B%E6%83%85/" class="article-date">
-  <time class="dt-published" datetime="2022-12-29T16:09:46.000Z" itemprop="datePublished">2022-12-30</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/%E6%83%B3%E6%B3%95/">想法</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2022/12/30/%E4%BB%8A%E5%90%8E%E8%A6%81%E5%A5%BD%E5%A5%BD%E5%81%9A%E7%9A%84%E4%B8%80%E4%BA%9B%E4%BA%8B%E6%83%85/">今后要好好做的一些事情</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p>未来要做的东西：</p>
-<p>1、打算用rust做一个学习水平的RPC系统。</p>
-<p>2、写关于C++的博客。多年C++经验，应该是要总结点什么。</p>
-<p>3、写关于mysql的博客。</p>
-<p>4、学习数学。</p>
-<p>对了，还要好好学习写作，倾尽所能，写点东西，在互联网的一个小小的角落里，刷刷存在感吧。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://www.jackhuang.cc/2022/12/30/%E4%BB%8A%E5%90%8E%E8%A6%81%E5%A5%BD%E5%A5%BD%E5%81%9A%E7%9A%84%E4%B8%80%E4%BA%9B%E4%BA%8B%E6%83%85/" data-id="clc9cg15500027vul24kbbzx4" data-title="今后要好好做的一些事情" class="article-share-link">分享</a>
-      
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
 
 
 </section>
