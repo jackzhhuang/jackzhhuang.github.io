@@ -110,7 +110,7 @@
 
 
 
-<h2 id="二、C-标准的查看类型方法"><a href="#二、C-标准的查看类型方法" class="headerlink" title="二、C++标准的查看类型方法"></a>二、C++标准的查看类型方法</h2><p>C++标准使用的方法是std::type_info这个类来获取变量类型，但这个类无法直接构造，只能用C++关键字typeid来获得这个类对象。std::type_info有一个成员函数叫name，它返回变量的类型，只是这个变量类型会丢失一些关键信息，比如const或者引用，因此目前标准并没有给出很好的方法去查看变量类型是什么。</p>
+<h2 id="二、C-标准的查看类型方法"><a href="#二、C-标准的查看类型方法" class="headerlink" title="二、C++标准的查看类型方法"></a>二、C++标准的查看类型方法</h2><p>C++标准使用的方法是std::type_info这个类来获取变量类型，但这个类无法直接构造，因为它的构造函数被deleted了，只能用C++关键字typeid来获得这个类对象。std::type_info有一个成员函数叫name，它返回变量的类型，只是这个变量类型会丢失一些关键信息，比如const或者引用，因此目前标准并没有给出很好的方法去查看变量类型是什么。</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">const</span> std::string <span class="title">s</span><span class="params">(<span class="string">&quot;hello world!&quot;</span>)</span></span>;</span><br><span class="line"><span class="keyword">decltype</span>(s) <span class="built_in">d</span>(<span class="string">&quot;hello rust!&quot;</span>);</span><br><span class="line"></span><br><span class="line">std::cout &lt;&lt; <span class="built_in">typeid</span>(d).<span class="built_in">name</span>() &lt;&lt; std::endl;</span><br></pre></td></tr></table></figure>
 
 <p>例如上面这段代码，在xcode上打印的就是：</p>
