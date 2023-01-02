@@ -78,6 +78,56 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-Rust所有权" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2023/01/02/Rust%E6%89%80%E6%9C%89%E6%9D%83/" class="article-date">
+  <time class="dt-published" datetime="2023-01-02T08:17:40.000Z" itemprop="datePublished">2023-01-02</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Rust/">Rust</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2023/01/02/Rust%E6%89%80%E6%9C%89%E6%9D%83/">Rust所有权</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>Rust的所有权应该是Rust语言最难理解的一个，是初学者学习Rust遇到的第一个也是最大的陡坡。很多语言几乎不需要去花时间学习资源管理（Java，Go，Python等，C++当然是除外的），所以那些语言很流行，很受欢迎，因为只需要学习一下语法，关键字就能投入到项目中去了，但Rust学习单单是所有权（相当于资源管理）这一块内容，就可以成功劝退绝大部分程序员。</p>
+<p>这是Rust的劣势，决定了Rust流行不起来，也是Rust的优势，决定了Rust效率和正确率上都远优于其它语言（甚至包括C语言）。今天写个总结，把Rust所有权内容说一说。</p>
+<h2 id="简单的生命周期"><a href="#简单的生命周期" class="headerlink" title="简单的生命周期"></a>简单的生命周期</h2><p>从最简单的说起，let表示绑定某个指针到某个对象上，当离开作用域时，对象被销毁，指针进而变为invalid：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">s</span> = <span class="type">String</span>::<span class="title function_ invoke__">from</span>(<span class="string">&quot;hello rust!&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>例如上面的代码，离开main函数，就变成invalid了，String对象也销毁了。</p>
+<p>上面的代码相当于这样：</p>
+<p><img src="/Users/jack/Documents/pages/myblog/source/svg/rust_%E6%89%80%E6%9C%89%E6%9D%83.svg" alt="http-bw"></p>
+<h2 id="从最简单的所有权关系说起"><a href="#从最简单的所有权关系说起" class="headerlink" title="从最简单的所有权关系说起"></a>从最简单的所有权关系说起</h2><h3 id="赋值"><a href="#赋值" class="headerlink" title="赋值"></a>赋值</h3><h3 id="返回值"><a href="#返回值" class="headerlink" title="返回值"></a>返回值</h3><h2 id="使用借用"><a href="#使用借用" class="headerlink" title="使用借用"></a>使用借用</h2><h2 id="借用的限制"><a href="#借用的限制" class="headerlink" title="借用的限制"></a>借用的限制</h2><h2 id="使用拷贝"><a href="#使用拷贝" class="headerlink" title="使用拷贝"></a>使用拷贝</h2><h2 id="数组的特殊情况"><a href="#数组的特殊情况" class="headerlink" title="数组的特殊情况"></a>数组的特殊情况</h2><h2 id="使用RC计数器"><a href="#使用RC计数器" class="headerlink" title="使用RC计数器"></a>使用RC计数器</h2>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://www.jackhuang.cc/2023/01/02/Rust%E6%89%80%E6%9C%89%E6%9D%83/" data-id="clcex5e2y0000beul6er8cxyy" data-title="Rust所有权" class="article-share-link">分享</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
     <article id="post-查看类型" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/2023/01/01/%E6%9F%A5%E7%9C%8B%E7%B1%BB%E5%9E%8B/" class="article-date">
@@ -273,7 +323,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">分类</h3>
     <div class="widget">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/C/">C++</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%83%B3%E6%B3%95/">想法</a></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/C/">C++</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Rust/">Rust</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%83%B3%E6%B3%95/">想法</a></li></ul>
     </div>
   </div>
 
@@ -299,6 +349,10 @@
     <h3 class="widget-title">最新文章</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2023/01/02/Rust%E6%89%80%E6%9C%89%E6%9D%83/">Rust所有权</a>
+          </li>
         
           <li>
             <a href="/2023/01/01/%E6%9F%A5%E7%9C%8B%E7%B1%BB%E5%9E%8B/">查看类型</a>
