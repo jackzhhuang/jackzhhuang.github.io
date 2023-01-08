@@ -2,7 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>https://www.jackhuang.cc/2023/01/02/Rust%E6%89%80%E6%9C%89%E6%9D%83/</loc>
+    <loc>https://www.jackhuang.cc/2023/01/07/RustStruct/</loc>
     
     <lastmod>2023-01-08</lastmod>
     
@@ -11,7 +11,7 @@
   </url>
   
   <url>
-    <loc>https://www.jackhuang.cc/2023/01/07/RustStruct/</loc>
+    <loc>https://www.jackhuang.cc/2023/01/02/Rust%E6%89%80%E6%9C%89%E6%9D%83/</loc>
     
     <lastmod>2023-01-08</lastmod>
     
@@ -92,7 +92,7 @@
 
   
   <url>
-    <loc>https://www.jackhuang.cc/categories/%E6%83%B3%E6%B3%95/</loc>
+    <loc>https://www.jackhuang.cc/categories/Rust/</loc>
     <lastmod>2023-01-08</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -106,7 +106,7 @@
   </url>
   
   <url>
-    <loc>https://www.jackhuang.cc/categories/Rust/</loc>
+    <loc>https://www.jackhuang.cc/categories/%E6%83%B3%E6%B3%95/</loc>
     <lastmod>2023-01-08</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
