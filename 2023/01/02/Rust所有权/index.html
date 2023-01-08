@@ -18,9 +18,9 @@
 <meta property="og:image" content="https://www.jackhuang.cc/svg/rust%E5%BC%95%E7%94%A8.svg">
 <meta property="og:image" content="https://www.jackhuang.cc/svg/rust_clone.svg">
 <meta property="article:published_time" content="2023-01-02T08:17:40.000Z">
-<meta property="article:modified_time" content="2023-01-04T15:44:53.791Z">
+<meta property="article:modified_time" content="2023-01-08T03:30:14.280Z">
 <meta property="article:author" content="Jack Huang">
-<meta property="article:tag" content="C&#x2F;C++,RUST,Python,nodejs,Java,Mysql">
+<meta property="article:tag" content="Rust">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://www.jackhuang.cc/svg/rust_%E6%89%80%E6%9C%89%E6%9D%83.svg">
   
@@ -117,14 +117,14 @@
 
 
 
-<h2 id="1-简单的生命周期"><a href="#1-简单的生命周期" class="headerlink" title="1. 简单的生命周期"></a>1. 简单的生命周期</h2><p>从最简单的说起，let表示绑定某个指针到某个对象上，当离开作用域时，对象被销毁，指针进而变为invalid：</p>
+<h2><span id="1-简单的生命周期">1. 简单的生命周期</span></h2><p>从最简单的说起，let表示绑定某个指针到某个对象上，当离开作用域时，对象被销毁，指针进而变为invalid：</p>
 <figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">s</span> = <span class="type">String</span>::<span class="title function_ invoke__">from</span>(<span class="string">&quot;hello rust!&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>例如上面的代码，离开main函数，就变成invalid了，String对象也销毁了。</p>
 <p>上面的代码相当于这样：</p>
 <p><img src="https://www.jackhuang.cc/svg/rust_%E6%89%80%E6%9C%89%E6%9D%83.svg" alt="绑定关系"></p>
 <p>这里简单说一下，s可以理解为一个指针，String即为对象，其成员p指向真正的字符串类型，后面的10位字符串的长度，16为String对象的容量（capacity） 。</p>
-<h2 id="2-从最简单的所有权关系说起"><a href="#2-从最简单的所有权关系说起" class="headerlink" title="2. 从最简单的所有权关系说起"></a>2. 从最简单的所有权关系说起</h2><h3 id="2-1-赋值"><a href="#2-1-赋值" class="headerlink" title="2.1 赋值"></a>2.1 赋值</h3><p>其实Rust难，就难在下面这个简单代码里面，很多人是无法接受Rust这种规定，但其实Rust这么干也是用心良苦。</p>
+<h2><span id="2-从最简单的所有权关系说起">2. 从最简单的所有权关系说起</span></h2><h3><span id="21-赋值">2.1 赋值</span></h3><p>其实Rust难，就难在下面这个简单代码里面，很多人是无法接受Rust这种规定，但其实Rust这么干也是用心良苦。</p>
 <figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> <span class="variable">s</span> = <span class="type">String</span>::<span class="title function_ invoke__">from</span>(<span class="string">&quot;hello rust!&quot;</span>);</span><br><span class="line"><span class="keyword">let</span> <span class="variable">t</span> = s;</span><br><span class="line"><span class="built_in">println!</span>(<span class="string">&quot;t = &#123;&#125;&quot;</span>, t);</span><br><span class="line"><span class="built_in">println!</span>(<span class="string">&quot;s = &#123;&#125;&quot;</span>, s);</span><br></pre></td></tr></table></figure>
 
 <p>以上代码是不能通过编译的，报错如下：</p>
@@ -133,7 +133,7 @@
 <p>因为s赋值给t后，s将会变成invalid，也就是悬空指针，这个时候不能对s进行任何访问操作，其对象关系图如下：</p>
 <p><img src="https://www.jackhuang.cc/svg/rust%E8%B5%8B%E5%80%BC.svg" alt="赋值"></p>
 <p>也即，s将失去String对象，t取而代之，只有去掉对s的访问才可以通过编译，Rust不允许访问没有资源的指针。</p>
-<h3 id="2-2-参数传递"><a href="#2-2-参数传递" class="headerlink" title="2.2 参数传递"></a>2.2 参数传递</h3><p>同理，返回值也一样，比如我们有一个函数，返回一个String对象：</p>
+<h3><span id="22-参数传递">2.2 参数传递</span></h3><p>同理，返回值也一样，比如我们有一个函数，返回一个String对象：</p>
 <figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">fn</span> <span class="title function_">print_upper_string</span> (t: <span class="type">String</span>) &#123;</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;&#123;&#125;&quot;</span>, t.<span class="title function_ invoke__">to_uppercase</span>());</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">s</span> = <span class="type">String</span>::<span class="title function_ invoke__">from</span>(<span class="string">&quot;hello rust!&quot;</span>);</span><br><span class="line">    <span class="title function_ invoke__">print_upper_string</span>(s);</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;s = &#123;&#125;&quot;</span>, s);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>和之前一样，上面的代码第10行诗没有办法通过编译的，因为print_upper_string函数的参数t已经获得了s的String对象资源，s变成了悬空指针，cargo build会提示：</p>
@@ -141,7 +141,7 @@
 
 
 
-<h2 id="3-使用借用"><a href="#3-使用借用" class="headerlink" title="3. 使用借用"></a>3. 使用借用</h2><p>解决以上的问题有三个办法，一个是借用，一个是clone，还有一个是使用引用计数。这里先讲借用。</p>
+<h2><span id="3-使用借用">3. 使用借用</span></h2><p>解决以上的问题有三个办法，一个是借用，一个是clone，还有一个是使用引用计数。这里先讲借用。</p>
 <p>所谓借用，其实就是C++的引用，也就是被赋值的指针是引用，而不是拥有资源，此时不发生资源转移：</p>
 <figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> <span class="variable">s</span> = <span class="type">String</span>::<span class="title function_ invoke__">from</span>(<span class="string">&quot;hello rust!&quot;</span>);</span><br><span class="line"><span class="keyword">let</span> <span class="variable">t</span> = &amp;s;</span><br><span class="line"><span class="built_in">println!</span>(<span class="string">&quot;t = &#123;&#125;&quot;</span>, t);</span><br><span class="line"><span class="built_in">println!</span>(<span class="string">&quot;s = &#123;&#125;&quot;</span>, s);</span><br></pre></td></tr></table></figure>
 
@@ -160,12 +160,12 @@
 <figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">println!</span>(<span class="string">&quot;t = &#123;&#125;&quot;</span>, *t);</span><br><span class="line"><span class="built_in">println!</span>(<span class="string">&quot;s = &#123;&#125;&quot;</span>, s);</span><br></pre></td></tr></table></figure>
 
 <p>以上两句代码同样也是打印hello rust!。而且，你会发现*t的地址正是s的地址。</p>
-<h2 id="4-使用克隆"><a href="#4-使用克隆" class="headerlink" title="4. 使用克隆"></a>4. 使用克隆</h2><p>另一个可以用于赋值的方法，就是克隆函数clone：</p>
+<h2><span id="4-使用克隆">4. 使用克隆</span></h2><p>另一个可以用于赋值的方法，就是克隆函数clone：</p>
 <figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> <span class="variable">s</span> = <span class="type">String</span>::<span class="title function_ invoke__">from</span>(<span class="string">&quot;hello rust! &quot;</span>);</span><br><span class="line"><span class="keyword">let</span> <span class="variable">t</span> = s.<span class="title function_ invoke__">clone</span>();</span><br><span class="line"><span class="built_in">println!</span>(<span class="string">&quot;t = &#123;&#125;, t = &#123;:p&#125;&quot;</span>, t, &amp;t);</span><br><span class="line"><span class="built_in">println!</span>(<span class="string">&quot;s = &#123;&#125;, s = &#123;:p&#125;&quot;</span>, s, &amp;s);</span><br></pre></td></tr></table></figure>
 
 <p>这时，s和t就是两个完全不同的指针了，它们只是值相同而已：</p>
 <p><img src="https://www.jackhuang.cc/svg/rust_clone.svg" alt="克隆"></p>
-<h2 id="5-数组的特殊情况"><a href="#5-数组的特殊情况" class="headerlink" title="5. 数组的特殊情况"></a>5. 数组的特殊情况</h2><p>以上说的是非数组情况，到了数组，稍微有点不一样了，因为数组是维护了一组指针，如果随便允许把其中某个或者某些指针置为悬空指针，那么数组就需要维护哪个指针是悬空的，哪个指针是有效的。Rust拒绝这么干，所以，数组中的指针不允许直接变成悬空指针：</p>
+<h2><span id="5-数组的特殊情况">5. 数组的特殊情况</span></h2><p>以上说的是非数组情况，到了数组，稍微有点不一样了，因为数组是维护了一组指针，如果随便允许把其中某个或者某些指针置为悬空指针，那么数组就需要维护哪个指针是悬空的，哪个指针是有效的。Rust拒绝这么干，所以，数组中的指针不允许直接变成悬空指针：</p>
 <figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> <span class="variable">array</span>: [<span class="type">String</span>; <span class="number">5</span>] = [<span class="type">String</span>::<span class="title function_ invoke__">from</span>(<span class="string">&quot;hello&quot;</span>), </span><br><span class="line">                          <span class="type">String</span>::<span class="title function_ invoke__">from</span>(<span class="string">&quot;rust&quot;</span>), </span><br><span class="line">                          <span class="type">String</span>::<span class="title function_ invoke__">from</span>(<span class="string">&quot;!&quot;</span>), </span><br><span class="line">                          <span class="type">String</span>::<span class="title function_ invoke__">from</span>(<span class="string">&quot;jack&quot;</span>), </span><br><span class="line">                          <span class="type">String</span>::<span class="title function_ invoke__">from</span>(<span class="string">&quot;huang&quot;</span>),];</span><br><span class="line"><span class="keyword">let</span> <span class="variable">t</span> = array[<span class="number">2</span>];</span><br><span class="line"><span class="keyword">let</span> <span class="variable">s</span> = array[<span class="number">3</span>];</span><br><span class="line"></span><br><span class="line"><span class="built_in">println!</span>(<span class="string">&quot;t = &#123;&#125;&quot;</span>, t);</span><br><span class="line"><span class="built_in">println!</span>(<span class="string">&quot;s = &#123;&#125;&quot;</span>, s);</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
 <p>按前面所说，以上代码中，t和s会获得array数组中第三、第四个资源所有权，但实际Rust拒绝这么干，此时编译错误：</p>
@@ -193,7 +193,7 @@
 
 
 
-<h2 id="6-primitive类型不会有所有权转移"><a href="#6-primitive类型不会有所有权转移" class="headerlink" title="6. primitive类型不会有所有权转移"></a>6. primitive类型不会有所有权转移</h2><p>尽管前面讲了很多所有权转移的例子，但对于原始类型（比如整型，bool，char）并不会有所有权转移的问题，它们永远都是copy：</p>
+<h2><span id="6-primitive类型不会有所有权转移">6. primitive类型不会有所有权转移</span></h2><p>尽管前面讲了很多所有权转移的例子，但对于原始类型（比如整型，bool，char）并不会有所有权转移的问题，它们永远都是copy：</p>
 <figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> <span class="variable">a</span> = <span class="number">3</span>;</span><br><span class="line"><span class="keyword">let</span> <span class="variable">b</span> = a; <span class="comment">// 不会发生所有权转移，a和b都有自己的值3</span></span><br><span class="line"><span class="built_in">println!</span>(<span class="string">&quot;a = &#123;&#125;, b = &#123;&#125;&quot;</span>, a, b);</span><br></pre></td></tr></table></figure>
 
 <p>上面的代码正常编译和运行：</p>
@@ -206,15 +206,26 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://www.jackhuang.cc/2023/01/02/Rust%E6%89%80%E6%9C%89%E6%9D%83/" data-id="clcex5e2y0000beul6er8cxyy" data-title="Rust所有权" class="article-share-link">分享</a>
+      <a data-url="https://www.jackhuang.cc/2023/01/02/Rust%E6%89%80%E6%9C%89%E6%9D%83/" data-id="clcmtrz5c0001z3ulaecj4tio" data-title="Rust所有权" class="article-share-link">分享</a>
       
       
       
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Rust/" rel="tag">Rust</a></li></ul>
+
     </footer>
   </div>
   
     
 <nav id="article-nav">
+  
+    <a href="/2023/01/05/%E5%8F%B3%E5%80%BC%E5%BC%95%E7%94%A8%E5%9C%BA%E6%99%AF%E5%88%86%E6%9E%90/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">前一篇</strong>
+      <div class="article-nav-title">
+        
+          C++右值引用场景分析
+        
+      </div>
+    </a>
   
   
     <a href="/2023/01/01/%E6%9F%A5%E7%9C%8B%E7%B1%BB%E5%9E%8B/" id="article-nav-older" class="article-nav-link-wrap">
@@ -243,9 +254,23 @@
 
   
     
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Rust/" rel="tag">Rust</a></li></ul>
+    </div>
+  </div>
+
 
   
     
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Rust/" style="font-size: 10px;">Rust</a>
+    </div>
+  </div>
+
   
     
   <div class="widget-wrap">
@@ -264,6 +289,14 @@
       <ul>
         
           <li>
+            <a href="/2023/01/07/RustStruct/">Rust的struct类型</a>
+          </li>
+        
+          <li>
+            <a href="/2023/01/05/%E5%8F%B3%E5%80%BC%E5%BC%95%E7%94%A8%E5%9C%BA%E6%99%AF%E5%88%86%E6%9E%90/">C++右值引用场景分析</a>
+          </li>
+        
+          <li>
             <a href="/2023/01/02/Rust%E6%89%80%E6%9C%89%E6%9D%83/">Rust所有权</a>
           </li>
         
@@ -273,10 +306,6 @@
         
           <li>
             <a href="/2022/12/31/%E5%BF%AB%E9%80%9F%E8%AF%B4%E4%B8%80%E4%B8%8B%E5%8F%B3%E5%80%BC%E5%BC%95%E7%94%A8/">快速说一下C++右值引用</a>
-          </li>
-        
-          <li>
-            <a href="/2022/12/30/%E4%BB%8A%E5%90%8E%E8%A6%81%E5%A5%BD%E5%A5%BD%E5%81%9A%E7%9A%84%E4%B8%80%E4%BA%9B%E4%BA%8B%E6%83%85/">今后要好好做的一些事情</a>
           </li>
         
       </ul>
