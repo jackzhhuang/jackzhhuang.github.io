@@ -117,7 +117,7 @@
 
 
 
-<h2 id="1-右值引用作为函数参数"><a href="#1-右值引用作为函数参数" class="headerlink" title="1. 右值引用作为函数参数"></a>1. 右值引用作为函数参数</h2><h3 id="1-1-具体类"><a href="#1-1-具体类" class="headerlink" title="1.1 具体类"></a>1.1 具体类</h3><p>假设我们现在要打印一个MyString对象，如果函数使用的是一个具体的右值引用（即MyString&amp;&amp;）参数，那么，它就是右值引用，即只接受右值：</p>
+<h2><span id="1-右值引用作为函数参数">1. 右值引用作为函数参数</span></h2><h3><span id="11-具体类">1.1 具体类</span></h3><p>假设我们现在要打印一个MyString对象，如果函数使用的是一个具体的右值引用（即MyString&amp;&amp;）参数，那么，它就是右值引用，即只接受右值：</p>
  <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">print_my_string</span><span class="params">(MyString&amp;&amp; s)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">using</span> boost::typeindex::type_id_with_cvr;</span><br><span class="line">    </span><br><span class="line">    std::cout &lt;&lt; <span class="built_in">type_id_with_cvr</span>&lt;<span class="keyword">decltype</span>(s)&gt;().<span class="built_in">pretty_name</span>() &lt;&lt; std::endl;</span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;s = &quot;</span> &lt;&lt; s &lt;&lt; std::endl;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>若打算传一个左值，那就会报错：</p>
@@ -134,7 +134,7 @@
 
 <p>可以看到，并没有调用太多的构造函数，尤其是没有去调用右值引用的拷贝构造函数，这当然是优化的结果（return value optimization）。尽管如此，依赖右值引用入参的print_my_string还是被调用了，符合预期。</p>
 <p>总之，当函数的入参是一个具体的右值引用参数时，那么它就是一个右值引用参数，不能是其它类型值。可是，一旦把具体的右值引用参数改成模板类型，就发生巨大的改变。</p>
-<h3 id="1-2-模板"><a href="#1-2-模板" class="headerlink" title="1.2 模板"></a>1.2 模板</h3><p>将print_my_string修改成模板函数后，变成这样：</p>
+<h3><span id="12-模板">1.2 模板</span></h3><p>将print_my_string修改成模板函数后，变成这样：</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">template</span>&lt;<span class="keyword">class</span> T&gt;</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">print_my_string</span><span class="params">(T&amp;&amp; s)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">using</span> boost::typeindex::type_id_with_cvr;</span><br><span class="line">    std::cout &lt;&lt; <span class="built_in">type_id_with_cvr</span>&lt;<span class="keyword">decltype</span>(s)&gt;().<span class="built_in">pretty_name</span>() &lt;&lt; std::endl;</span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;s = &quot;</span> &lt;&lt; s &lt;&lt; std::endl;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>此时，如果传入一个MyString对象：</p>
@@ -156,14 +156,14 @@
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">in common constructor!</span><br><span class="line">MyString <span class="type">const</span>&amp;</span><br><span class="line">s = hello world!</span><br></pre></td></tr></table></figure>
 
 <p>实际上，T&amp;&amp;和右值引用并不是一回事，T&amp;&amp;是一种万能引用，可以根据调用方的参数类型变成对应的引用类型。</p>
-<h2 id="2-变量的右值引用"><a href="#2-变量的右值引用" class="headerlink" title="2. 变量的右值引用"></a>2. 变量的右值引用</h2><h3 id="2-1-变量为右值引用"><a href="#2-1-变量为右值引用" class="headerlink" title="2.1 变量为右值引用"></a>2.1 变量为右值引用</h3><p>变量定义为右值引用的情况，那么当然只能是右值引用了：</p>
+<h2><span id="2-变量的右值引用">2. 变量的右值引用</span></h2><h3><span id="21-变量为右值引用">2.1 变量为右值引用</span></h3><p>变量定义为右值引用的情况，那么当然只能是右值引用了：</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">using</span> boost::typeindex::type_id_with_cvr;</span><br><span class="line"></span><br><span class="line">MyString&amp;&amp; t = <span class="built_in">make_my_string</span>(<span class="string">&quot;hello world!&quot;</span>);</span><br><span class="line">std::cout &lt;&lt; <span class="built_in">type_id_with_cvr</span>&lt;<span class="keyword">decltype</span>(t)&gt;().<span class="built_in">pretty_name</span>() &lt;&lt; std::endl;</span><br><span class="line">std::cout &lt;&lt; t &lt;&lt; std::endl;</span><br></pre></td></tr></table></figure>
 
 <p>会打印：</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">in common constructor!</span><br><span class="line">MyString&amp;&amp;</span><br><span class="line">hello world!</span><br></pre></td></tr></table></figure>
 
 <p>这个特性似乎没什么可说的。那么换成auto&amp;&amp;呢？</p>
-<h3 id="2-2-auto-amp-amp"><a href="#2-2-auto-amp-amp" class="headerlink" title="2.2 auto&amp;&amp;"></a>2.2 auto&amp;&amp;</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">using</span> boost::typeindex::type_id_with_cvr;</span><br><span class="line"></span><br><span class="line"><span class="keyword">auto</span>&amp;&amp; t = <span class="built_in">make_my_string</span>(<span class="string">&quot;hello world!&quot;</span>);</span><br><span class="line">std::cout &lt;&lt; <span class="built_in">type_id_with_cvr</span>&lt;<span class="keyword">decltype</span>(t)&gt;().<span class="built_in">pretty_name</span>() &lt;&lt; std::endl;</span><br><span class="line">std::cout &lt;&lt; t &lt;&lt; std::endl;</span><br></pre></td></tr></table></figure>
+<h3><span id="22-autoampamp">2.2 auto&amp;&amp;</span></h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">using</span> boost::typeindex::type_id_with_cvr;</span><br><span class="line"></span><br><span class="line"><span class="keyword">auto</span>&amp;&amp; t = <span class="built_in">make_my_string</span>(<span class="string">&quot;hello world!&quot;</span>);</span><br><span class="line">std::cout &lt;&lt; <span class="built_in">type_id_with_cvr</span>&lt;<span class="keyword">decltype</span>(t)&gt;().<span class="built_in">pretty_name</span>() &lt;&lt; std::endl;</span><br><span class="line">std::cout &lt;&lt; t &lt;&lt; std::endl;</span><br></pre></td></tr></table></figure>
 
 <p>运行代码发现还是右值引用：</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">in common constructor!</span><br><span class="line">MyString&amp;&amp;</span><br><span class="line">hello world!</span><br></pre></td></tr></table></figure>
@@ -181,7 +181,7 @@
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">in common constructor!</span><br><span class="line">MyString <span class="type">const</span>&amp;</span><br><span class="line">hello world!</span><br></pre></td></tr></table></figure>
 
 <p>可以加auto&amp;&amp;和T&amp;&amp;一样，都是万能引用，随着使用方的类型变化成对应的引用类型。</p>
-<h2 id="3-万能引用加上const后的-amp-amp"><a href="#3-万能引用加上const后的-amp-amp" class="headerlink" title="3. 万能引用加上const后的&amp;&amp;"></a>3. 万能引用加上const后的&amp;&amp;</h2><p>上面说了T&amp;&amp;和auto&amp;&amp;是万能引用，那么const T&amp;&amp;和const auto&amp;&amp;呢？print_my_string 改成了加行const的T&amp;&amp;入参：</p>
+<h2><span id="3-万能引用加上const后的ampamp">3. 万能引用加上const后的&amp;&amp;</span></h2><p>上面说了T&amp;&amp;和auto&amp;&amp;是万能引用，那么const T&amp;&amp;和const auto&amp;&amp;呢？print_my_string 改成了加行const的T&amp;&amp;入参：</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">template</span>&lt;<span class="keyword">class</span> T&gt;</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">print_my_string</span><span class="params">(<span class="type">const</span> T&amp;&amp; s)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">using</span> boost::typeindex::type_id_with_cvr;</span><br><span class="line">    std::cout &lt;&lt; <span class="built_in">type_id_with_cvr</span>&lt;<span class="keyword">decltype</span>(s)&gt;().<span class="built_in">pretty_name</span>() &lt;&lt; std::endl;</span><br><span class="line">    std::cout &lt;&lt; <span class="string">&quot;s = &quot;</span> &lt;&lt; s &lt;&lt; std::endl;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>此时下面的代码会变成const左值引用吗？</p>
@@ -194,7 +194,7 @@
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">MyString <span class="title">s</span><span class="params">(<span class="string">&quot;hello world!&quot;</span>)</span></span>;</span><br><span class="line"><span class="built_in">print_my_string</span>(std::<span class="built_in">move</span>(s));</span><br></pre></td></tr></table></figure>
 
 <p>同理，auto&amp;&amp;加上const后，即const auto&amp;&amp;就不再是万能引用，而是右值引用，必须是右值才能给它赋值。</p>
-<h2 id="4-总结"><a href="#4-总结" class="headerlink" title="4. 总结"></a>4. 总结</h2><p>对于实际类的右值引用就是右值引用。</p>
+<h2><span id="4-总结">4. 总结</span></h2><p>对于实际类的右值引用就是右值引用。</p>
 <p>但参数值T&amp;&amp;和右值引用无关，是万能引用，其参数类型由调用方决定，调用方传的什么类型，就是什么类型的引用，即可以是右值引用也可以是左值引用，甚至可以推导出const属性。</p>
 <p>同理，作为一个变量，auto&amp;&amp;也是万能引用，其由赋值方来决定其是什么类型的引用，也即可以是右值引用也可以是左值引用，同样也可以推导出const属性。</p>
 <p>但需要注意的是，const T&amp;&amp;和const auto&amp;&amp;却不是万能const引用，而是右值const引用，即它们只接受右值。</p>
@@ -202,7 +202,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://www.jackhuang.cc/2023/01/05/%E5%8F%B3%E5%80%BC%E5%BC%95%E7%94%A8%E5%9C%BA%E6%99%AF%E5%88%86%E6%9E%90/" data-id="clcilysy30000cmuldxqg3nek" data-title="C++右值引用场景分析" class="article-share-link">分享</a>
+      <a data-url="https://www.jackhuang.cc/2023/01/05/%E5%8F%B3%E5%80%BC%E5%BC%95%E7%94%A8%E5%9C%BA%E6%99%AF%E5%88%86%E6%9E%90/" data-id="clcmtrz5j0008z3ul0d431qpo" data-title="C++右值引用场景分析" class="article-share-link">分享</a>
       
       
       
