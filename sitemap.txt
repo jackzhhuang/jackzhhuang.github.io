@@ -1,3 +1,4 @@
+https://www.jackhuang.cc/2023/01/10/mod-and-crate/
 https://www.jackhuang.cc/2023/01/08/enum-and-match/
 https://www.jackhuang.cc/2023/01/07/RustStruct/
 https://www.jackhuang.cc/2023/01/02/Rust%E6%89%80%E6%9C%89%E6%9D%83/
