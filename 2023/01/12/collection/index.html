@@ -15,7 +15,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://www.jackhuang.cc/svg/Vec.svg">
 <meta property="article:published_time" content="2023-01-12T14:42:05.000Z">
-<meta property="article:modified_time" content="2023-01-15T15:50:54.750Z">
+<meta property="article:modified_time" content="2023-01-15T16:15:59.363Z">
 <meta property="article:author" content="Jack Huang">
 <meta property="article:tag" content="C&#x2F;C++,RUST,Python,nodejs,Java,Mysql">
 <meta name="twitter:card" content="summary">
@@ -138,7 +138,8 @@
 <li><a href="#2-%E5%AD%97%E7%AC%A6%E4%B8%B2string">2. 字符串String</a><ul>
 <li><a href="#21-%E5%AD%97%E7%AC%A6%E4%B8%B2%E7%9A%84%E8%BF%9E%E6%8E%A5">2.1 字符串的连接</a></li>
 <li><a href="#22-%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8C%E5%AD%97%E8%8A%82">2.2 字符串和字节</a></li>
-<li><a href="#23-rust%E7%9A%84string%E4%B8%8D%E7%AE%80%E5%8D%95">2.3 Rust的String不简单</a></li>
+<li><a href="#23-%E6%AF%94%E8%BE%83%E4%B8%A4%E4%B8%AAstring">2.3 比较两个String</a></li>
+<li><a href="#24-rust%E7%9A%84string%E4%B8%8D%E7%AE%80%E5%8D%95">2.4 Rust的String不简单</a></li>
 </ul>
 </li>
 <li><a href="#3-%E5%93%88%E5%B8%8Chashmap">3. 哈希HashMap</a><ul>
@@ -241,7 +242,14 @@
 <figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">c = <span class="number">189</span></span><br><span class="line">s = <span class="string">&quot;你好，世界！&quot;</span></span><br></pre></td></tr></table></figure>
 
 <p>189其实是“你”这个字符的第二个字节数。</p>
-<h3><span id="23-rust的string不简单">2.3 Rust的String不简单</span></h3><p>Rust的String并不简单，这里只是主要提了最重要的一点，即String需要我们时刻知道我们到底是造操作字符还是字节，未来遇到String的使用，还是需要多翻阅文档，这里就不去一句句翻译文档内容了。</p>
+<h3><span id="23-比较两个string">2.3 比较两个String</span></h3><p>Rust在这方面要求就比较简单，只需要 &#x3D;&#x3D; 去比较就好了：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> <span class="variable">s1</span> = <span class="type">String</span>::<span class="title function_ invoke__">from</span>(<span class="string">&quot;你好世界!&quot;</span>);</span><br><span class="line"><span class="keyword">let</span> <span class="variable">s2</span> = <span class="string">&quot;你好世界!&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> s1 == s2 &#123;</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;they are same!&quot;</span>);</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;they are different!&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>输出为：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">they are same!</span><br></pre></td></tr></table></figure>
+
+<p>虽然s1是String对象，s2是原生字符串，s1是对象的指针，s2是一个引用，但Rust还是会去判断这两个字符串是否内容相等。</p>
+<h3><span id="24-rust的string不简单">2.4 Rust的String不简单</span></h3><p>Rust的String并不简单，这里只是主要提了最重要的一点，即String需要我们时刻知道我们到底是造操作字符还是字节，未来遇到String的使用，还是需要多翻阅文档，这里就不去一句句翻译文档内容了。</p>
 <h2><span id="3-哈希hashmap">3. 哈希HashMap</span></h2><p>hash也是日常中最常用的数据结构，Rust的HashMap使用了SpiHash算法，避免了哈希碰撞的攻击，详见：<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/SipHash">https://en.wikipedia.org/wiki/SipHash</a> 。当然，其效率就有所下降。</p>
 <p>这里主要讲的是我们常使用的方法，第一个当然是插入了。</p>
 <h3><span id="31-插入">3.1 插入</span></h3><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">use</span> std::collections::HashMap;</span><br><span class="line"><span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">h1</span> = HashMap::<span class="title function_ invoke__">new</span>();</span><br><span class="line">h1.<span class="title function_ invoke__">insert</span>(<span class="type">String</span>::<span class="title function_ invoke__">from</span>(<span class="string">&quot;hello world!&quot;</span>), <span class="number">10</span>);</span><br><span class="line">h1.<span class="title function_ invoke__">insert</span>(<span class="type">String</span>::<span class="title function_ invoke__">from</span>(<span class="string">&quot;hello rust!&quot;</span>), <span class="number">20</span>);</span><br><span class="line">h1.<span class="title function_ invoke__">insert</span>(<span class="type">String</span>::<span class="title function_ invoke__">from</span>(<span class="string">&quot;hello jack!&quot;</span>), <span class="number">30</span>);</span><br><span class="line"></span><br><span class="line"><span class="built_in">println!</span>(<span class="string">&quot;h1 = &#123;:#?&#125;&quot;</span>, h1);</span><br></pre></td></tr></table></figure>
