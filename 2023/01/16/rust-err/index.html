@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>Rust的错误处理 | Jack Huang的技术生活</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="Rust的错误处理主要有以下4点需要学习： 1、使用panic!宏； 2、使用Result&lt;T, E&gt;; 3、使用Optional&lt;T&gt; 4、使用 ? 符号简化错误处理的代码，这一点非常赞。 现在就看看我们Rust的错误处理具体细节吧。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Rust的错误处理">
+<meta property="og:url" content="https://www.jackhuang.cc/2023/01/16/rust-err/index.html">
+<meta property="og:site_name" content="Jack Huang的技术生活">
+<meta property="og:description" content="Rust的错误处理主要有以下4点需要学习： 1、使用panic!宏； 2、使用Result&lt;T, E&gt;; 3、使用Optional&lt;T&gt; 4、使用 ? 符号简化错误处理的代码，这一点非常赞。 现在就看看我们Rust的错误处理具体细节吧。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-01-16T05:07:36.000Z">
+<meta property="article:modified_time" content="2023-01-16T16:09:22.103Z">
+<meta property="article:author" content="Jack Huang">
+<meta property="article:tag" content="C&#x2F;C++,RUST,Python,nodejs,Java,Mysql">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Jack Huang的技术生活" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Jack Huang的技术生活</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">一些关于技术的思考，想法和积累</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+          <a class="main-nav-link" href="/about/">关于我</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS 订阅"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="搜索"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://www.jackhuang.cc"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-rust-err" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2023/01/16/rust-err/" class="article-date">
+  <time class="dt-published" datetime="2023-01-16T05:07:36.000Z" itemprop="datePublished">2023-01-16</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Rust/">Rust</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      Rust的错误处理
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>Rust的错误处理主要有以下4点需要学习：</p>
+<p>1、使用panic!宏；</p>
+<p>2、使用Result&lt;T, E&gt;;</p>
+<p>3、使用Optional&lt;T&gt;</p>
+<p>4、使用 ? 符号简化错误处理的代码，这一点非常赞。</p>
+<p>现在就看看我们Rust的错误处理具体细节吧。</p>
+<span id="more"></span>
+
+<!-- toc -->
+
+<ul>
+<li><a href="#panic%E5%AE%8F">panic!宏</a></li>
+<li><a href="#%E4%BD%BF%E7%94%A8resultt-e">使用Result&lt;T, E&gt;</a></li>
+<li><a href="#%E7%94%A8-%E6%9D%A5%E7%AE%80%E5%8C%96%E8%BF%94%E5%9B%9E%E7%9A%84%E9%94%99%E8%AF%AF%E5%80%BC%E5%A4%84%E7%90%86">用 ? 来简化返回的错误值处理</a></li>
+<li><a href="#%E4%BD%BF%E7%94%A8optionalt%E4%B9%9F%E6%98%AF%E4%B8%80%E7%A7%8D%E9%80%89%E6%8B%A9">使用Optional&lt;T&gt;也是一种选择</a></li>
+<li><a href="#%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99panic%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99%E8%BF%94%E5%9B%9E%E9%94%99%E8%AF%AF%E7%A0%81">什么时候panic什么时候返回错误码</a></li>
+</ul>
+<!-- tocstop -->
+
+<h2><span id="panic宏">panic!宏</span></h2><p>这个是最简单也是最暴力的错误解决处理方案，即直接中断程序运行，并且报告程序错误。如果程序无法继续往下执行，那么，尽早中断也是不错的选择，关键是，如果配合环境变量RUST_BACKTRACE&#x3D;1的话，还可以打印从panic的地方开始的调用栈，方便快速定位问题：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">fn</span> <span class="title function_">divide</span>(a: <span class="type">i32</span>, b: <span class="type">i32</span>) <span class="punctuation">-&gt;</span> <span class="type">i32</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> b == <span class="number">0</span> &#123;</span><br><span class="line">        <span class="built_in">panic!</span>(<span class="string">&quot;the denominator should not be 0&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    a / b</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">s</span> = <span class="number">16</span>;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">t</span> = <span class="number">0</span>;</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;s * t = &#123;&#125;&quot;</span>, <span class="title function_ invoke__">divide</span>(s, t));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果运行的时候加上环境变量RUST_BACKTRACE&#x3D;1，则可以在检查分母的失败时打印出调用栈：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">RUST_BACKTRACE=<span class="number">1</span> cargo run</span><br></pre></td></tr></table></figure>
+
+<p> 输出为：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">thread <span class="symbol">&#x27;main</span>&#x27; panicked at <span class="symbol">&#x27;the</span> denominator should not be <span class="number">0</span>&#x27;, src/main.rs:<span class="number">4</span>:<span class="number">9</span></span><br><span class="line">stack backtrace:</span><br><span class="line">   <span class="number">0</span>: _rust_begin_unwind</span><br><span class="line">   <span class="number">1</span>: core::panicking::panic_fmt</span><br><span class="line">   <span class="number">2</span>: greeting::divide</span><br><span class="line">             at /Users/jack/Documents/code/rust/vsrust/greeting/src/main.rs:<span class="number">4</span>:<span class="number">9</span></span><br><span class="line">   <span class="number">3</span>: greeting::main</span><br><span class="line">             at /Users/jack/Documents/code/rust/vsrust/greeting/src/main.rs:<span class="number">12</span>:<span class="number">28</span></span><br><span class="line">   <span class="number">4</span>: core::ops::function::<span class="built_in">FnOnce</span>::call_once</span><br><span class="line">             at /private/tmp/rust-<span class="number">20220812</span>-<span class="number">6466</span>-<span class="number">1</span>atesch/rustc-<span class="number">1.63</span>.<span class="number">0</span>-src/library/core/src/ops/function.rs:<span class="number">248</span>:<span class="number">5</span></span><br><span class="line">note: <span class="literal">Some</span> details are omitted, run with `RUST_BACKTRACE=full` <span class="keyword">for</span> <span class="title class_">a</span> verbose backtrace.</span><br></pre></td></tr></table></figure>
+
+
+
+<h2><span id="使用resultltt-egt">使用Result&lt;T, E&gt;</span></h2><p>大部分错误都是可以容忍的，或者说我们可以继续保持程序继续运行，同时给用户一个友好提示，所以给一个恰当的提示是大多数场景。这个时候我们一般使用Result&lt;T, E&gt;。这是一个很简单但非常有用且常用的枚举类型，其源代码为：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">pub</span> <span class="keyword">enum</span> <span class="title class_">Result</span>&lt;T, E&gt; &#123;</span><br><span class="line">    <span class="comment">/// Contains the success value</span></span><br><span class="line">    <span class="meta">#[lang = <span class="string">&quot;Ok&quot;</span>]</span></span><br><span class="line">    <span class="meta">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]</span></span><br><span class="line">    <span class="title function_ invoke__">Ok</span>(<span class="meta">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]</span> T),</span><br><span class="line"></span><br><span class="line">    <span class="comment">/// Contains the error value</span></span><br><span class="line">    <span class="meta">#[lang = <span class="string">&quot;Err&quot;</span>]</span></span><br><span class="line">    <span class="meta">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]</span></span><br><span class="line">    <span class="title function_ invoke__">Err</span>(<span class="meta">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]</span> E),</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>即Ok和Err两个枚举类型，很多标准函数都会用它来表示是否执行成功，例如，我们现在写一个程序，打开一个文件，如果该文件不存在，则创建它，否则就往文件里面写hello world：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">use</span> std::&#123;fs::File, io::Write&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">open_or_create_file</span>() <span class="punctuation">-&gt;</span> <span class="type">Result</span>&lt;(), std::io::Error&gt; &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">file_handle_result</span> = File::<span class="title function_ invoke__">open</span>(<span class="string">&quot;rust_test.txt&quot;</span>);</span><br><span class="line">    <span class="keyword">match</span> file_handle_result &#123;</span><br><span class="line">        <span class="title function_ invoke__">Ok</span>(<span class="keyword">mut</span> file_hanle) =&gt; &#123;</span><br><span class="line">            file_hanle.<span class="title function_ invoke__">write_all</span>(<span class="string">&quot;你好世界&quot;</span>.<span class="title function_ invoke__">to_string</span>().<span class="title function_ invoke__">as_bytes</span>());</span><br><span class="line">            <span class="title function_ invoke__">Ok</span>(())</span><br><span class="line">        &#125;,</span><br><span class="line">        <span class="title function_ invoke__">Err</span>(error_message) =&gt; &#123;</span><br><span class="line">            <span class="keyword">let</span> <span class="variable">new_file_hanle_result</span> = File::<span class="title function_ invoke__">create</span>(<span class="string">&quot;rust_test.txt&quot;</span>);</span><br><span class="line">            <span class="keyword">match</span> new_file_hanle_result &#123;</span><br><span class="line">                <span class="title function_ invoke__">Ok</span>(<span class="keyword">mut</span> file_hanle) =&gt; &#123;</span><br><span class="line">                    file_hanle.<span class="title function_ invoke__">write_all</span>(<span class="string">&quot;你好世界&quot;</span>.<span class="title function_ invoke__">to_string</span>().<span class="title function_ invoke__">as_bytes</span>());</span><br><span class="line">                    <span class="title function_ invoke__">Ok</span>(())</span><br><span class="line">                &#125;,</span><br><span class="line">                <span class="title function_ invoke__">Err</span>(error_message) =&gt; &#123;</span><br><span class="line">                    <span class="built_in">panic!</span>(<span class="string">&quot;failed to create rust_test.txt, since: &#123;&#125;&quot;</span>, error_message.<span class="title function_ invoke__">to_string</span>());</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">r</span> = <span class="title function_ invoke__">open_or_create_file</span>();</span><br><span class="line">    <span class="keyword">match</span> r &#123;</span><br><span class="line">        <span class="title function_ invoke__">Err</span>(error_message) =&gt; &#123;</span><br><span class="line">            <span class="built_in">println!</span>(<span class="string">&quot;something wrong: &#123;&#125;&quot;</span>, error_message.<span class="title function_ invoke__">to_string</span>());</span><br><span class="line">        &#125;,</span><br><span class="line">        _ =&gt; (),</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>洋洋洒洒写了很多，其实就是做了一个简单的逻辑，即先打开文件，存在则写入，不存在则创建，创建成功后写入，创建失败则panic。这个算是比较基本的Result&lt;T, E&gt;使用了。但显然，Rust不会让我们写这么多 match 或者 if 去做判断Result&lt;T, E&gt;结果的，下面就看看Rust是怎么把这段代码简化的。</p>
+<h2><span id="用-来简化返回的错误值处理">用 ? 来简化返回的错误值处理</span></h2><p>Rust提供了了 ? 号来帮助我们简化这种常见的Result&lt;T, E&gt;判断。? 其实就是一段简单的逻辑，即，如果返回的是Err那么就直接返回，如果是Ok则继续往下执行：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">fn</span> <span class="title function_">open_write</span>() <span class="punctuation">-&gt;</span> <span class="type">Result</span>&lt;(), std::io::Error&gt; &#123;</span><br><span class="line">    File::<span class="title function_ invoke__">open</span>(<span class="string">&quot;rust_test.txt&quot;</span>)?.<span class="title function_ invoke__">write_all</span>(<span class="string">&quot;你好世界&quot;</span>.<span class="title function_ invoke__">to_string</span>().<span class="title function_ invoke__">as_bytes</span>());</span><br><span class="line">    <span class="title function_ invoke__">Ok</span>(())</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">create_write</span>() <span class="punctuation">-&gt;</span> <span class="type">Result</span>&lt;(), std::io::Error&gt; &#123;</span><br><span class="line">    File::<span class="title function_ invoke__">create</span>(<span class="string">&quot;rust_test.txt&quot;</span>)?.<span class="title function_ invoke__">write_all</span>(<span class="string">&quot;你好世界&quot;</span>.<span class="title function_ invoke__">to_string</span>().<span class="title function_ invoke__">as_bytes</span>());</span><br><span class="line">    <span class="title function_ invoke__">Ok</span>(())</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">r</span> = <span class="title function_ invoke__">open_write</span>();</span><br><span class="line">    <span class="keyword">match</span> r &#123;</span><br><span class="line">        <span class="title function_ invoke__">Err</span>(error_message) =&gt; &#123;</span><br><span class="line">            <span class="built_in">println!</span>(<span class="string">&quot;something wrong: &#123;&#125;&quot;</span>, error_message.<span class="title function_ invoke__">to_string</span>());</span><br><span class="line">            <span class="title function_ invoke__">create_write</span>();</span><br><span class="line">        &#125;,</span><br><span class="line">        _ =&gt; (),</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>可以看到，使用 ? 号后，简化了我们对Result&lt;T, E&gt;的判断处理，代码更简洁了。上面的代码中，open() 方法返回了Result&lt;T, E&gt;，? 会处理成功与失败的情况，若成功，则展开Ok(T)，也即获得文件对象句柄，进而调用write_all() 方法写入数据，若失败，则提前返回。</p>
+<p>这里需要注意的是，open_write() 和 create_write() 返回值必须和里面的代码匹配，即成功返回的是Ok(())，失败则返回的是File::open() 或File::create() 的失败返回值Err(E)，此处E是std::io::Error。</p>
+<h2><span id="使用optionallttgt也是一种选择">使用Optional&lt;T&gt;也是一种选择</span></h2><p>Optional&lt;T&gt;也可以像Result&lt;T, E&gt;那样用，如果是None那么就直接返回，否则就继续处理，比如前面的HashMap，我们get一个key，若存在，则乘以二返回，否则就返回None：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">fn</span> <span class="title function_">multiple_2</span>(h: &amp;HashMap&lt;<span class="type">String</span>, <span class="type">i32</span>&gt;, key: &amp;<span class="type">str</span>) <span class="punctuation">-&gt;</span> <span class="type">Option</span>&lt;<span class="type">i32</span>&gt; &#123;</span><br><span class="line">    <span class="title function_ invoke__">Some</span>(h.<span class="title function_ invoke__">get</span>(key)? * <span class="number">2</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">h</span> = HashMap::<span class="title function_ invoke__">new</span>();</span><br><span class="line">    h.<span class="title function_ invoke__">insert</span>(<span class="string">&quot;hello&quot;</span>.<span class="title function_ invoke__">to_string</span>(), <span class="number">2</span>);</span><br><span class="line">    h.<span class="title function_ invoke__">insert</span>(<span class="string">&quot;rust&quot;</span>.<span class="title function_ invoke__">to_string</span>(), <span class="number">4</span>);</span><br><span class="line">    h.<span class="title function_ invoke__">insert</span>(<span class="string">&quot;jack&quot;</span>.<span class="title function_ invoke__">to_string</span>(), <span class="number">6</span>);</span><br><span class="line"></span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;the result is &#123;:?&#125;&quot;</span>, <span class="title function_ invoke__">multiple_2</span>(&amp;h, <span class="string">&quot;jack&quot;</span>));</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;the result is &#123;:?&#125;&quot;</span>, <span class="title function_ invoke__">multiple_2</span>(&amp;h, <span class="string">&quot;rose&quot;</span>));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>可以看到，如果通过get() 方法访问一个HashMap存在的key，那么 ? 会展开Some(&amp;i32)得到i32的对象的引用，并且和2相乘。如果不存在，则get() 方法返回None，函数提前返回，这段代码的输出是：</p>
+ <figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">the result is <span class="title function_ invoke__">Some</span>(<span class="number">12</span>)</span><br><span class="line">the result is <span class="literal">None</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h2><span id="什么时候panic什么时候返回错误码">什么时候panic什么时候返回错误码</span></h2><p>那么什么时候panic什么时候返回错误枚举呢？个人觉得这个问题还是比较显而易见的，从后端服务器设计角度来讲，进程退出是难以维护的不够健壮的提现，好的后端服务，应该能经受得住各种输入数据而屹立不倒，如果随随便便就退出以示对错误的一种反应，则容易被恶意客户端所利用，造成拒绝服务攻击。</p>
+<p>也有人认为，出了错就尽快退出，这样可以及时发现错误，这个愿望是很好的，在程序调试阶段我们可以这么干，的确有利于调试，但放到线上，就需要深思熟虑了。</p>
+<p>折衷方案是，对于后端服务初始化阶段，我们可以对关键信息做panic，运行时，对损害健壮性的请求进行提前拦截并提示错误。业务流程错误则当然使用错误信息。</p>
+<p>再进一步说，对于出错，我们其实不能仅仅只是靠panic或者返回错误信息，需要更系统的去考虑问题，比如系统的吞吐（延迟），成功量（率），失败量（率），请求量，不同水平的告警，等等各种多维度的去监控才能准确的知道一个系统的健康与否。这里只是Rust语言学习，不展开说了。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://www.jackhuang.cc/2023/01/16/rust-err/" data-id="clcz057g20000ghul5csv44l5" data-title="Rust的错误处理" class="article-share-link">分享</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2023/01/12/collection/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">后一篇</strong>
+      <div class="article-nav-title">Rust的容器</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">分类</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/C/">C++</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Rust/">Rust</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E6%83%B3%E6%B3%95/">想法</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/01/">一月 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/12/">十二月 2022</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2023/01/16/rust-err/">Rust的错误处理</a>
+          </li>
+        
+          <li>
+            <a href="/2023/01/12/collection/">Rust的容器</a>
+          </li>
+        
+          <li>
+            <a href="/2023/01/10/mod-and-crate/">Rust的模块化管理</a>
+          </li>
+        
+          <li>
+            <a href="/2023/01/08/enum-and-match/">Rust中的enum和match</a>
+          </li>
+        
+          <li>
+            <a href="/2023/01/07/RustStruct/">Rust的struct类型</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 Jack Huang<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+    <a href="/about/" class="mobile-nav-link">关于我</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.4.1.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>
