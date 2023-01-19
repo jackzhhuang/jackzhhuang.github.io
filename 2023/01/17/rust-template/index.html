@@ -16,7 +16,7 @@
 <meta property="og:description" content="要开始学习Rust比较高级的内容了。 今天要讲的是Rust的模板编程。模板编程实际上并不少见，不论C++还是Java，只要使用容器，基本都离不开模板。Rust的模板和C++很相似，都是编译时根据模板代码生成实际的（concrete）代码然后再编译成二进制。 那么，今天就好好看看Rust的模板编程吧。">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2023-01-17T05:13:33.000Z">
-<meta property="article:modified_time" content="2023-01-19T06:48:26.577Z">
+<meta property="article:modified_time" content="2023-01-19T07:32:36.446Z">
 <meta property="article:author" content="Jack Huang">
 <meta property="article:tag" content="Rust">
 <meta name="twitter:card" content="summary">
@@ -175,27 +175,6 @@
 <p>今天要讲的是Rust的模板编程。模板编程实际上并不少见，不论C++还是Java，只要使用容器，基本都离不开模板。Rust的模板和C++很相似，都是编译时根据模板代码生成实际的（concrete）代码然后再编译成二进制。</p>
 <p>那么，今天就好好看看Rust的模板编程吧。</p>
 <span id="more"></span>
-
-<!-- toc -->
-
-<ul>
-<li><a href="#--">模板</a><ul>
-<li><a href="#----">函数模板</a></li>
-<li><a href="#struct--">struct模板</a></li>
-<li><a href="#-----">方法的模板</a></li>
-</ul>
-</li>
-<li><a href="#trait--">trait编程</a><ul>
-<li><a href="#---trait">什么是trait</a></li>
-<li><a href="#--trait">实现trait</a></li>
-<li><a href="#dispatch--">dispatch机制</a></li>
-<li><a href="#trait-bond">trait bond</a></li>
-<li><a href="#where---">where关键字</a></li>
-</ul>
-</li>
-<li><a href="#--">总结</a></li>
-</ul>
-<!-- tocstop -->
 
 <h2 id="模板"><a href="#模板" class="headerlink" title="模板"></a>模板</h2><h3 id="函数模板"><a href="#函数模板" class="headerlink" title="函数模板"></a>函数模板</h3><p>假设我们需要做查处整型和字符型数组中，最大的那个元素，那么需要两个函数分别处理：</p>
 <figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">fn</span> <span class="title function_">find_largest_int</span>(array: &amp;[<span class="type">i32</span>]) <span class="punctuation">-&gt;</span> &amp;<span class="type">i32</span> &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">largest</span> = &amp;array[<span class="number">0</span>];</span><br><span class="line">    <span class="keyword">for</span> <span class="variable">i</span> <span class="keyword">in</span> array &#123;</span><br><span class="line">        <span class="keyword">if</span> largest &lt; i &#123;</span><br><span class="line">            largest = i;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    largest</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">find_largest_char</span>(array: &amp;[<span class="type">char</span>]) <span class="punctuation">-&gt;</span> &amp;<span class="type">char</span> &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">largest</span> = &amp;array[<span class="number">0</span>];</span><br><span class="line">    <span class="keyword">for</span> <span class="variable">i</span> <span class="keyword">in</span> array &#123;</span><br><span class="line">        <span class="keyword">if</span> largest &lt; i &#123;</span><br><span class="line">            largest = i;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    largest</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -394,6 +373,19 @@
             </div>
         </div>
         
+        
+        <div class="toc-container tooltip-left">
+            <i class="icon-font icon-category"></i>
+            <div class="tooltip tooltip-east">
+                <span class="tooltip-item">
+                </span>
+                <span class="tooltip-content">
+                    <div class="toc-article">
+                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A8%A1%E6%9D%BF"><span class="toc-number">1.</span> <span class="toc-text">模板</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%87%BD%E6%95%B0%E6%A8%A1%E6%9D%BF"><span class="toc-number">1.1.</span> <span class="toc-text">函数模板</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#struct%E6%A8%A1%E6%9D%BF"><span class="toc-number">1.2.</span> <span class="toc-text">struct模板</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%B9%E6%B3%95%E7%9A%84%E6%A8%A1%E6%9D%BF"><span class="toc-number">1.3.</span> <span class="toc-text">方法的模板</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#trait%E7%BC%96%E7%A8%8B"><span class="toc-number">2.</span> <span class="toc-text">trait编程</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFtrait"><span class="toc-number">2.1.</span> <span class="toc-text">什么是trait</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%9E%E7%8E%B0trait"><span class="toc-number">2.2.</span> <span class="toc-text">实现trait</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#dispatch%E6%9C%BA%E5%88%B6"><span class="toc-number">2.3.</span> <span class="toc-text">dispatch机制</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#trait-bond"><span class="toc-number">2.4.</span> <span class="toc-text">trait bond</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#where%E5%85%B3%E9%94%AE%E5%AD%97"><span class="toc-number">2.5.</span> <span class="toc-text">where关键字</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">3.</span> <span class="toc-text">总结</span></a></li></ol>
+                    </div>
+                </span>
+            </div>
+        </div>
         
     </div>
 </aside>

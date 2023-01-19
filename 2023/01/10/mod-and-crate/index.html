@@ -16,7 +16,7 @@
 <meta property="og:description" content="任何语言都离不开一个基本概念——包，Rust当然也不例外。按照官方文档教程说法，Rust最基本的包叫crate，它包含了一个或若干个library文件（库文件）或者binary文件（执行文件）。">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2023-01-10T15:18:55.000Z">
-<meta property="article:modified_time" content="2023-01-19T06:58:26.208Z">
+<meta property="article:modified_time" content="2023-01-19T07:32:21.480Z">
 <meta property="article:author" content="Jack Huang">
 <meta property="article:tag" content="Rust">
 <meta name="twitter:card" content="summary">
@@ -173,28 +173,6 @@
       
         <p>任何语言都离不开一个基本概念——包，Rust当然也不例外。按照官方文档教程说法，Rust最基本的包叫crate，它包含了一个或若干个library文件（库文件）或者binary文件（执行文件）。</p>
 <span id="more"></span>
-
-<!-- toc -->
-
-<ul>
-<li><a href="#1-----------">1. 从最简单的包演化说起</a><ul>
-<li><a href="#11----mod">1.1 第一个mod</a></li>
-<li><a href="#12--mod------">1.2 把mod放到别的文件</a></li>
-<li><a href="#13--mod------">1.3 把mod放到别的目录</a></li>
-</ul>
-</li>
-<li><a href="#2-------">2.  模块的路径</a><ul>
-<li><a href="#21--------------">2.1 根目录、绝对路径和相对路径</a></li>
-<li><a href="#22---use">2.2 使用use</a></li>
-<li><a href="#23---pub-use-as">2.3 使用pub use和as</a></li>
-<li><a href="#24---super">2.4 使用super</a></li>
-</ul>
-</li>
-<li><a href="#25-pub-struct-pub-enum">2.5 pub struct和pub enum</a></li>
-<li><a href="#3---------">3. 同时引入多个模块</a></li>
-<li><a href="#4---">4. 总结</a></li>
-</ul>
-<!-- tocstop -->
 
 <h2 id="1-从最简单的包演化说起"><a href="#1-从最简单的包演化说起" class="headerlink" title="1. 从最简单的包演化说起"></a>1. 从最简单的包演化说起</h2><p>任何项目都不可能一个main文件写到底，我们总是要分成几个文件，甚至还要给文件放进不同目录，甚至会事先编译一些文件来管理项目文件。为了学习Rust的相关概念，我们从最简单的一个文件说起，慢慢把它演化成我们常见的项目管理方式，首先来个最简单的main.rs：</p>
 <figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#[derive(Debug)]</span></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">Person</span> &#123;</span><br><span class="line">    name: <span class="type">String</span>,</span><br><span class="line">    age: <span class="type">u32</span>,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">p</span> = Person &#123;</span><br><span class="line">        name: <span class="string">&quot;jack&quot;</span>.<span class="title function_ invoke__">to_string</span>(),</span><br><span class="line">        age: <span class="number">100</span></span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;p = &#123;:?&#125;&quot;</span>, p);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -442,6 +420,19 @@
             </div>
         </div>
         
+        
+        <div class="toc-container tooltip-left">
+            <i class="icon-font icon-category"></i>
+            <div class="tooltip tooltip-east">
+                <span class="tooltip-item">
+                </span>
+                <span class="tooltip-content">
+                    <div class="toc-article">
+                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E4%BB%8E%E6%9C%80%E7%AE%80%E5%8D%95%E7%9A%84%E5%8C%85%E6%BC%94%E5%8C%96%E8%AF%B4%E8%B5%B7"><span class="toc-number">1.</span> <span class="toc-text">1. 从最简单的包演化说起</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-1-%E7%AC%AC%E4%B8%80%E4%B8%AAmod"><span class="toc-number">1.1.</span> <span class="toc-text">1.1 第一个mod</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-2-%E6%8A%8Amod%E6%94%BE%E5%88%B0%E5%88%AB%E7%9A%84%E6%96%87%E4%BB%B6"><span class="toc-number">1.2.</span> <span class="toc-text">1.2 把mod放到别的文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-3-%E6%8A%8Amod%E6%94%BE%E5%88%B0%E5%88%AB%E7%9A%84%E7%9B%AE%E5%BD%95"><span class="toc-number">1.3.</span> <span class="toc-text">1.3 把mod放到别的目录</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E6%A8%A1%E5%9D%97%E7%9A%84%E8%B7%AF%E5%BE%84"><span class="toc-number">2.</span> <span class="toc-text">2.  模块的路径</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-%E6%A0%B9%E7%9B%AE%E5%BD%95%E3%80%81%E7%BB%9D%E5%AF%B9%E8%B7%AF%E5%BE%84%E5%92%8C%E7%9B%B8%E5%AF%B9%E8%B7%AF%E5%BE%84"><span class="toc-number">2.1.</span> <span class="toc-text">2.1 根目录、绝对路径和相对路径</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-%E4%BD%BF%E7%94%A8use"><span class="toc-number">2.2.</span> <span class="toc-text">2.2 使用use</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-%E4%BD%BF%E7%94%A8pub-use%E5%92%8Cas"><span class="toc-number">2.3.</span> <span class="toc-text">2.3 使用pub use和as</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-4-%E4%BD%BF%E7%94%A8super"><span class="toc-number">2.4.</span> <span class="toc-text">2.4 使用super</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-5-pub-struct%E5%92%8Cpub-enum"><span class="toc-number">3.</span> <span class="toc-text">2.5 pub struct和pub enum</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E5%90%8C%E6%97%B6%E5%BC%95%E5%85%A5%E5%A4%9A%E4%B8%AA%E6%A8%A1%E5%9D%97"><span class="toc-number">4.</span> <span class="toc-text">3. 同时引入多个模块</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E6%80%BB%E7%BB%93"><span class="toc-number">5.</span> <span class="toc-text">4. 总结</span></a></li></ol>
+                    </div>
+                </span>
+            </div>
+        </div>
         
     </div>
 </aside>

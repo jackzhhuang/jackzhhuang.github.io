@@ -16,7 +16,7 @@
 <meta property="og:description" content="Rust的struct定义和C++的类似，甚至提供了简化初始化的方法，定义成员方法也更灵活，刚刚登上第一个陡坡（所有权），这一节缓缓，因为struct算是Rust中难度	不高的内容。">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2023-01-07T09:19:26.000Z">
-<meta property="article:modified_time" content="2023-01-19T06:58:53.527Z">
+<meta property="article:modified_time" content="2023-01-19T07:32:47.105Z">
 <meta property="article:author" content="Jack Huang">
 <meta property="article:tag" content="Rust">
 <meta name="twitter:card" content="summary">
@@ -173,24 +173,6 @@
       
         <p>Rust的struct定义和C++的类似，甚至提供了简化初始化的方法，定义成员方法也更灵活，刚刚登上第一个陡坡（所有权），这一节缓缓，因为struct算是Rust中难度	不高的内容。</p>
 <span id="more"></span>
-
-<!-- toc -->
-
-<ul>
-<li><a href="#1-struct---">1. struct的定义</a></li>
-<li><a href="#2-struct------">2. struct的初始化方法</a><ul>
-<li><a href="#21------">2.1 直接初始化</a></li>
-<li><a href="#22-------">2.2 用函数初始化</a></li>
-<li><a href="#23---------">2.3 用别的对象初始化</a></li>
-</ul>
-</li>
-<li><a href="#3----struct">3. 特殊的struct</a></li>
-<li><a href="#4--struct----">4. 给struct加上方法</a></li>
-<li><a href="#5-----">5. 静态方法</a></li>
-<li><a href="#6---------">6. 定义多个成员方法</a></li>
-<li><a href="#7-----">7. 遗留问题</a></li>
-</ul>
-<!-- tocstop -->
 
 <h2 id="1-struct的定义"><a href="#1-struct的定义" class="headerlink" title="1. struct的定义"></a>1. struct的定义</h2><p>和很多语言一样，定义一个struct就是用struct关键字加上名字，然后罗列出字段来，比如最简单的定义一个人：</p>
 <figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">Person</span> &#123;</span><br><span class="line">    name: <span class="type">String</span>,</span><br><span class="line">    email: <span class="type">String</span>, </span><br><span class="line">    age: <span class="type">u32</span>,</span><br><span class="line">    address: <span class="type">String</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
