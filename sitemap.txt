@@ -1,3 +1,4 @@
+https://www.jackhuang.cc/about/index.html
 https://www.jackhuang.cc/2023/01/01/%E6%9F%A5%E7%9C%8B%E7%B1%BB%E5%9E%8B/
 https://www.jackhuang.cc/2023/01/07/RustStruct/
 https://www.jackhuang.cc/2023/01/02/Rust%E6%89%80%E6%9C%89%E6%9D%83/
@@ -9,7 +10,6 @@ https://www.jackhuang.cc/2023/01/05/%E5%8F%B3%E5%80%BC%E5%BC%95%E7%94%A8%E5%9C%B
 https://www.jackhuang.cc/2022/12/31/%E5%BF%AB%E9%80%9F%E8%AF%B4%E4%B8%80%E4%B8%8B%E5%8F%B3%E5%80%BC%E5%BC%95%E7%94%A8/
 https://www.jackhuang.cc/2022/12/30/%E4%BB%8A%E5%90%8E%E8%A6%81%E5%A5%BD%E5%A5%BD%E5%81%9A%E7%9A%84%E4%B8%80%E4%BA%9B%E4%BA%8B%E6%83%85/
 https://www.jackhuang.cc/2023/01/12/collection/
-https://www.jackhuang.cc/about/index.html
 https://www.jackhuang.cc/googlefc1dce18b2b0d99a.html
 https://www.jackhuang.cc/
 https://www.jackhuang.cc/tags/Rust/

@@ -2,6 +2,15 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://www.jackhuang.cc/about/index.html</loc>
+    
+    <lastmod>2023-01-19</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://www.jackhuang.cc/2023/01/01/%E6%9F%A5%E7%9C%8B%E7%B1%BB%E5%9E%8B/</loc>
     
     <lastmod>2023-01-19</lastmod>
@@ -95,15 +104,6 @@
     <loc>https://www.jackhuang.cc/2023/01/12/collection/</loc>
     
     <lastmod>2023-01-19</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://www.jackhuang.cc/about/index.html</loc>
-    
-    <lastmod>2023-01-16</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
