@@ -16,7 +16,7 @@
 <meta property="og:description" content="要开始学习Rust比较高级的内容了。 今天要讲的是Rust的模板编程。模板编程实际上并不少见，不论C++还是Java，只要使用容器，基本都离不开模板。Rust的模板和C++很相似，都是编译时根据模板代码生成实际的（concrete）代码然后再编译成二进制。 那么，今天就好好看看Rust的模板编程吧。">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2023-01-17T05:13:33.000Z">
-<meta property="article:modified_time" content="2023-01-19T12:44:45.890Z">
+<meta property="article:modified_time" content="2023-01-19T12:48:04.013Z">
 <meta property="article:author" content="Jack Huang">
 <meta property="article:tag" content="Rust">
 <meta name="twitter:card" content="summary">
@@ -192,6 +192,7 @@
 <figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">fn</span> <span class="title function_">collect</span>&lt;B: FromIterator&lt;<span class="keyword">Self</span>::Item&gt;&gt;(<span class="keyword">self</span>) <span class="punctuation">-&gt;</span> B</span><br><span class="line"><span class="keyword">where</span></span><br><span class="line">    <span class="keyword">Self</span>: <span class="built_in">Sized</span>,</span><br><span class="line">&#123;</span><br><span class="line">    FromIterator::<span class="title function_ invoke__">from_iter</span>(<span class="keyword">self</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p> 其返回的是一个模板B，那么在编译s.split(&amp;[‘ ‘, ‘,’, ‘.’]).collect();这段代码的时候编译器怎么知道我们用的是Vec呢？确实，实际上我们可以用Vec，也可以用LinkedList，那么，为了让编译器生成一个返回Vec的方法出来，我们必须在调用的时候显示写出let words: Vec&lt;&amp;str&gt; &#x3D; … ，这样编译器才能知道我们需要Vec，于是生成一个返回值为Vec的collect() 方法出来。</p>
+<p>我们也可以把Vec&lt;&amp;str&gt;改成Vec&lt;_&gt;，因为编译器完全可以自己推导出&amp;str的，用下划线 _ 即可省去写太多字母。</p>
 <h3 id="struct模板"><a href="#struct模板" class="headerlink" title="struct模板"></a>struct模板</h3><p>和函数模板差不多，我们在struct名称前加上模板声名就可以声明一个模板struct了，后面的字段可以定义对应的类型字段：</p>
 <figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#[derive(Debug)]</span></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">Coord</span>&lt;T&gt; &#123;</span><br><span class="line">    x: T,</span><br><span class="line">    y: T,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">#[derive(Debug)]</span></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">Point</span>&lt;T, U&gt; &#123;</span><br><span class="line">    number: T,</span><br><span class="line">    coord: U,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
