@@ -6,19 +6,15 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="https://www.jackhuang.cc">
-  <title>Rust中的enum和match | Jack Huang的技术生活</title>
+  <title>Tag: C++ | Jack Huang的技术生活</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="今天就来熟悉一下Rust的enum和match语法吧。">
-<meta property="og:type" content="article">
-<meta property="og:title" content="Rust中的enum和match">
-<meta property="og:url" content="https://www.jackhuang.cc/2023/01/08/enum-and-match/index.html">
+  <meta property="og:type" content="website">
+<meta property="og:title" content="Jack Huang的技术生活">
+<meta property="og:url" content="https://www.jackhuang.cc/tags/C/index.html">
 <meta property="og:site_name" content="Jack Huang的技术生活">
-<meta property="og:description" content="今天就来熟悉一下Rust的enum和match语法吧。">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2023-01-08T11:25:24.000Z">
-<meta property="article:modified_time" content="2023-01-19T06:58:22.200Z">
 <meta property="article:author" content="Jack Huang">
-<meta property="article:tag" content="Rust">
+<meta property="article:tag" content="C&#x2F;C++,RUST,Python,nodejs,Java,Mysql">
 <meta name="twitter:card" content="summary">
   
     <link rel="alternative" href="/atom.xml" title="Jack Huang的技术生活" type="application/atom+xml">
@@ -151,277 +147,179 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-enum-and-match" class="article article-type-post " itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
+            
   
-    <h1 class="article-title" itemprop="name">
-      Rust中的enum和match
+  
+    
+    
+      
+      
+      <section class="archives-wrap">
+        <div class="archive-year-wrap">
+          <a href="/archives/2023" class="archive-year">2023</a>
+        </div>
+        <div class="archives">
+    
+    <article class="archive-article archive-type-post">
+  <div class="archive-article-inner">
+    <header class="archive-article-header">
+      	<div class="article-meta">
+	      	<a href="/2023/01/05/%E5%8F%B3%E5%80%BC%E5%BC%95%E7%94%A8%E5%9C%BA%E6%99%AF%E5%88%86%E6%9E%90/" class="archive-article-date">
+  	<time datetime="2023-01-05T04:42:57.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-01-05</time>
+</a>
+        </div>
+    	 
+  
+    <h1 itemprop="name">
+      <a class="archive-article-title" href="/2023/01/05/%E5%8F%B3%E5%80%BC%E5%BC%95%E7%94%A8%E5%9C%BA%E6%99%AF%E5%88%86%E6%9E%90/">C++右值引用场景分析</a>
     </h1>
   
 
-        
-        <a href="/2023/01/08/enum-and-match/" class="archive-article-date">
-  	<time datetime="2023-01-08T11:25:24.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-01-08</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>今天就来熟悉一下Rust的enum和match语法吧。</p>
-<span id="more"></span>
-
-<!-- toc -->
-
-<ul>
-<li><a href="#1-----enum">1. 定义一个enum</a><ul>
-<li><a href="#11--enum---">1.1 给enum绑定值</a></li>
-<li><a href="#12--enum------">1.2 给enum加上成员方法</a></li>
-<li><a href="#13-enum-struct---">1.3 enum和struct的区别</a></li>
-</ul>
-</li>
-<li><a href="#2-match---">2. match控制流</a></li>
-<li><a href="#3------enum-optional--t--">3. 一个常用的enum：Optional&lt;T&gt;</a></li>
-<li><a href="#4-if-let--">4. if let用法</a></li>
-<li><a href="#5---match-if-let-----">5. 使用match和if let的注意事项</a></li>
-</ul>
-<!-- tocstop -->
-
-<h2 id="1-定义一个enum"><a href="#1-定义一个enum" class="headerlink" title="1. 定义一个enum"></a>1. 定义一个enum</h2><p>枚举类型从来不缺席任何一个稍微高级的语言。Rust也不例外，定义一个枚举只需要enum关键字即可，比如我们定义IP地址类型，其有两种格式，V4和V6版本：</p>
-<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#[derive(Debug)]</span></span><br><span class="line"><span class="keyword">enum</span> <span class="title class_">IpAddressType</span> &#123;</span><br><span class="line">    V4,</span><br><span class="line">    V6</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>那么，如果有一个地质结构体，就可以用它来标识一个地址是哪一个类型的，使用方法也和其他语言差不多：</p>
-<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#[derive(Debug)]</span></span><br><span class="line"><span class="keyword">enum</span> <span class="title class_">IpAddressType</span> &#123;</span><br><span class="line">    V4,</span><br><span class="line">    V6</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">#[derive(Debug)]</span></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">IpAddress</span> &#123;</span><br><span class="line">    address_type: IpAddressType,</span><br><span class="line">    address: <span class="type">String</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">ip</span> = IpAddress &#123;</span><br><span class="line">        address_type: IpAddressType::V4,</span><br><span class="line">        address: <span class="string">&quot;127.0.0.1&quot;</span>.<span class="title function_ invoke__">to_string</span>()</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;ip = &#123;:#?&#125;&quot;</span>, ip);</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>可以看到，ennum此时的用法和C++差不多一样，几乎没有特殊之处，下面，就说一下Rust的enum类型带来的更多特性。</p>
-<h3 id="1-1-给enum绑定值"><a href="#1-1-给enum绑定值" class="headerlink" title="1.1 给enum绑定值"></a>1.1 给enum绑定值</h3><p>上面的例子，IpAddressType定义了V4和V6两个类型，要使用它们去标识一个IP需要和String类型一起使用，即IpAddressType标识String的内容是V4还是V6，enum实际上还可以和一个类型绑定，使得其不但有类型属性，还有值属性，比如上面的例子，可以简化为这样：</p>
-<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#[derive(Debug)]</span></span><br><span class="line"><span class="keyword">enum</span> <span class="title class_">IpAddress</span> &#123;</span><br><span class="line">    <span class="title function_ invoke__">V4</span>(<span class="type">String</span>),</span><br><span class="line">    <span class="title function_ invoke__">V6</span>(<span class="type">String</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">ip</span> = IpAddress::<span class="title function_ invoke__">V4</span>(<span class="string">&quot;127.0.0.1&quot;</span>.<span class="title function_ invoke__">to_string</span>());</span><br><span class="line"></span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;ip = &#123;:#?&#125;&quot;</span>, ip);</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>这时的输出为：</p>
-<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ip = <span class="title function_ invoke__">V4</span>(</span><br><span class="line">    <span class="string">&quot;127.0.0.1&quot;</span>,</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
-
-<p>可以看到，enum的类型还可以和其它类型绑定在一起，形成“类型+值”的关系，简化了代码。</p>
-<p>enum绑定可以很灵活，可以绑定任何类型，只要你想绑定，就能绑定，比如：</p>
-<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#[derive(Debug)]</span></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">Person</span> &#123;</span><br><span class="line">    name: <span class="type">String</span>,</span><br><span class="line">    age: <span class="type">u32</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">#[derive(Debug)]</span></span><br><span class="line"><span class="keyword">enum</span> <span class="title class_">IpAddress</span> &#123;</span><br><span class="line">    <span class="title function_ invoke__">V4</span>(<span class="type">String</span>),</span><br><span class="line">    <span class="title function_ invoke__">V6</span>(<span class="type">String</span>),</span><br><span class="line">    <span class="title function_ invoke__">RAW_V4</span>(<span class="type">u8</span>, <span class="type">u8</span>, <span class="type">u8</span>, <span class="type">String</span>), <span class="comment">// 绑定多个值</span></span><br><span class="line">    <span class="title function_ invoke__">VPerson</span>(Person) <span class="comment">// 绑定自定义struct</span></span><br><span class="line">    Point&#123;x: <span class="type">i32</span>, y: <span class="type">i32</span>&#125;,  <span class="comment">// 绑定一个匿名struct</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>可以这样使用这个enum：</p>
-<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> <span class="variable">raw_ip</span> = IpAddress::<span class="title function_ invoke__">RAW_V4</span>(<span class="number">127</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="string">&quot;this is a home address&quot;</span>.<span class="title function_ invoke__">to_string</span>());</span><br><span class="line"><span class="keyword">let</span> <span class="variable">person_type</span> = IpAddress::<span class="title function_ invoke__">VPerson</span>(Person &#123; name: <span class="type">String</span>::<span class="title function_ invoke__">from</span>(<span class="string">&quot;jack&quot;</span>), age: <span class="number">100</span> &#125;);</span><br><span class="line"><span class="keyword">let</span> <span class="variable">point</span> = IpAddress::Point &#123; x: <span class="number">100</span>, y: <span class="number">120</span> &#125;;</span><br><span class="line"><span class="built_in">println!</span>(<span class="string">&quot;raw_ip = &#123;:?&#125;&quot;</span>, raw_ip);</span><br><span class="line"><span class="built_in">println!</span>(<span class="string">&quot;person_type = &#123;:?&#125;&quot;</span>, person_type);</span><br><span class="line"><span class="built_in">println!</span>(<span class="string">&quot;point = &#123;:?&#125;&quot;</span>, point);</span><br></pre></td></tr></table></figure>
-
-<p>会打印：</p>
-<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">raw_ip = <span class="title function_ invoke__">RAW_V4</span>(<span class="number">127</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="string">&quot;this is a home address&quot;</span>)</span><br><span class="line">person_type = <span class="title function_ invoke__">VPerson</span>(Person &#123; name: <span class="string">&quot;jack&quot;</span>, age: <span class="number">100</span> &#125;)</span><br><span class="line">point = Point &#123; x: <span class="number">100</span>, y: <span class="number">120</span> &#125;</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="1-2-给enum加上成员方法"><a href="#1-2-给enum加上成员方法" class="headerlink" title="1.2 给enum加上成员方法"></a>1.2 给enum加上成员方法</h3><p>enum甚至可以加上成员方法，比如我们给IpAddress添加一个方法：</p>
-<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">impl</span> <span class="title class_">IpAddress</span> &#123;</span><br><span class="line">   <span class="keyword">fn</span> <span class="title function_">do_something</span>(&amp;<span class="keyword">self</span>) &#123;</span><br><span class="line">        <span class="built_in">println!</span>(<span class="string">&quot;this is an enum!&quot;</span>);</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>此时，一旦拥有了一个IpAddress的枚举值，即可调用这个do_something方法：</p>
-<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> <span class="variable">ip</span> = IpAddress::<span class="title function_ invoke__">VPerson</span>(Person &#123; name: <span class="string">&quot;jack&quot;</span>.<span class="title function_ invoke__">to_string</span>(), age: <span class="number">100</span> &#125;);</span><br><span class="line">ip.<span class="title function_ invoke__">do_something</span>();</span><br></pre></td></tr></table></figure>
-
-<p>将会打印：</p>
-<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">this is an enum!</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="1-3-enum和struct的区别"><a href="#1-3-enum和struct的区别" class="headerlink" title="1.3 enum和struct的区别"></a>1.3 enum和struct的区别</h3><p>看上去enum和struct大部分是一样的，它们可以定义字段，定义方法，但也有细微的不同，首先当然是一个是用struct关键字定义，一个是用enum定义。</p>
-<p>其次，如果我们把上面的例子改成用struct实现，那么每一个枚举类型都是一个struct，那么这些struct它们都不属于一个类型下的定义，即每个类型都是独立的，而枚举类型则是打包了很多个类型，此时若把struct当作enum来用，if let判断或者match判断是错误的，比如：</p>
-<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">IpAddressV4</span> &#123;</span><br><span class="line">    name: <span class="type">String</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">IpAddressV6</span> &#123;</span><br><span class="line">    age: <span class="type">u32</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">ip</span> = IpAddressV6&#123;</span><br><span class="line">        age: <span class="number">100</span></span><br><span class="line">    &#125;; </span><br><span class="line">    <span class="keyword">match</span> ip &#123;</span><br><span class="line">        IpAddressV4 =&gt; <span class="built_in">println!</span>(<span class="string">&quot;it is v4&quot;</span>),</span><br><span class="line">        IpAddressV6 =&gt; <span class="built_in">println!</span>(<span class="string">&quot;it is v6&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>上面的代码虽然可以编译，但打印出来的却是：</p>
-<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">it is v4</span><br></pre></td></tr></table></figure>
-
-<p>很明显，不符合预期。 这是因为match发现它们都是struct这个类型，于是走进了V4这个分支中。用enum就可以顺利表达我们的意思：</p>
-<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">enum</span> <span class="title class_">IpAddress</span> &#123;</span><br><span class="line">    <span class="title function_ invoke__">V4</span>(<span class="type">String</span>),</span><br><span class="line">    <span class="title function_ invoke__">V6</span>(<span class="type">u32</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">ip</span> = IpAddress::<span class="title function_ invoke__">V6</span>(<span class="number">100</span>);</span><br><span class="line">    <span class="keyword">match</span> ip &#123;</span><br><span class="line">        IpAddress::<span class="title function_ invoke__">V4</span>(x) =&gt; <span class="built_in">println!</span>(<span class="string">&quot;it is v4&quot;</span>),</span><br><span class="line">        IpAddress::<span class="title function_ invoke__">V6</span>(x) =&gt; <span class="built_in">println!</span>(<span class="string">&quot;it is v6&quot;</span>),</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>此时打印：</p>
-<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">it is v6</span><br></pre></td></tr></table></figure>
-
-<p>打印正常，因为enum能正确给V4和V6不同的类型，所以，如果需要用match或者if let的话，还是使用enum吧。</p>
-<h2 id="2-match控制流"><a href="#2-match控制流" class="headerlink" title="2. match控制流"></a>2. match控制流</h2><p>上面的代码用到了match语法，match其实就是C++中的switch，关键是：match强制检查所有enum类型，否则报错，也就是必须要么枚举所有的类型，或者使用下划线 _  来指定匹配之前的类型都失败则执行默认行为。比如之前的match判断就枚举了V4和V6的所有枚举，但如果遇到整型，由于不可能枚举所有整形，就需要默认分支，也即下划线来保证所有的分支都有考虑到：</p>
- <figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">fn</span> <span class="title function_">is_24_or_30</span>(i: <span class="type">i32</span>) &#123;</span><br><span class="line">    <span class="keyword">match</span> i &#123;</span><br><span class="line">        <span class="number">24</span> =&gt; <span class="built_in">println!</span>(<span class="string">&quot;one day has 24 hours&quot;</span>),</span><br><span class="line">        <span class="number">30</span> =&gt; <span class="built_in">println!</span>(<span class="string">&quot;some monthes have 30 days&quot;</span>),</span><br><span class="line">        _ =&gt; <span class="built_in">println!</span>(<span class="string">&quot;no decriptions, it is &#123;&#125;&quot;</span>, i),</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>注意，每一个rust分支都是以逗号“,”结尾。我们也可以加上大括号，写一些语句：</p>
-<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">fn</span> <span class="title function_">is_24_or_30</span>(i: <span class="type">i32</span>) &#123;</span><br><span class="line">    <span class="keyword">match</span> i &#123;</span><br><span class="line">        <span class="number">24</span> =&gt; <span class="built_in">println!</span>(<span class="string">&quot;one day has 24 hours&quot;</span>),</span><br><span class="line">        <span class="number">30</span> =&gt; <span class="built_in">println!</span>(<span class="string">&quot;some monthes have 30 days&quot;</span>),</span><br><span class="line">        <span class="number">365</span> =&gt; &#123;</span><br><span class="line">            <span class="keyword">let</span> <span class="variable">p</span> = Person &#123;</span><br><span class="line">                name: <span class="string">&quot;jack&quot;</span>.<span class="title function_ invoke__">to_string</span>(),</span><br><span class="line">                age: <span class="number">100</span>,</span><br><span class="line">            &#125;;</span><br><span class="line">            <span class="built_in">println!</span>(<span class="string">&quot;a year commonly has 365 days, the person is: &#123;:?&#125;&quot;</span>, p);</span><br><span class="line">        &#125;,</span><br><span class="line">        _ =&gt; <span class="built_in">println!</span>(<span class="string">&quot;no decriptions, it is &#123;&#125;&quot;</span>, i),</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-
-<h2 id="3-一个常用的enum：Optional-lt-T-gt"><a href="#3-一个常用的enum：Optional-lt-T-gt" class="headerlink" title="3. 一个常用的enum：Optional&lt;T&gt;"></a>3. 一个常用的enum：Optional&lt;T&gt;</h2><p>可以讲讲Optional&lt;T&gt;了。它实际上是一个enum，其源代码如下：</p>
-<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">pub</span> <span class="keyword">enum</span> <span class="title class_">Option</span>&lt;T&gt; &#123;</span><br><span class="line">    <span class="comment">/// No value.</span></span><br><span class="line">    <span class="meta">#[lang = <span class="string">&quot;None&quot;</span>]</span></span><br><span class="line">    <span class="meta">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]</span></span><br><span class="line">    <span class="literal">None</span>,</span><br><span class="line">    <span class="comment">/// Some value of type `T`.</span></span><br><span class="line">    <span class="meta">#[lang = <span class="string">&quot;Some&quot;</span>]</span></span><br><span class="line">    <span class="meta">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]</span></span><br><span class="line">    <span class="title function_ invoke__">Some</span>(<span class="meta">#[stable(feature = <span class="string">&quot;rust1&quot;</span>, since = <span class="string">&quot;1.0.0&quot;</span>)]</span> T),</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>只有两个成员类型，一个是None，顾名思义，即空类型，一个是Some，绑定一个范型T，所以，如果一个变量是Optional&lt;T&gt;的，那么意味着，要么是None类型，要么是Some类型。例如我们写一个函数，入参是Optional&lt;T&gt;，那么里面就要判断两个类型，一个是Some &lt;T&gt;，另一个是None：</p>
- <figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#[derive(Debug)]</span></span><br><span class="line"><span class="keyword">enum</span> <span class="title class_">IpAddress</span> &#123;</span><br><span class="line">    <span class="title function_ invoke__">V4</span>(<span class="type">u8</span>, <span class="type">u8</span>, <span class="type">u8</span>, <span class="type">u8</span>),</span><br><span class="line">    <span class="title function_ invoke__">V6</span>(<span class="type">String</span>),</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">what_kind</span>(k: &amp;<span class="type">Option</span>&lt;IpAddress&gt;) &#123;</span><br><span class="line">    <span class="keyword">match</span> k &#123;</span><br><span class="line">       <span class="title function_ invoke__">Some</span>(x) =&gt; &#123;</span><br><span class="line">            <span class="keyword">match</span> x &#123;</span><br><span class="line">                IpAddress::<span class="title function_ invoke__">V4</span>(a, b, c, d) =&gt; <span class="built_in">println!</span>(<span class="string">&quot;the v4 ip is &#123;&#125;:&#123;&#125;:&#123;&#125;:&#123;&#125;&quot;</span>, a, b, c, d), </span><br><span class="line">                IpAddress::<span class="title function_ invoke__">V6</span>(a) =&gt; <span class="built_in">println!</span>(<span class="string">&quot;the v6 ip is &#123;:?&#125;&quot;</span>, a), </span><br><span class="line">            &#125;</span><br><span class="line">       &#125;,</span><br><span class="line">       <span class="literal">None</span> =&gt; <span class="built_in">println!</span>(<span class="string">&quot;None&quot;</span>),</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">ip1</span> = <span class="title function_ invoke__">Some</span>(IpAddress::<span class="title function_ invoke__">V4</span>(<span class="number">127</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>));</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">ip2</span> = <span class="title function_ invoke__">Some</span>(IpAddress::<span class="title function_ invoke__">V6</span>(<span class="string">&quot;::::1&quot;</span>.<span class="title function_ invoke__">to_string</span>()));</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">ip3</span> = <span class="literal">None</span>;</span><br><span class="line"></span><br><span class="line">    <span class="title function_ invoke__">what_kind</span>(&amp;ip1);</span><br><span class="line">    <span class="title function_ invoke__">what_kind</span>(&amp;ip2);</span><br><span class="line">    <span class="title function_ invoke__">what_kind</span>(&amp;ip3);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>以上代码可以看出，遇到Optional&lt;T&gt;枚举时，必须考虑None和Some两种情况（不然编译报错，虽然可以用下划线来表示默认行为），而要想拿到和Some绑定的T，则必须用match（或者if let，下面会讲），简单总结来说，Optional&lt;T&gt;分为两层处理：</p>
-<p>1、处理None和Some；</p>
-<p>2、若不为None处理Some取出T。</p>
-<p>那么，有人会问，为什么要有Optional&lt;T&gt;这个东西呢？因为Rust所有实体都不能为invalid状态，因此不存在“空”这样的概念，要么有值，要么不能访问，产生编译错误，但现实是有这个概念的，很多语言也有这个概念，Rust在语言机制层面禁止了这个状态的存在，可为了和现实或者和其它语言相对应表达意思的话怎么办呢？于是就需要Optional&lt;T&gt;来做这个工作。</p>
-<p>最后要提一下的是，如果match某个枚举类型啥也不想干，怎么表达呢？因为match必须强制对所有的枚举类型都考虑一遍，所以，遇到啥也不想干的分支，需要一个特殊的写法：</p>
-<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">match</span> ip1 &#123;</span><br><span class="line">    <span class="title function_ invoke__">Some</span>(x) =&gt; &#123;</span><br><span class="line">        <span class="keyword">match</span> x &#123;</span><br><span class="line">            IpAddress::<span class="title function_ invoke__">V4</span>(a, b, c, d) =&gt; <span class="built_in">println!</span>(<span class="string">&quot;here&quot;</span>),</span><br><span class="line">            _ =&gt; (),</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// println!(&quot;x = &#123;:?&#125;&quot;, x);</span></span><br><span class="line">    &#125;</span><br><span class="line">    _ =&gt; (),</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>上面代码第9行，&#x3D;&gt; ()就是表示，这个分支啥也不干。</p>
-<h2 id="4-if-let用法"><a href="#4-if-let用法" class="headerlink" title="4. if let用法"></a>4. if let用法</h2><p>上面讲了match处理Optional&lt;T&gt;的方法，如果你只是对某个枚举类型感兴趣但其它都做默认处理的话，就可以使用if let用法。这样可以比较自然的写出对枚举类型的处理，其实也可以少打一些代码。</p>
-<p>if let其实就是match的特殊版本，即只处理某一个枚举，其它要么忽视，要么else去做默认处理，例如上面的例子可以改写成这样：</p>
-<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">fn</span> <span class="title function_">what_kind</span>(k: &amp;<span class="type">Option</span>&lt;IpAddress&gt;) &#123;</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">let</span> <span class="variable">Some</span>(x) = k &#123;</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">let</span> <span class="variable">IpAddress</span>::<span class="title function_ invoke__">V4</span>(a, b, c, d) = x &#123;</span><br><span class="line">            <span class="built_in">println!</span>(<span class="string">&quot;the v4 ip is &#123;&#125;:&#123;&#125;:&#123;&#125;:&#123;&#125;&quot;</span>, a, b, c, d);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">let</span> <span class="variable">IpAddress</span>::<span class="title function_ invoke__">V6</span>(a) = x &#123;</span><br><span class="line">            <span class="built_in">println!</span>(<span class="string">&quot;the v6 ip is &#123;:?&#125;&quot;</span>, a);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="built_in">println!</span>(<span class="string">&quot;None&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-
-<h2 id="5-使用match和if-let的注意事项"><a href="#5-使用match和if-let的注意事项" class="headerlink" title="5. 使用match和if let的注意事项"></a>5. 使用match和if let的注意事项</h2><p>match和if let的使用算是讲完了，但有一个不起眼的事情需要提一下，就是match和if let是会发生资源转移的，例如：</p>
-<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> <span class="keyword">let</span> <span class="variable">Some</span>(x) = ip1 &#123;</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">let</span> <span class="variable">IpAddress</span>::<span class="title function_ invoke__">V4</span>(a, b, c, d) = x &#123;</span><br><span class="line">        <span class="built_in">println!</span>(<span class="string">&quot;here&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;x = &#123;:?&#125;&quot;</span>, x);</span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">println!</span>(<span class="string">&quot;ip1 = &#123;:?&#125;&quot;</span>, ip1);</span><br></pre></td></tr></table></figure>
-
-<p>上面第一行代码if let Some(x) &#x3D; ip1，会发生资源转移，即ip1的字段会转移到x上，也即partial moves（详见：<a target="_blank" rel="noopener" href="https://doc.rust-lang.org/rust-by-example/scope/move/partial_move.html">https://doc.rust-lang.org/rust-by-example/scope/move/partial_move.html</a> ）因此，第7行的println!会访问一个已经包含悬空指针的ip1，这不合法，编译器拒绝编译：</p>
-<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">error[E0382]: borrow of partially moved value: `ip1`</span><br><span class="line">  -<span class="punctuation">-&gt;</span> src/main.rs:<span class="number">71</span>:<span class="number">28</span></span><br><span class="line">   |</span><br><span class="line"><span class="number">65</span> |     <span class="keyword">if</span> <span class="keyword">let</span> <span class="variable">Some</span>(x) = ip1 &#123;</span><br><span class="line">   |                 - value partially moved here</span><br><span class="line">...</span><br><span class="line"><span class="number">71</span> |     <span class="built_in">println!</span>(<span class="string">&quot;ip1 = &#123;:?&#125;&quot;</span>, ip1);</span><br><span class="line">   |                            ^^^ value borrowed here after partial <span class="keyword">move</span></span><br><span class="line">   |</span><br><span class="line">   = note: partial <span class="keyword">move</span> occurs because value has <span class="keyword">type</span> `IpAddress`, which does not implement the `<span class="built_in">Copy</span>` <span class="keyword">trait</span></span><br><span class="line">   = note: this error originates <span class="keyword">in</span> the <span class="keyword">macro</span> `$crate::format_args_nl` (<span class="keyword">in</span> Nightly builds, run with -Z <span class="keyword">macro</span>-backtrace <span class="keyword">for</span> <span class="variable">more</span> <span class="keyword">in</span>fo)</span><br><span class="line">help: borrow this field <span class="keyword">in</span> the pattern to avoid moving `ip1.<span class="number">0</span>`</span><br><span class="line">   |</span><br><span class="line"><span class="number">65</span> |     <span class="keyword">if</span> <span class="keyword">let</span> <span class="variable">Some</span>(<span class="keyword">ref</span> x) = ip1 &#123;</span><br><span class="line">   |                 +++</span><br></pre></td></tr></table></figure>
-
-<p>编译起给出的建议是用引用ref x，当然，我觉得用&amp;ip1也可以。</p>
-<p>还需要注意到一个点是，x并没有发生资源转移，因为x的资源都是u8，他们是primitive类型的，直接使用拷贝，这在前面讲过。</p>
-<p>换成match呢：</p>
-<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">match</span> ip1 &#123;</span><br><span class="line">      <span class="title function_ invoke__">Some</span>(x) =&gt; &#123;</span><br><span class="line">          <span class="keyword">if</span> <span class="keyword">let</span> <span class="variable">IpAddress</span>::<span class="title function_ invoke__">V4</span>(a, b, c, d) = x &#123;</span><br><span class="line">              <span class="built_in">println!</span>(<span class="string">&quot;here&quot;</span>);</span><br><span class="line">          &#125;</span><br><span class="line">          <span class="built_in">println!</span>(<span class="string">&quot;x = &#123;:?&#125;&quot;</span>, x);</span><br><span class="line">      &#125;,</span><br><span class="line">      _ =&gt; (),</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="built_in">println!</span>(<span class="string">&quot;ip1 = &#123;:?&#125;&quot;</span>, ip1);</span><br></pre></td></tr></table></figure>
-
-<p>依然编译不通过的，资源转移发生在上面的第2行：Some(x) &#x3D;&gt;，此时ip1资源转给了x，ip1又包含悬空指针了：</p>
-<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">error[E0382]: borrow of partially moved value: `ip1`</span><br><span class="line">  -<span class="punctuation">-&gt;</span> src/main.rs:<span class="number">74</span>:<span class="number">28</span></span><br><span class="line">   |</span><br><span class="line"><span class="number">66</span> |         <span class="title function_ invoke__">Some</span>(x) =&gt; &#123;</span><br><span class="line">   |              - value partially moved here</span><br><span class="line">...</span><br><span class="line"><span class="number">74</span> |     <span class="built_in">println!</span>(<span class="string">&quot;ip1 = &#123;:?&#125;&quot;</span>, ip1);</span><br><span class="line">   |                            ^^^ value borrowed here after partial <span class="keyword">move</span></span><br><span class="line">   |</span><br><span class="line">   = note: partial <span class="keyword">move</span> occurs because value has <span class="keyword">type</span> `IpAddress`, which does not implement the `<span class="built_in">Copy</span>` <span class="keyword">trait</span></span><br><span class="line">   = note: this error originates <span class="keyword">in</span> the <span class="keyword">macro</span> `$crate::format_args_nl` (<span class="keyword">in</span> Nightly builds, run with -Z <span class="keyword">macro</span>-backtrace <span class="keyword">for</span> <span class="variable">more</span> <span class="keyword">in</span>fo)</span><br><span class="line">help: borrow this field <span class="keyword">in</span> the pattern to avoid moving `ip1.<span class="number">0</span>`</span><br><span class="line">   |</span><br><span class="line"><span class="number">66</span> |         <span class="title function_ invoke__">Some</span>(<span class="keyword">ref</span> x) =&gt; &#123;</span><br></pre></td></tr></table></figure>
-
-<p> 总结来说，使用match或者if let一定要小心，如果不想发生资源转移，那么就用引用来代替，编译器给出了不错的建议。</p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
+        <div class="article-info info-on-right">
+          
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">Rust</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">C++</a>
         		</li>
       		
 		</ul>
 	</div>
 
-      
+          
 	<div class="article-category tagcloud">
 		<i class="icon-book icon"></i>
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="/categories/Rust//" class="article-tag-list-link color5">Rust</a>
+        			<a href="/categories/C//" class="article-tag-list-link color4">C++</a>
         		</li>
       		
 		</ul>
 	</div>
 
 
-      
-
-      
-        
-<div class="share-btn share-icons tooltip-left">
-  <div class="tooltip tooltip-east">
-    <span class="tooltip-item">
-      <a href="javascript:;" class="share-sns share-outer">
-        <i class="icon icon-share"></i>
-      </a>
-    </span>
-    <span class="tooltip-content">
-      <div class="share-wrap">
-        <div class="share-icons">
-          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
-            <i class="icon icon-weibo"></i>
-          </a>
-          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
-            <i class="icon icon-weixin"></i>
-          </a>
-          <a class="qq share-sns" href="javascript:;" data-type="qq">
-            <i class="icon icon-qq"></i>
-          </a>
-          <a class="douban share-sns" href="javascript:;" data-type="douban">
-            <i class="icon icon-douban"></i>
-          </a>
-          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
-            <i class="icon icon-qzone"></i>
-          </a>
-          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
-            <i class="icon icon-facebook"></i>
-          </a>
-          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
-            <i class="icon icon-twitter"></i>
-          </a>
-          <a class="google share-sns" href="javascript:;" data-type="google">
-            <i class="icon icon-google"></i>
-          </a>
         </div>
-      </div>
-    </span>
-  </div>
-</div>
-
-<div class="page-modal wx-share js-wx-box">
-    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
-    <p>扫一扫，分享到微信</p>
-    <div class="wx-qrcode">
-      <img src="//pan.baidu.com/share/qrcode?url=https://www.jackhuang.cc/2023/01/08/enum-and-match/" alt="微信分享二维码">
-    </div>
-</div>
-
-<div class="mask js-mask"></div>
-      
-      <div class="clearfix"></div>
-    </div>
+        <div class="clearfix"></div>
+    </header>
   </div>
 </article>
-
   
-<nav id="article-nav">
-  
-    <a href="/2023/01/10/mod-and-crate/" id="article-nav-newer" class="article-nav-link-wrap">
-      <i class="icon-circle-left"></i>
-      <div class="article-nav-title">
-        
-          Rust的模块化管理
-        
-      </div>
-    </a>
-  
-  
-    <a href="/2023/01/07/RustStruct/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">Rust的struct类型</div>
-      <i class="icon-circle-right"></i>
-    </a>
-  
-</nav>
-
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
+    
+    
+    <article class="archive-article archive-type-post">
+  <div class="archive-article-inner">
+    <header class="archive-article-header">
+      	<div class="article-meta">
+	      	<a href="/2023/01/01/%E6%9F%A5%E7%9C%8B%E7%B1%BB%E5%9E%8B/" class="archive-article-date">
+  	<time datetime="2023-01-01T06:33:22.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-01-01</time>
+</a>
         </div>
-        
-        
-    </div>
-</aside>
-
-
-
+    	 
   
-  
+    <h1 itemprop="name">
+      <a class="archive-article-title" href="/2023/01/01/%E6%9F%A5%E7%9C%8B%E7%B1%BB%E5%9E%8B/">C++查看类型</a>
+    </h1>
   
 
+        <div class="article-info info-on-right">
+          
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">C++</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+          
+	<div class="article-category tagcloud">
+		<i class="icon-book icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/C//" class="article-tag-list-link color4">C++</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+
+        </div>
+        <div class="clearfix"></div>
+    </header>
+  </div>
+</article>
+  
+    
+    
+      
+        </div></section>
+      
+      
+      <section class="archives-wrap">
+        <div class="archive-year-wrap">
+          <a href="/archives/2022" class="archive-year">2022</a>
+        </div>
+        <div class="archives">
+    
+    <article class="archive-article archive-type-post">
+  <div class="archive-article-inner">
+    <header class="archive-article-header">
+      	<div class="article-meta">
+	      	<a href="/2022/12/31/%E5%BF%AB%E9%80%9F%E8%AF%B4%E4%B8%80%E4%B8%8B%E5%8F%B3%E5%80%BC%E5%BC%95%E7%94%A8/" class="archive-article-date">
+  	<time datetime="2022-12-31T12:43:52.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-12-31</time>
+</a>
+        </div>
+    	 
+  
+    <h1 itemprop="name">
+      <a class="archive-article-title" href="/2022/12/31/%E5%BF%AB%E9%80%9F%E8%AF%B4%E4%B8%80%E4%B8%8B%E5%8F%B3%E5%80%BC%E5%BC%95%E7%94%A8/">快速说一下C++右值引用</a>
+    </h1>
   
 
+        <div class="article-info info-on-right">
+          
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">C++</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+          
+	<div class="article-category tagcloud">
+		<i class="icon-book icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/C//" class="article-tag-list-link color4">C++</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+
+        </div>
+        <div class="clearfix"></div>
+    </header>
+  </div>
+</article>
+  
+  
+    </div></section>
   
 
-  
+    
 
 
           </div>
@@ -444,9 +342,9 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: true,
+		isPost: false,
 		isArchive: false,
-		isTag: false,
+		isTag: true,
 		isCategory: false,
 		open_in_new: false,
 		toc_hide_index: true,

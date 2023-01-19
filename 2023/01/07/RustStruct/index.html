@@ -16,9 +16,9 @@
 <meta property="og:description" content="Rust的struct定义和C++的类似，甚至提供了简化初始化的方法，定义成员方法也更灵活，刚刚登上第一个陡坡（所有权），这一节缓缓，因为struct算是Rust中难度	不高的内容。">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2023-01-07T09:19:26.000Z">
-<meta property="article:modified_time" content="2023-01-09T12:46:41.104Z">
+<meta property="article:modified_time" content="2023-01-19T06:58:53.527Z">
 <meta property="article:author" content="Jack Huang">
-<meta property="article:tag" content="C&#x2F;C++,RUST,Python,nodejs,Java,Mysql">
+<meta property="article:tag" content="Rust">
 <meta name="twitter:card" content="summary">
   
     <link rel="alternative" href="/atom.xml" title="Jack Huang的技术生活" type="application/atom+xml">
@@ -177,26 +177,26 @@
 <!-- toc -->
 
 <ul>
-<li><a href="#1-struct%E7%9A%84%E5%AE%9A%E4%B9%89">1. struct的定义</a></li>
-<li><a href="#2-struct%E7%9A%84%E5%88%9D%E5%A7%8B%E5%8C%96%E6%96%B9%E6%B3%95">2. struct的初始化方法</a><ul>
-<li><a href="#21-%E7%9B%B4%E6%8E%A5%E5%88%9D%E5%A7%8B%E5%8C%96">2.1 直接初始化</a></li>
-<li><a href="#22-%E7%94%A8%E5%87%BD%E6%95%B0%E5%88%9D%E5%A7%8B%E5%8C%96">2.2 用函数初始化</a></li>
-<li><a href="#23-%E7%94%A8%E5%88%AB%E7%9A%84%E5%AF%B9%E8%B1%A1%E5%88%9D%E5%A7%8B%E5%8C%96">2.3 用别的对象初始化</a></li>
+<li><a href="#1-struct---">1. struct的定义</a></li>
+<li><a href="#2-struct------">2. struct的初始化方法</a><ul>
+<li><a href="#21------">2.1 直接初始化</a></li>
+<li><a href="#22-------">2.2 用函数初始化</a></li>
+<li><a href="#23---------">2.3 用别的对象初始化</a></li>
 </ul>
 </li>
-<li><a href="#3-%E7%89%B9%E6%AE%8A%E7%9A%84struct">3. 特殊的struct</a></li>
-<li><a href="#4-%E7%BB%99struct%E5%8A%A0%E4%B8%8A%E6%96%B9%E6%B3%95">4. 给struct加上方法</a></li>
-<li><a href="#5-%E9%9D%99%E6%80%81%E6%96%B9%E6%B3%95">5. 静态方法</a></li>
-<li><a href="#6-%E5%AE%9A%E4%B9%89%E5%A4%9A%E4%B8%AA%E6%88%90%E5%91%98%E6%96%B9%E6%B3%95">6. 定义多个成员方法</a></li>
-<li><a href="#7-%E9%81%97%E7%95%99%E9%97%AE%E9%A2%98">7. 遗留问题</a></li>
+<li><a href="#3----struct">3. 特殊的struct</a></li>
+<li><a href="#4--struct----">4. 给struct加上方法</a></li>
+<li><a href="#5-----">5. 静态方法</a></li>
+<li><a href="#6---------">6. 定义多个成员方法</a></li>
+<li><a href="#7-----">7. 遗留问题</a></li>
 </ul>
 <!-- tocstop -->
 
-<h2><span id="1-struct的定义">1. struct的定义</span></h2><p>和很多语言一样，定义一个struct就是用struct关键字加上名字，然后罗列出字段来，比如最简单的定义一个人：</p>
+<h2 id="1-struct的定义"><a href="#1-struct的定义" class="headerlink" title="1. struct的定义"></a>1. struct的定义</h2><p>和很多语言一样，定义一个struct就是用struct关键字加上名字，然后罗列出字段来，比如最简单的定义一个人：</p>
 <figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">Person</span> &#123;</span><br><span class="line">    name: <span class="type">String</span>,</span><br><span class="line">    email: <span class="type">String</span>, </span><br><span class="line">    age: <span class="type">u32</span>,</span><br><span class="line">    address: <span class="type">String</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>这就定义好了一个人，接下来就是初始化了。</p>
-<h2><span id="2-struct的初始化方法">2. struct的初始化方法</span></h2><h3><span id="21-直接初始化">2.1 直接初始化</span></h3><p>Rust有三种办法初始化一个struct，最简单的莫过于直接赋值，很像json，即key-value形式赋值即可（另外其实提示一下，初始化这些字段并无顺序要求）：</p>
+<h2 id="2-struct的初始化方法"><a href="#2-struct的初始化方法" class="headerlink" title="2. struct的初始化方法"></a>2. struct的初始化方法</h2><h3 id="2-1-直接初始化"><a href="#2-1-直接初始化" class="headerlink" title="2.1 直接初始化"></a>2.1 直接初始化</h3><p>Rust有三种办法初始化一个struct，最简单的莫过于直接赋值，很像json，即key-value形式赋值即可（另外其实提示一下，初始化这些字段并无顺序要求）：</p>
 <figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> <span class="variable">one</span> = Person &#123;</span><br><span class="line">    name: <span class="type">String</span>::<span class="title function_ invoke__">from</span>(<span class="string">&quot;Jack&quot;</span>),</span><br><span class="line">    email: <span class="type">String</span>::<span class="title function_ invoke__">from</span>(<span class="string">&quot;jackzhhuang@gmail.com&quot;</span>),</span><br><span class="line">    age: <span class="number">100</span>,</span><br><span class="line">    address: <span class="string">&quot;China&quot;</span>.<span class="title function_ invoke__">to_string</span>()</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
 
 <p>试着打印one，会发现错误：</p>
@@ -215,11 +215,11 @@
 
 
 
-<h3><span id="22-用函数初始化">2.2 用函数初始化</span></h3><p>我们当然可以写一个函数然后传入一些字段值，然后在函数中初始化一个对象，最后返回出去。但Rust还提供了一个更简略的语法：</p>
+<h3 id="2-2-用函数初始化"><a href="#2-2-用函数初始化" class="headerlink" title="2.2 用函数初始化"></a>2.2 用函数初始化</h3><p>我们当然可以写一个函数然后传入一些字段值，然后在函数中初始化一个对象，最后返回出去。但Rust还提供了一个更简略的语法：</p>
 <figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">fn</span> <span class="title function_">build_a_person</span>(name: <span class="type">String</span>, age: <span class="type">u32</span>) <span class="punctuation">-&gt;</span> Person &#123;</span><br><span class="line">    Person &#123; name, </span><br><span class="line">             age, </span><br><span class="line">             address: <span class="string">&quot;China&quot;</span>.<span class="title function_ invoke__">to_string</span>(), </span><br><span class="line">             email: <span class="string">&quot;jackzhhuang@gmail.com&quot;</span>.<span class="title function_ invoke__">to_string</span>()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>可以看到，name和age直接就放在大括号中了，并不需要写出name: name或者age: age这样的代码。</p>
-<h3><span id="23-用别的对象初始化">2.3 用别的对象初始化</span></h3><p>如果已经有了一个对象，我们还想初始化另一个对象，只是有些字段和现有的对象字段不同，除了用前面的方法初始化以外，还有什么办法吗？Rust提供了struct update语法：</p>
+<h3 id="2-3-用别的对象初始化"><a href="#2-3-用别的对象初始化" class="headerlink" title="2.3 用别的对象初始化"></a>2.3 用别的对象初始化</h3><p>如果已经有了一个对象，我们还想初始化另一个对象，只是有些字段和现有的对象字段不同，除了用前面的方法初始化以外，还有什么办法吗？Rust提供了struct update语法：</p>
  <figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> <span class="variable">one</span> = Person &#123;</span><br><span class="line">    name: <span class="type">String</span>::<span class="title function_ invoke__">from</span>(<span class="string">&quot;Jack&quot;</span>),</span><br><span class="line">    email: <span class="type">String</span>::<span class="title function_ invoke__">from</span>(<span class="string">&quot;jackzhhuang@gmail.com&quot;</span>),</span><br><span class="line">    age: <span class="number">100</span>,</span><br><span class="line">    address: <span class="string">&quot;China&quot;</span>.<span class="title function_ invoke__">to_string</span>()</span><br><span class="line">&#125;;</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line"><span class="keyword">let</span> <span class="variable">another</span> = Person &#123;</span><br><span class="line">    name: <span class="string">&quot;Bob&quot;</span>.<span class="title function_ invoke__">to_string</span>(),</span><br><span class="line">    email: <span class="string">&quot;jackhuangvvv@gmail.com&quot;</span>.<span class="title function_ invoke__">to_string</span>(),</span><br><span class="line">    ..one</span><br><span class="line">&#125;;</span><br><span class="line"> </span><br><span class="line"><span class="built_in">println!</span>(<span class="string">&quot;another = &#123;:#?&#125;&quot;</span>, another);</span><br></pre></td></tr></table></figure>
 
 <p>以上会输出：</p>
@@ -233,11 +233,11 @@
 <figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">44</span> |       <span class="keyword">let</span> <span class="variable">another</span> = Person &#123;</span><br><span class="line">   |  ___________________-</span><br><span class="line"><span class="number">45</span> | |         name: <span class="string">&quot;Bob&quot;</span>.<span class="title function_ invoke__">to_string</span>(),</span><br><span class="line"><span class="number">46</span> | |         email: <span class="string">&quot;jackhuangvvv@gmail.com&quot;</span>.<span class="title function_ invoke__">to_string</span>(),</span><br><span class="line"><span class="number">47</span> | |         ..one</span><br><span class="line"><span class="number">48</span> | |     &#125;;</span><br><span class="line">   | |_____- value moved here</span><br><span class="line">...</span><br><span class="line"><span class="number">55</span> |       <span class="built_in">println!</span>(<span class="string">&quot;one.address = &#123;&#125;&quot;</span>, one.address);</span><br><span class="line">   |                                    ^^^^^^^^^^^ value borrowed here after <span class="keyword">move</span></span><br></pre></td></tr></table></figure>
 
 <p>即这么干，one会把它的字段资源转移到another，由于name和email我们赋的是新值，而age是u32，为primitive，赋值是copy形式，只有address字段我们即没有给新值，且其赋值会采取资源转移形式，因此one的address变成悬空指针了，不能访问。</p>
-<h2><span id="3-特殊的struct">3. 特殊的struct</span></h2><p>和C++一样，可以定义一个什么都没有的struct：</p>
+<h2 id="3-特殊的struct"><a href="#3-特殊的struct" class="headerlink" title="3. 特殊的struct"></a>3. 特殊的struct</h2><p>和C++一样，可以定义一个什么都没有的struct：</p>
 <figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#[derive(Debug)]</span></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">Nothing</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">no</span> = Nothing;</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;n = &#123;:?&#125;&quot;</span>, no)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p> 这个用在trait比较多，类似于定义一个interface，后续会学习到。</p>
-<h2><span id="4-给struct加上方法">4. 给struct加上方法</span></h2><p>在没有成员方法之前，我们计算一个长方形的面积时这么写的：</p>
+<h2 id="4-给struct加上方法"><a href="#4-给struct加上方法" class="headerlink" title="4. 给struct加上方法"></a>4. 给struct加上方法</h2><p>在没有成员方法之前，我们计算一个长方形的面积时这么写的：</p>
 <figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#[derive(Debug)]</span></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">Rectangle</span> &#123;</span><br><span class="line">    width: <span class="type">u32</span>,</span><br><span class="line">    height: <span class="type">u32</span>,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">area</span>(width: <span class="type">u32</span>, height: <span class="type">u32</span>) <span class="punctuation">-&gt;</span> <span class="type">u32</span> &#123;</span><br><span class="line">    width * height</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">r</span> = Rectangle &#123;</span><br><span class="line">        width: <span class="number">60</span>,</span><br><span class="line">        height: <span class="number">80</span>,</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;the area of the rectangle = &#123;:?&#125; is &#123;&#125;&quot;</span>, r, <span class="title function_ invoke__">area</span>(r.width, r.height));</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
 <p>用面向对象的方法去思考，面积是长方形的一个属性，长方形自己才知道如何计算自己的面积，因此，应该是长方形这个类返回面积才对，把area这个函数变成Rectangle的方法，只需要impl关键字，并且把area移到Rectangle里面去，并且，第一个参数是&amp;self：</p>
@@ -253,7 +253,7 @@
 <figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">20</span> |     <span class="keyword">let</span> <span class="variable">s</span> = r.<span class="title function_ invoke__">area</span>();</span><br><span class="line">   |               ------ `r` moved due to this method call</span><br><span class="line"><span class="number">21</span> |     <span class="built_in">println!</span>(<span class="string">&quot;the area of the rectangle = &#123;:?&#125; is &#123;&#125;&quot;</span>, r, s);</span><br><span class="line">   |                                                        ^ value borrowed here after <span class="keyword">move</span></span><br><span class="line">   |</span><br><span class="line">note: this function takes ownership of the receiver `<span class="keyword">self</span>`, which moves `r`</span><br><span class="line">  -<span class="punctuation">-&gt;</span> src/main.rs:<span class="number">9</span>:<span class="number">13</span></span><br><span class="line">   |</span><br><span class="line"><span class="number">9</span>  |     <span class="keyword">fn</span> <span class="title function_">area</span>(<span class="keyword">self</span>) <span class="punctuation">-&gt;</span> <span class="type">u32</span> &#123;</span><br><span class="line">   |             ^^^^</span><br><span class="line">   = note: this error originates <span class="keyword">in</span> the <span class="keyword">macro</span> `$crate::format_args_nl` (<span class="keyword">in</span> Nightly builds, run with -Z <span class="keyword">macro</span>-backtrace <span class="keyword">for</span> <span class="variable">more</span> <span class="keyword">in</span>fo)</span><br></pre></td></tr></table></figure>
 
 <p>根据提示可以知道，因为self不是引用，所以对象资源被转移走了，r就丢了对象，导致悬空指针。这种把self定义为非引用的用法在Option&lt;T&gt;中比较常用，下一节会讲到。</p>
-<h2><span id="5-静态方法">5. 静态方法</span></h2><p>正如之前用的String::from那样，struct可以定义静态成员方法，也就是不需要对象指针就可以访问的方法，只需要在方法上不加入self参数即可，比如下面这个计算一个数的平方：</p>
+<h2 id="5-静态方法"><a href="#5-静态方法" class="headerlink" title="5. 静态方法"></a>5. 静态方法</h2><p>正如之前用的String::from那样，struct可以定义静态成员方法，也就是不需要对象指针就可以访问的方法，只需要在方法上不加入self参数即可，比如下面这个计算一个数的平方：</p>
 <figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">impl</span> <span class="title class_">Rectangle</span> &#123;</span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">square</span>(n: <span class="type">u32</span>) <span class="punctuation">-&gt;</span> <span class="type">u32</span> &#123;</span><br><span class="line">        n * n</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> <span class="variable">n</span> = <span class="number">3</span>;</span><br><span class="line"><span class="built_in">println!</span>(<span class="string">&quot;square of &#123;&#125; is &#123;&#125;&quot;</span>, n, Rectangle::<span class="title function_ invoke__">square</span>(n));</span><br></pre></td></tr></table></figure>
 
 <p>可以正常打印：</p>
@@ -261,14 +261,14 @@
 
 
 
-<h2><span id="6-定义多个成员方法">6. 定义多个成员方法</span></h2><p>定义多个成员方法时，可以都写在同一个impl块中也可以分开写：</p>
+<h2 id="6-定义多个成员方法"><a href="#6-定义多个成员方法" class="headerlink" title="6. 定义多个成员方法"></a>6. 定义多个成员方法</h2><p>定义多个成员方法时，可以都写在同一个impl块中也可以分开写：</p>
 <figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">impl</span> <span class="title class_">Rectangle</span> &#123;</span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">area</span>(&amp;<span class="keyword">self</span>) <span class="punctuation">-&gt;</span> <span class="type">u32</span> &#123;</span><br><span class="line">        <span class="keyword">self</span>.width * <span class="keyword">self</span>.height</span><br><span class="line">    &#125;   </span><br><span class="line"></span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">square</span>(n: <span class="type">u32</span>) <span class="punctuation">-&gt;</span> <span class="type">u32</span> &#123;</span><br><span class="line">        n * n</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>和以下是等价的：</p>
 <figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">impl</span> <span class="title class_">Rectangle</span> &#123;</span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">area</span>(&amp;<span class="keyword">self</span>) <span class="punctuation">-&gt;</span> <span class="type">u32</span> &#123;</span><br><span class="line">        <span class="keyword">self</span>.width * <span class="keyword">self</span>.height</span><br><span class="line">    &#125;   </span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">impl</span> <span class="title class_">Rectangle</span> &#123;</span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">square</span>(n: <span class="type">u32</span>) <span class="punctuation">-&gt;</span> <span class="type">u32</span> &#123;</span><br><span class="line">        n * n</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>可以分开写在不同的impl块的好处是扩展Rectangle类的时候不需要去修改之前的老代码，相比OOP中的写一个子类去扩展要更方便更灵活。</p>
-<h2><span id="7-遗留问题">7. 遗留问题</span></h2><p>这一节相对来说是比较简单的，实际上遗留了一些比较难的问题，这些需要后面学习到lifetime的时候解决：</p>
+<h2 id="7-遗留问题"><a href="#7-遗留问题" class="headerlink" title="7. 遗留问题"></a>7. 遗留问题</h2><p>这一节相对来说是比较简单的，实际上遗留了一些比较难的问题，这些需要后面学习到lifetime的时候解决：</p>
 <p>1、目前为止我们都是用的类来做成员字段，如果用引用做成员字段呢？</p>
 <p>2、如果struct对象已引用的方式传参，那么会发生什么？</p>
 <p>3、如何解决用其它对象初始化新对象时，其它对象字段指针变成悬空指针的问题？</p>
@@ -280,6 +280,17 @@
     <div class="article-info article-info-index">
       
       
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">Rust</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
       
 	<div class="article-category tagcloud">
 		<i class="icon-book icon"></i>
@@ -393,7 +404,7 @@
                 </span>
                 <span class="tooltip-content">
                     <div class="toc-article">
-                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">1.</span> <span class="toc-text">1. struct的定义</span></a></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">2.</span> <span class="toc-text">2. struct的初始化方法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">2.1.</span> <span class="toc-text">2.1 直接初始化</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">2.2.</span> <span class="toc-text">2.2 用函数初始化</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">2.3.</span> <span class="toc-text">2.3 用别的对象初始化</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">3.</span> <span class="toc-text">3. 特殊的struct</span></a></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">4.</span> <span class="toc-text">4. 给struct加上方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">5.</span> <span class="toc-text">5. 静态方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">6.</span> <span class="toc-text">6. 定义多个成员方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">7.</span> <span class="toc-text">7. 遗留问题</span></a></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-struct%E7%9A%84%E5%AE%9A%E4%B9%89"><span class="toc-number">1.</span> <span class="toc-text">1. struct的定义</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-struct%E7%9A%84%E5%88%9D%E5%A7%8B%E5%8C%96%E6%96%B9%E6%B3%95"><span class="toc-number">2.</span> <span class="toc-text">2. struct的初始化方法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-%E7%9B%B4%E6%8E%A5%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="toc-number">2.1.</span> <span class="toc-text">2.1 直接初始化</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-%E7%94%A8%E5%87%BD%E6%95%B0%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="toc-number">2.2.</span> <span class="toc-text">2.2 用函数初始化</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-%E7%94%A8%E5%88%AB%E7%9A%84%E5%AF%B9%E8%B1%A1%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="toc-number">2.3.</span> <span class="toc-text">2.3 用别的对象初始化</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E7%89%B9%E6%AE%8A%E7%9A%84struct"><span class="toc-number">3.</span> <span class="toc-text">3. 特殊的struct</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E7%BB%99struct%E5%8A%A0%E4%B8%8A%E6%96%B9%E6%B3%95"><span class="toc-number">4.</span> <span class="toc-text">4. 给struct加上方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-%E9%9D%99%E6%80%81%E6%96%B9%E6%B3%95"><span class="toc-number">5.</span> <span class="toc-text">5. 静态方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-%E5%AE%9A%E4%B9%89%E5%A4%9A%E4%B8%AA%E6%88%90%E5%91%98%E6%96%B9%E6%B3%95"><span class="toc-number">6.</span> <span class="toc-text">6. 定义多个成员方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-%E9%81%97%E7%95%99%E9%97%AE%E9%A2%98"><span class="toc-number">7.</span> <span class="toc-text">7. 遗留问题</span></a></li></ol>
                     </div>
                 </span>
             </div>
@@ -498,6 +509,10 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">Rust</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">C++</a>
               </li>
             
             <div class="clearfix"></div>
