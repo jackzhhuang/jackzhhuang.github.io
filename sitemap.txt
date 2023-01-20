@@ -1,3 +1,4 @@
+https://www.jackhuang.cc/2023/01/19/rust-lifetime/
 https://www.jackhuang.cc/2023/01/17/rust-template/
 https://www.jackhuang.cc/about/index.html
 https://www.jackhuang.cc/2023/01/01/%E6%9F%A5%E7%9C%8B%E7%B1%BB%E5%9E%8B/
