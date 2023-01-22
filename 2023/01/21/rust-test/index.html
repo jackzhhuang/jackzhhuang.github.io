@@ -6,15 +6,20 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="https://www.jackhuang.cc">
-  <title>Jack Huang的技术生活</title>
+  <title>Rust的测试框架 | Jack Huang的技术生活</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="Jack Huang的技术生活">
-<meta property="og:url" content="https://www.jackhuang.cc/index.html">
+  <meta name="description" content="测试（testing）是软件开发关键一环，重中之重，任何好的代码都离不开一个严格的测试，Rust也不例外。测试可以找出bug，可以证明某种情况下的正确性。本节介绍怎么在Rust测试框架下写测试代码。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Rust的测试框架">
+<meta property="og:url" content="https://www.jackhuang.cc/2023/01/21/rust-test/index.html">
 <meta property="og:site_name" content="Jack Huang的技术生活">
+<meta property="og:description" content="测试（testing）是软件开发关键一环，重中之重，任何好的代码都离不开一个严格的测试，Rust也不例外。测试可以找出bug，可以证明某种情况下的正确性。本节介绍怎么在Rust测试框架下写测试代码。">
 <meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-01-21T01:16:18.000Z">
+<meta property="article:modified_time" content="2023-01-22T11:09:10.165Z">
 <meta property="article:author" content="Jack Huang">
-<meta property="article:tag" content="C&#x2F;C++,RUST,Python,nodejs,Java,Mysql">
+<meta property="article:tag" content="Rust">
+<meta property="article:tag" content="Test">
 <meta name="twitter:card" content="summary">
   
     <link rel="alternative" href="/atom.xml" title="Jack Huang的技术生活" type="application/atom+xml">
@@ -141,16 +146,14 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-    <article id="post-rust-test" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+            <article id="post-rust-test" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
-    <h1 itemprop="name">
-      <a class="article-title" href="/2023/01/21/rust-test/">Rust的测试框架</a>
+    <h1 class="article-title" itemprop="name">
+      Rust的测试框架
     </h1>
   
 
@@ -164,9 +167,141 @@
     <div class="article-entry" itemprop="articleBody">
       
         <p>测试（testing）是软件开发关键一环，重中之重，任何好的代码都离不开一个严格的测试，Rust也不例外。测试可以找出bug，可以证明某种情况下的正确性。本节介绍怎么在Rust测试框架下写测试代码。</p>
-        
-          <a class="article-more-a" href="/2023/01/21/rust-test/#more">more >></a>
-        
+<span id="more"></span>
+
+
+
+<h2 id="生成测试框架"><a href="#生成测试框架" class="headerlink" title="生成测试框架"></a>生成测试框架</h2><p>在生成 library 库的时候，Rust一定会生成一个简单的测试模板，例如，我们建立一个名叫jacktest的库：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cargo new jacktest --lib</span><br></pre></td></tr></table></figure>
+
+<p>此时就会在src目录下生成lib.rs文件，里面就是一个简单的测试模板，简单的对 2+2 进行测试：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">add</span>(left: <span class="type">usize</span>, right: <span class="type">usize</span>) <span class="punctuation">-&gt;</span> <span class="type">usize</span> &#123;</span><br><span class="line">    left + right</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">#[cfg(test)]</span></span><br><span class="line"><span class="keyword">mod</span> tests &#123;</span><br><span class="line">    <span class="keyword">use</span> super::*;</span><br><span class="line"></span><br><span class="line">    <span class="meta">#[test]</span></span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">it_works</span>() &#123;</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">result</span> = <span class="title function_ invoke__">add</span>(<span class="number">2</span>, <span class="number">2</span>);</span><br><span class="line">        <span class="built_in">assert_eq!</span>(result, <span class="number">4</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p> 这里先注意到的是之前我们用过的一个语法 #[]，即表明增加某个属性（attribute），比如之前用的 #[derive(Debug)] 就是指这是一个派生（derive）属性，具体属性为Debug，即这个struct可以用于Debug，比如格式化打印观察里面的数据。</p>
+<p>这里 #[test] 则表示it_works是一个 testing 函数，会被命令cargo test调起。执行cargo test后，会打印出it_works被执行的测试信息：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">running <span class="number">1</span> test</span><br><span class="line">test tests::it_works ... ok</span><br><span class="line"></span><br><span class="line">test result: ok. <span class="number">1</span> passed; <span class="number">0</span> failed; <span class="number">0</span> ignored; <span class="number">0</span> measured; <span class="number">0</span> filtered out; finished <span class="keyword">in</span> <span class="number">0.00</span>s</span><br><span class="line"></span><br><span class="line">   Doc-tests jacktest</span><br><span class="line"></span><br><span class="line">running <span class="number">0</span> tests</span><br><span class="line"></span><br><span class="line">test result: ok. <span class="number">0</span> passed; <span class="number">0</span> failed; <span class="number">0</span> ignored; <span class="number">0</span> measured; <span class="number">0</span> filtered out; finished <span class="keyword">in</span> <span class="number">0.00</span>s</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>这样，我们就可以自己添加自己想要测试的内容了。这里不去讨论太多assert宏的使用，这个在官方文档花了大量篇幅介绍，这里不去一一介绍那些assert宏。关于assert宏的要说的有两点：</p>
+<h3 id="assert宏的应用"><a href="#assert宏的应用" class="headerlink" title="assert宏的应用"></a>assert宏的应用</h3><p>第一，我们应该尽量选择合适的assert去体现测试原意，比如计算两个值是否相等，使用：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">assert_eq!</span>(a, b);</span><br></pre></td></tr></table></figure>
+
+<p>就比使用：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">assert!</span>(a == b);</span><br></pre></td></tr></table></figure>
+
+<p>要好。因为assert_eq出来的信息比assert出来的信息更能反映测试目的。</p>
+<p>第二，assert后面可以打印一些format信息帮助我们在看测试结果的时候能看到更多有用的信息：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">assert_eq!</span>(a, b, <span class="string">&quot;\nthe a.area = &#123;&#125;, b.area = &#123;&#125;&quot;</span>, a.<span class="title function_ invoke__">area</span>(), b.<span class="title function_ invoke__">area</span>());</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="panic"><a href="#panic" class="headerlink" title="panic"></a>panic</h3><p>测试框架遇到panic会直接报错，但和平常的panic处理方法不同，测试框架里面的panic不会停止测试流程，只是单个测试会中断而已，例如我们在上一个测试代码中增加一个测试用例：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#[test]</span></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">it_will_panic</span>() &#123;</span><br><span class="line">    <span class="built_in">panic!</span>(<span class="string">&quot;something goes wrong!&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>测试框架还是会执行其它的测试用例：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">running <span class="number">2</span> tests</span><br><span class="line"><span class="keyword">in</span> partial_cmp of RectangcleArea, jack<span class="symbol">&#x27;s</span> area = <span class="number">1000</span> and rose<span class="symbol">&#x27;s</span> area = <span class="number">240</span></span><br><span class="line">thread <span class="symbol">&#x27;tests</span>::it_will_panic&#x27; panicked at <span class="symbol">&#x27;something</span> goes wrong!&#x27;, src/lib.rs:<span class="number">41</span>:<span class="number">9</span></span><br><span class="line">note: run with `RUST_BACKTRACE=<span class="number">1</span>` environment variable to display a backtrace</span><br><span class="line">test tests::equal ... ok</span><br><span class="line">test tests::it_will_panic ... FAILED</span><br></pre></td></tr></table></figure>
+
+<p>这是因为测试框架是用多线程来拉起测试用例的，某一个用例panic只会影响某一个线程，不会使整个测试框架进程都退出。</p>
+<p>panic也可以format我们输出：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">panic!</span>(<span class="string">&quot;the value is &#123;&#125;&quot;</span>, value);</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="should-panic"><a href="#should-panic" class="headerlink" title="should_panic"></a>should_panic</h3><p>有些时候panic就是我们所期望的，特别是我们需要测试一些失败用例的情况下，比如设计一个类，关联一个 1 到 100 的数字，如果输入不在这个范围内则panic：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">Guess</span> &#123;</span><br><span class="line">    value: <span class="type">i32</span>,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">impl</span> <span class="title class_">Guess</span> &#123;</span><br><span class="line">    <span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">new</span>(value: <span class="type">i32</span>) <span class="punctuation">-&gt;</span> Guess &#123;</span><br><span class="line">        <span class="keyword">if</span> value &lt; <span class="number">1</span> &#123;</span><br><span class="line">            <span class="built_in">panic!</span>(</span><br><span class="line">                <span class="string">&quot;Guess value must be greater than or equal to 1, got &#123;&#125;.&quot;</span>,</span><br><span class="line">                value</span><br><span class="line">            );</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> value &gt; <span class="number">100</span> &#123;</span><br><span class="line">            <span class="built_in">panic!</span>(</span><br><span class="line">                <span class="string">&quot;Guess value must be less than or equal to 100, got &#123;&#125;.&quot;</span>,</span><br><span class="line">                value</span><br><span class="line">            );</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        Guess &#123; value &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>现在，如果输入200到new方法中，则理应在13行panic，这是我们期待的，但如果直接执行测试，那结果是不通过的，这时就需要should_panic宏来告诉测试框架，这个是我们期待的panic，可以认为通过。那么怎么告诉呢，其原理是检查panic宏打印的log是否包含should_panic中指定的字符串，如果包含，则认为如预期panic，测试用例通过：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#[cfg(test)]</span></span><br><span class="line"><span class="keyword">mod</span> tests &#123;</span><br><span class="line">    <span class="keyword">use</span> super::*;</span><br><span class="line"></span><br><span class="line">    <span class="meta">#[test]</span></span><br><span class="line">    <span class="meta">#[should_panic(expected = <span class="string">&quot;less than or equal to 100&quot;</span>)]</span></span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">greater_than_100</span>() &#123;</span><br><span class="line">        Guess::<span class="title function_ invoke__">new</span>(<span class="number">200</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>上面的代码中，#[should_panic(expected &#x3D; “less than or equal to 100”)] 就是指定期待panic的地方，其中expect所等于的字符串，就是子串，只要逻辑代码中panic信息包含这个子串，那么认为测试通过而不是报失败。</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">running <span class="number">1</span> test</span><br><span class="line">test tests::greater_than_100 - should panic ... ok</span><br><span class="line"></span><br><span class="line">test result: ok. <span class="number">1</span> passed; <span class="number">0</span> failed; <span class="number">0</span> ignored; <span class="number">0</span> measured; <span class="number">0</span> filtered out; finished <span class="keyword">in</span> <span class="number">0.00</span>s</span><br><span class="line"></span><br><span class="line">   Doc-tests jacktest</span><br><span class="line"></span><br><span class="line">running <span class="number">0</span> tests</span><br><span class="line"></span><br><span class="line">test result: ok. <span class="number">0</span> passed; <span class="number">0</span> failed; <span class="number">0</span> ignored; <span class="number">0</span> measured; <span class="number">0</span> filtered out; finished <span class="keyword">in</span> <span class="number">0.00</span>s</span><br></pre></td></tr></table></figure>
+
+<p>如果我们交换Guess函数中 if - else 语句的panic，此时panic信息自然就不是期待的那样了：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> value &lt; <span class="number">1</span> &#123;</span><br><span class="line">    <span class="built_in">panic!</span>(</span><br><span class="line">        <span class="string">&quot;Guess value must be less than or equal to 100, got &#123;&#125;.&quot;</span>,</span><br><span class="line">        value</span><br><span class="line">    );</span><br><span class="line">&#125; <span class="keyword">else</span> <span class="keyword">if</span> value &gt; <span class="number">100</span> &#123;</span><br><span class="line">    <span class="built_in">panic!</span>(</span><br><span class="line">        <span class="string">&quot;Guess value must be greater than or equal to 1, got &#123;&#125;.&quot;</span>,</span><br><span class="line">        value</span><br><span class="line">    );</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>此时执行测试，走入if value &gt; 100分支中，但提示信息和should_panic不一样，那么会被判定为不期待的panic，测试失败：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">note: panic did not contain expected string</span><br><span class="line">      panic message: `<span class="string">&quot;Guess value must be greater than or equal to 1, got 200.&quot;</span>`,</span><br><span class="line"> expected substring: `<span class="string">&quot;less than or equal to 100&quot;</span>`</span><br><span class="line"></span><br><span class="line">failures:</span><br><span class="line">    tests::greater_than_100</span><br><span class="line"></span><br><span class="line">test result: FAILED. <span class="number">0</span> passed; <span class="number">1</span> failed; <span class="number">0</span> ignored; <span class="number">0</span> measured; <span class="number">0</span> filtered out; finished <span class="keyword">in</span> <span class="number">0.00</span>s</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="控制测试框架"><a href="#控制测试框架" class="headerlink" title="控制测试框架"></a>控制测试框架</h2><h3 id="测试框架的参数"><a href="#测试框架的参数" class="headerlink" title="测试框架的参数"></a>测试框架的参数</h3><p>测试框架参数分成两种，一种用于过滤测试代码用例（比如执行或者不执行某些测试用例），一种是用来控制测试框架行为的（比如用例的执行方式，怎么打印信息等）。</p>
+<p>两种参数用 – 隔离。例如：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cargo test 测试用例过滤参数 -- 控制测试框架行为参数</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="控制测试用例行为"><a href="#控制测试用例行为" class="headerlink" title="控制测试用例行为"></a>控制测试用例行为</h3><h4 id="控制测试线程数量"><a href="#控制测试线程数量" class="headerlink" title="控制测试线程数量"></a>控制测试线程数量</h4><p>之前也提到过，测试框架使用的是多线程拉起各个测试用例的，也就是测试用例是并行运行的，一般情况下不会有什么问题，但如果比如两个用例同时写一个文件那么久会出现不可预知的后果，这时就需要我们告诉测试框架，使用单线程去执行用例，这个是控制测试框架行为的，所以放在 – 的右边：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cargo test -- --test_threads=<span class="number">1</span></span><br></pre></td></tr></table></figure>
+
+<p>这样就不会有并发运行测试了。</p>
+<h4 id="在测试流程中打印print信息"><a href="#在测试流程中打印print信息" class="headerlink" title="在测试流程中打印print信息"></a>在测试流程中打印print信息</h4><p>假设我们现在有一个矩形面积类：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#[derive(Debug)]</span></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">RectangcleArea</span> &#123;</span><br><span class="line">    height: <span class="type">u32</span>,</span><br><span class="line">    width: <span class="type">u32</span>,</span><br><span class="line">    name: <span class="type">String</span>,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">impl</span> <span class="title class_">RectangcleArea</span> &#123;</span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">area</span>(&amp;<span class="keyword">self</span>) <span class="punctuation">-&gt;</span> <span class="type">u32</span> &#123;</span><br><span class="line">        <span class="keyword">self</span>.height * <span class="keyword">self</span>.width</span><br><span class="line">    &#125;   </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们需要测试哪个矩形的面积哪个面积大，那么我们必须先实现PartialEq（需要实现eq方法）和PartialOrd（需要实现partial_cmp方法）这两个trait：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">impl</span> <span class="title class_">PartialEq</span> <span class="keyword">for</span> <span class="title class_">RectangcleArea</span> &#123;</span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">eq</span>(&amp;<span class="keyword">self</span>, other: &amp;RectangcleArea) <span class="punctuation">-&gt;</span> <span class="type">bool</span> &#123;</span><br><span class="line">        <span class="built_in">println!</span>(<span class="string">&quot;in eq of RectangcleArea, &#123;&#125;&#x27;s area = &#123;&#125; and &#123;&#125;&#x27;s area = &#123;&#125;&quot;</span>, </span><br><span class="line">                 <span class="keyword">self</span>.name, <span class="keyword">self</span>.<span class="title function_ invoke__">area</span>(), other.name, other.<span class="title function_ invoke__">area</span>());</span><br><span class="line"></span><br><span class="line">        <span class="keyword">self</span>.<span class="title function_ invoke__">area</span>() == other.<span class="title function_ invoke__">area</span>()</span><br><span class="line">    &#125;    </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">impl</span> <span class="title class_">PartialOrd</span> <span class="keyword">for</span> <span class="title class_">RectangcleArea</span> &#123;</span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">partial_cmp</span>(&amp;<span class="keyword">self</span>, other: &amp;RectangcleArea) <span class="punctuation">-&gt;</span> <span class="type">Option</span>&lt;std::cmp::Ordering&gt; &#123;</span><br><span class="line">        <span class="built_in">println!</span>(<span class="string">&quot;in partial_cmp of RectangcleArea, &#123;&#125;&#x27;s area = &#123;&#125; and &#123;&#125;&#x27;s area = &#123;&#125;&quot;</span>, </span><br><span class="line">                 <span class="keyword">self</span>.name, <span class="keyword">self</span>.<span class="title function_ invoke__">area</span>(), other.name, other.<span class="title function_ invoke__">area</span>());</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">self</span>.<span class="title function_ invoke__">area</span>() &gt; other.<span class="title function_ invoke__">area</span>() &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="title function_ invoke__">Some</span>(std::cmp::Ordering::Greater);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="title function_ invoke__">Some</span>(std::cmp::Ordering::Less);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p> 但我们在进行测试的时候，发现println!并没有打印出来：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#[cfg(test)]</span></span><br><span class="line"><span class="keyword">mod</span> tests &#123;</span><br><span class="line">    <span class="keyword">use</span> super::*;</span><br><span class="line"></span><br><span class="line">    <span class="meta">#[test]</span></span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">large</span>() &#123;</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">a</span> = RectangcleArea &#123;</span><br><span class="line">            height: <span class="number">100</span>,</span><br><span class="line">            width: <span class="number">10</span>,</span><br><span class="line">            name: <span class="string">&quot;jack&quot;</span>.<span class="title function_ invoke__">to_string</span>(),</span><br><span class="line">        &#125;;</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">b</span> = RectangcleArea &#123;</span><br><span class="line">            height: <span class="number">120</span>,</span><br><span class="line">            width: <span class="number">2</span>,</span><br><span class="line">            name: <span class="string">&quot;rose&quot;</span>.<span class="title function_ invoke__">to_string</span>(),</span><br><span class="line">        &#125;;</span><br><span class="line">        </span><br><span class="line">        <span class="built_in">assert!</span>(a &gt; b, <span class="string">&quot;\nthe a.area = &#123;&#125;, b.area = &#123;&#125;&quot;</span>, a.<span class="title function_ invoke__">area</span>(), b.<span class="title function_ invoke__">area</span>());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p> 这是因为cargo test不会打印出标准输入输出，为了打印print信息，控制测试框架行为，需要这样：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cargo test -- --nocapture</span><br></pre></td></tr></table></figure>
+
+<p>或者这样：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cargo test -- --show-output</span><br></pre></td></tr></table></figure>
+
+<p>这样，我们在代码中print出来的数据就能看到了。</p>
+<h3 id="过滤测试用例"><a href="#过滤测试用例" class="headerlink" title="过滤测试用例"></a>过滤测试用例</h3><h4 id="运行指定用例"><a href="#运行指定用例" class="headerlink" title="运行指定用例"></a>运行指定用例</h4><p>在默认情况下，如果只是运行cargo test那么所有被标记为 #[test] 属性的用例都会被执行，但偶尔我们只想运行其中某个用例，此时就可以直接用名字来指定某个用例，例如增加一个这么个用例：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#[test]</span></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">eq</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">a</span> = RectangcleArea &#123;</span><br><span class="line">        height: <span class="number">100</span>,</span><br><span class="line">        width: <span class="number">10</span>,</span><br><span class="line">        name: <span class="string">&quot;jack&quot;</span>.<span class="title function_ invoke__">to_string</span>(),</span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">b</span> = RectangcleArea &#123;</span><br><span class="line">        height: <span class="number">10</span>,</span><br><span class="line">        width: <span class="number">100</span>,</span><br><span class="line">        name: <span class="string">&quot;rose&quot;</span>.<span class="title function_ invoke__">to_string</span>(),</span><br><span class="line">    &#125;;</span><br><span class="line">    </span><br><span class="line">    <span class="built_in">assert_eq!</span>(a, b, <span class="string">&quot;\nthe a.area = &#123;&#125;, b.area = &#123;&#125;&quot;</span>, a.<span class="title function_ invoke__">area</span>(), b.<span class="title function_ invoke__">area</span>());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果我们不想执行large测试用例，只想执行eq测试用例，那么：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cargo test eq -t- --show-output</span><br></pre></td></tr></table></figure>
+
+<p>因为是过滤，所以eq写在 – 的左边。表示执行以eq为开头的用例。这样large用例就不会被拉起。</p>
+<p>如果想运行多个，那么用前缀匹配即可，例如增加一个eq_fail：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#[test]</span></span><br><span class="line"> <span class="meta">#[should_panic(expected = <span class="string">&quot;not equal!&quot;</span>)]</span></span><br><span class="line"> <span class="keyword">fn</span> <span class="title function_">eq_fail</span>() &#123;</span><br><span class="line">     <span class="keyword">let</span> <span class="variable">a</span> = RectangcleArea &#123;</span><br><span class="line">         height: <span class="number">100</span>,</span><br><span class="line">         width: <span class="number">10</span>,</span><br><span class="line">         name: <span class="string">&quot;jack&quot;</span>.<span class="title function_ invoke__">to_string</span>(),</span><br><span class="line">     &#125;;</span><br><span class="line">     <span class="keyword">let</span> <span class="variable">b</span> = RectangcleArea &#123;</span><br><span class="line">         height: <span class="number">100</span>,</span><br><span class="line">         width: <span class="number">20</span>,</span><br><span class="line">         name: <span class="string">&quot;rose&quot;</span>.<span class="title function_ invoke__">to_string</span>(),</span><br><span class="line">     &#125;;</span><br><span class="line">     </span><br><span class="line">     <span class="keyword">if</span> a.<span class="title function_ invoke__">area</span>() != b.<span class="title function_ invoke__">area</span>() &#123;</span><br><span class="line">         <span class="built_in">panic!</span>(<span class="string">&quot;the area of a&#123;&#125; and b&#123;&#125; are not equal!&quot;</span>, a.<span class="title function_ invoke__">area</span>(), b.<span class="title function_ invoke__">area</span>());</span><br><span class="line">     &#125;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+
+<p>同样运行之前的命令，此时eq开头的测试用例都会被拉起：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">running <span class="number">2</span> tests</span><br><span class="line">test tests::eq ... ok</span><br><span class="line">test tests::eq_fail - should panic ... ok</span><br><span class="line"></span><br><span class="line">successes:</span><br><span class="line"></span><br><span class="line">---- tests::eq stdout ----</span><br><span class="line"><span class="keyword">in</span> eq of RectangcleArea, jack<span class="symbol">&#x27;s</span> area = <span class="number">1000</span> and rose<span class="symbol">&#x27;s</span> area = <span class="number">1000</span></span><br><span class="line"></span><br><span class="line">---- tests::eq_fail stdout ----</span><br><span class="line">thread <span class="symbol">&#x27;tests</span>::eq_fail&#x27; panicked at <span class="symbol">&#x27;the</span> area of a1000 and b2000 are not equal!&#x27;, src/lib.rs:<span class="number">54</span>:<span class="number">13</span></span><br><span class="line">note: run with `RUST_BACKTRACE=<span class="number">1</span>` environment variable to display a backtrace</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">successes:</span><br><span class="line">    tests::eq</span><br><span class="line">    tests::eq_fail</span><br><span class="line"></span><br><span class="line">test result: ok. <span class="number">2</span> passed; <span class="number">0</span> failed; <span class="number">0</span> ignored; <span class="number">0</span> measured; <span class="number">1</span> filtered out; finished <span class="keyword">in</span> <span class="number">0.00</span>s</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="忽略某些用例"><a href="#忽略某些用例" class="headerlink" title="忽略某些用例"></a>忽略某些用例</h4><p>有些用例很特殊，比如可能某个版本会出错，此时我们需要暂时忽略这些用例，那么可以用ignore属性忽略掉，比如：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#[test]</span></span><br><span class="line"><span class="meta">#[ignore = <span class="string">&quot;no testing anymore&quot;</span>]</span></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">large</span>() &#123;</span><br><span class="line">  ...</span><br></pre></td></tr></table></figure>
+
+<p>此时即使使用cargo test也不会拉起large用例了。</p>
+<h4 id="运行所有用例（包括已忽略的）"><a href="#运行所有用例（包括已忽略的）" class="headerlink" title="运行所有用例（包括已忽略的）"></a>运行所有用例（包括已忽略的）</h4><p>如果想运行所有用例即使是被 igore 的呢？那么一种方法当然是删掉 ignore 属性，一种是使用控制测试框架行为的参数，把被 ignored 的用例 include 进来：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cargo test -- --show-output --include-ignored</span><br></pre></td></tr></table></figure>
+
+<p>当然，如果只想运行被 ignored 的用例，那么就指定使用 ignored 用例即可：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cargo test -- --show-output --ignored</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="测试用例结构"><a href="#测试用例结构" class="headerlink" title="测试用例结构"></a>测试用例结构</h2><h3 id="测试代码与二进制文件"><a href="#测试代码与二进制文件" class="headerlink" title="测试代码与二进制文件"></a>测试代码与二进制文件</h3><p>当某个mod被声明test的时候，编译二进制文件讲不会包含测试代码，测试代码和生产用的代码是被分别编译成不同的产物的，这样即节省了编译时间，也减少了测试代码对生产代码的影响：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="title function_ invoke__">cfg</span>(test)]</span><br><span class="line"><span class="keyword">mod</span> tests &#123;</span><br><span class="line">    <span class="keyword">use</span> super::*;</span><br><span class="line">  ...</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="测试私有方法"><a href="#测试私有方法" class="headerlink" title="测试私有方法"></a>测试私有方法</h3><p>可以看到我们一直以来都是在测试非pub的函数，那么方法一样，我们测试的所有函数和方法都不是mod test里面的，也没有声明为pub，但实际我们一直在测试，所以Rust是允许 test 越过访问权限来测试的。</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">use</span> super::*;</span><br></pre></td></tr></table></figure>
+
+<p>Test 框架中use supper也说明它引入了所有其它mod，无需担心是否有pub属性。</p>
+<h2 id="集成测试"><a href="#集成测试" class="headerlink" title="集成测试"></a>集成测试</h2><p>前面说的都是单元测试，所谓单元测试，即对某一个模块的某一个函数或者方法进行测试，而集成测试，则是对某一个模块所导出的接口进行测试，这个模块可能依赖多个其它模块。和单元测试不同，单元测试是和生产代码（放在src目录下）放在一起的，只是都集中放在mod tests里面，并标记 cfg(test)] ，集成测试则是放在和生产代码目录src同级目录下，名叫tests，这些名字都是固定的。cargo会根据目录名而知道，tests下放的每一个文件都是一个testing crate（Rust的基础模块单元）。集成测试不需要再把测试代码放进mod tests里面，只要保证在tests目录下即可。</p>
+<p>例如我们把之前的RectangleArea的测试代码移动到tests目录下，最后目录结构如下：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">rectangle</span><br><span class="line">├── Cargo.lock</span><br><span class="line">├── Cargo.toml</span><br><span class="line">├── src</span><br><span class="line">│   ├── lib.rs</span><br><span class="line">│   └── rectangle_area.rs</span><br><span class="line">└── tests</span><br><span class="line">    └── test_rectangle_area.rs</span><br></pre></td></tr></table></figure>
+
+<p>其中lib.rs导出rectangle_area：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">pub</span> <span class="keyword">mod</span> rectangle_area;</span><br></pre></td></tr></table></figure>
+
+<p> 而内容如下：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">use</span> rectangle::rectangle_area::RectangcleArea;</span><br><span class="line"></span><br><span class="line"><span class="meta">#[test]</span></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">test_area_eq_large</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">a</span> = RectangcleArea &#123;</span><br><span class="line">        height: <span class="number">100</span>,</span><br><span class="line">        width: <span class="number">30</span>,</span><br><span class="line">        name: <span class="type">String</span>::<span class="title function_ invoke__">from</span>(<span class="string">&quot;jack&quot;</span>),</span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">b</span> = RectangcleArea &#123;</span><br><span class="line">        height: <span class="number">40</span>,</span><br><span class="line">        width: <span class="number">50</span>,</span><br><span class="line">        name: <span class="type">String</span>::<span class="title function_ invoke__">from</span>(<span class="string">&quot;jack&quot;</span>),</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">assert!</span>(a &gt; b, <span class="string">&quot;a.area() = &#123;&#125; is not larger than b.area() = &#123;&#125;&quot;</span>, a.<span class="title function_ invoke__">area</span>(), b.<span class="title function_ invoke__">area</span>());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p> 可以看到，测试框架因为被移出src目录，需要使用use把rectangle目录引入，而且，由于不再是单元测试，如果是私有的字段或者方法，将需要声明为pub，否则tests是无法使用的。</p>
+<p>运行cargo build将会编译库文件，运行cargo test将会执行tests目录下的测试模块，例如：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cargo test --test test_rectangle_area -- --nocapture</span><br></pre></td></tr></table></figure>
+
+<p>即运行 test_rectangle_area.rs的测试用例，且打印print信息。如果不指定test_rectangle_area，那么tests中所有的测试用例都会被拉起执行，而且如果其中某一个失败，会中断所有的测试流程。</p>
+<p>这里似乎不能像python test那样指定到某个函数进行测试，而且对于执行文件（main.rs）是不能使用测试框架的，因为Rust官方认为，执行文件的逻辑应该是很少的，大部分逻辑应该都在库文件中，执行文件只需要简单的运行起来就能测试了。</p>
+
       
 
       
@@ -203,16 +338,75 @@
 
 
       
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2023/01/21/rust-test/">展开全文 >></a>
-        </p>
-      
 
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
+        </div>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//pan.baidu.com/share/qrcode?url=https://www.jackhuang.cc/2023/01/21/rust-test/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
       
       <div class="clearfix"></div>
     </div>
   </div>
 </article>
+
+  
+<nav id="article-nav">
+  
+  
+    <a href="/2023/01/19/rust-lifetime/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">Rust的生命周期（lifetime）</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
 
 <aside class="wrap-side-operation">
     <div class="mod-side-operation">
@@ -227,816 +421,33 @@
         </div>
         
         
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-rust-lifetime" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2023/01/19/rust-lifetime/">Rust的生命周期（lifetime）</a>
-    </h1>
-  
-
-        
-        <a href="/2023/01/19/rust-lifetime/" class="archive-article-date">
-  	<time datetime="2023-01-19T08:19:54.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-01-19</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>生命周期，即lifetime是Rust最独有的一个特性，早期并没有这个特性，但后来为了辅助Rust的编译器检查生命周期是否合法，也为了调用方方便确认函数或者方法对生命周期的要求就加上去了，也许在未来，这个特性会被优化掉，谁知道呢。做为学习者，我们还是要把这些细节知识补充一下的。</p>
-        
-          <a class="article-more-a" href="/2023/01/19/rust-lifetime/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">Rust</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/Rust//" class="article-tag-list-link color5">Rust</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2023/01/19/rust-lifetime/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
+        <div class="toc-container tooltip-left">
+            <i class="icon-font icon-category"></i>
+            <div class="tooltip tooltip-east">
+                <span class="tooltip-item">
+                </span>
+                <span class="tooltip-content">
+                    <div class="toc-article">
+                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%94%9F%E6%88%90%E6%B5%8B%E8%AF%95%E6%A1%86%E6%9E%B6"><span class="toc-number">1.</span> <span class="toc-text">生成测试框架</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#assert%E5%AE%8F%E7%9A%84%E5%BA%94%E7%94%A8"><span class="toc-number">1.1.</span> <span class="toc-text">assert宏的应用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#panic"><span class="toc-number">1.2.</span> <span class="toc-text">panic</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#should-panic"><span class="toc-number">1.3.</span> <span class="toc-text">should_panic</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8E%A7%E5%88%B6%E6%B5%8B%E8%AF%95%E6%A1%86%E6%9E%B6"><span class="toc-number">2.</span> <span class="toc-text">控制测试框架</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B5%8B%E8%AF%95%E6%A1%86%E6%9E%B6%E7%9A%84%E5%8F%82%E6%95%B0"><span class="toc-number">2.1.</span> <span class="toc-text">测试框架的参数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8E%A7%E5%88%B6%E6%B5%8B%E8%AF%95%E7%94%A8%E4%BE%8B%E8%A1%8C%E4%B8%BA"><span class="toc-number">2.2.</span> <span class="toc-text">控制测试用例行为</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%8E%A7%E5%88%B6%E6%B5%8B%E8%AF%95%E7%BA%BF%E7%A8%8B%E6%95%B0%E9%87%8F"><span class="toc-number">2.2.1.</span> <span class="toc-text">控制测试线程数量</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%9C%A8%E6%B5%8B%E8%AF%95%E6%B5%81%E7%A8%8B%E4%B8%AD%E6%89%93%E5%8D%B0print%E4%BF%A1%E6%81%AF"><span class="toc-number">2.2.2.</span> <span class="toc-text">在测试流程中打印print信息</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%87%E6%BB%A4%E6%B5%8B%E8%AF%95%E7%94%A8%E4%BE%8B"><span class="toc-number">2.3.</span> <span class="toc-text">过滤测试用例</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%BF%90%E8%A1%8C%E6%8C%87%E5%AE%9A%E7%94%A8%E4%BE%8B"><span class="toc-number">2.3.1.</span> <span class="toc-text">运行指定用例</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%BF%BD%E7%95%A5%E6%9F%90%E4%BA%9B%E7%94%A8%E4%BE%8B"><span class="toc-number">2.3.2.</span> <span class="toc-text">忽略某些用例</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%BF%90%E8%A1%8C%E6%89%80%E6%9C%89%E7%94%A8%E4%BE%8B%EF%BC%88%E5%8C%85%E6%8B%AC%E5%B7%B2%E5%BF%BD%E7%95%A5%E7%9A%84%EF%BC%89"><span class="toc-number">2.3.3.</span> <span class="toc-text">运行所有用例（包括已忽略的）</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B5%8B%E8%AF%95%E7%94%A8%E4%BE%8B%E7%BB%93%E6%9E%84"><span class="toc-number">3.</span> <span class="toc-text">测试用例结构</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B5%8B%E8%AF%95%E4%BB%A3%E7%A0%81%E4%B8%8E%E4%BA%8C%E8%BF%9B%E5%88%B6%E6%96%87%E4%BB%B6"><span class="toc-number">3.1.</span> <span class="toc-text">测试代码与二进制文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B5%8B%E8%AF%95%E7%A7%81%E6%9C%89%E6%96%B9%E6%B3%95"><span class="toc-number">3.2.</span> <span class="toc-text">测试私有方法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%9B%86%E6%88%90%E6%B5%8B%E8%AF%95"><span class="toc-number">4.</span> <span class="toc-text">集成测试</span></a></li></ol>
+                    </div>
+                </span>
             </div>
         </div>
         
-        
     </div>
 </aside>
 
 
 
-
-  
-    <article id="post-rust-template" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2023/01/17/rust-template/">Rust的模版和trait编程</a>
-    </h1>
-  
-
-        
-        <a href="/2023/01/17/rust-template/" class="archive-article-date">
-  	<time datetime="2023-01-17T05:13:33.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-01-17</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>要开始学习Rust比较高级的内容了。</p>
-<p>今天要讲的是Rust的模板编程。模板编程实际上并不少见，不论C++还是Java，只要使用容器，基本都离不开模板。Rust的模板和C++很相似，都是编译时根据模板代码生成实际的（concrete）代码然后再编译成二进制。</p>
-<p>那么，今天就好好看看Rust的模板编程吧。</p>
-        
-          <a class="article-more-a" href="/2023/01/17/rust-template/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">Rust</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/Rust//" class="article-tag-list-link color5">Rust</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2023/01/17/rust-template/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-rust-err" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2023/01/16/rust-err/">Rust的错误处理</a>
-    </h1>
-  
-
-        
-        <a href="/2023/01/16/rust-err/" class="archive-article-date">
-  	<time datetime="2023-01-16T05:07:36.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-01-16</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>Rust的错误处理主要有以下4点需要学习：</p>
-<p>1、使用panic!宏；</p>
-<p>2、使用Result&lt;T, E&gt;;</p>
-<p>3、使用Optional&lt;T&gt;</p>
-<p>4、使用 ? 符号简化错误处理的代码，这一点非常赞。</p>
-<p>现在就看看我们Rust的错误处理具体细节吧。</p>
-        
-          <a class="article-more-a" href="/2023/01/16/rust-err/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">Rust</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/Rust//" class="article-tag-list-link color5">Rust</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2023/01/16/rust-err/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-collection" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2023/01/12/collection/">Rust的容器</a>
-    </h1>
-  
-
-        
-        <a href="/2023/01/12/collection/" class="archive-article-date">
-  	<time datetime="2023-01-12T14:42:05.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-01-12</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>今天熟悉一下Rust的常见容器和其用法。当然本节介绍的容器只是Rust众多数据结构中的一角，只能算是起个头，未来使用容器时，都应该多翻翻文档，并且每次都应该想想：</p>
-<p>1、用来做什么？（是数组还是字符串，是需要哈希还是需要有序）</p>
-<p>2、对数据访问有什么特别的要求？（顺序访问还是随机访问，要经常插入删除还是多是遍历）</p>
-<p>3、其它各种先决条件。</p>
-<p>总之，选择容器一定要看上下文的需求，选择最合适的容器去解决问题。同时，多看文档，多翻文档。</p>
-<p>现在我们就从最常用的容器开始吧。</p>
-        
-          <a class="article-more-a" href="/2023/01/12/collection/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">Rust</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/Rust//" class="article-tag-list-link color5">Rust</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2023/01/12/collection/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-mod-and-crate" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2023/01/10/mod-and-crate/">Rust的模块化管理</a>
-    </h1>
-  
-
-        
-        <a href="/2023/01/10/mod-and-crate/" class="archive-article-date">
-  	<time datetime="2023-01-10T15:18:55.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-01-10</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>任何语言都离不开一个基本概念——包，Rust当然也不例外。按照官方文档教程说法，Rust最基本的包叫crate，它包含了一个或若干个library文件（库文件）或者binary文件（执行文件）。</p>
-        
-          <a class="article-more-a" href="/2023/01/10/mod-and-crate/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">Rust</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/Rust//" class="article-tag-list-link color5">Rust</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2023/01/10/mod-and-crate/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-enum-and-match" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2023/01/08/enum-and-match/">Rust中的enum和match</a>
-    </h1>
-  
-
-        
-        <a href="/2023/01/08/enum-and-match/" class="archive-article-date">
-  	<time datetime="2023-01-08T11:25:24.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-01-08</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>今天就来熟悉一下Rust的enum和match语法吧。</p>
-        
-          <a class="article-more-a" href="/2023/01/08/enum-and-match/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">Rust</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/Rust//" class="article-tag-list-link color5">Rust</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2023/01/08/enum-and-match/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-RustStruct" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2023/01/07/RustStruct/">Rust的struct类型</a>
-    </h1>
-  
-
-        
-        <a href="/2023/01/07/RustStruct/" class="archive-article-date">
-  	<time datetime="2023-01-07T09:19:26.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-01-07</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>Rust的struct定义和C++的类似，甚至提供了简化初始化的方法，定义成员方法也更灵活，刚刚登上第一个陡坡（所有权），这一节缓缓，因为struct算是Rust中难度	不高的内容。</p>
-        
-          <a class="article-more-a" href="/2023/01/07/RustStruct/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">Rust</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/Rust//" class="article-tag-list-link color5">Rust</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2023/01/07/RustStruct/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-右值引用场景分析" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2023/01/05/%E5%8F%B3%E5%80%BC%E5%BC%95%E7%94%A8%E5%9C%BA%E6%99%AF%E5%88%86%E6%9E%90/">C++右值引用场景分析</a>
-    </h1>
-  
-
-        
-        <a href="/2023/01/05/%E5%8F%B3%E5%80%BC%E5%BC%95%E7%94%A8%E5%9C%BA%E6%99%AF%E5%88%86%E6%9E%90/" class="archive-article-date">
-  	<time datetime="2023-01-05T04:42:57.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-01-05</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>今天就向右值引用的使用场景进行开炮。</p>
-<p>首先，几句话快速复习左值右值：</p>
-        
-          <a class="article-more-a" href="/2023/01/05/%E5%8F%B3%E5%80%BC%E5%BC%95%E7%94%A8%E5%9C%BA%E6%99%AF%E5%88%86%E6%9E%90/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">C++</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/C//" class="article-tag-list-link color4">C++</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2023/01/05/%E5%8F%B3%E5%80%BC%E5%BC%95%E7%94%A8%E5%9C%BA%E6%99%AF%E5%88%86%E6%9E%90/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-Rust所有权" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2023/01/02/Rust%E6%89%80%E6%9C%89%E6%9D%83/">Rust所有权</a>
-    </h1>
-  
-
-        
-        <a href="/2023/01/02/Rust%E6%89%80%E6%9C%89%E6%9D%83/" class="archive-article-date">
-  	<time datetime="2023-01-02T08:17:40.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-01-02</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>Rust的所有权应该是Rust语言最难理解的一个，是初学者学习Rust遇到的第一个也是最大的陡坡。很多语言几乎不需要去花时间学习资源管理（Java，Go，Python等，C++当然是除外的），所以那些语言很流行，很受欢迎，因为只需要学习一下语法，关键字就能投入到项目中去了，但Rust学习单单是所有权（相当于资源管理）这一块内容，就可以成功劝退绝大部分程序员。</p>
-<p>这是Rust的劣势，决定了Rust流行不起来，也是Rust的优势，决定了Rust效率和正确率上都远优于其它语言（甚至包括C语言）。今天写个总结，把Rust所有权内容说一说。</p>
-        
-          <a class="article-more-a" href="/2023/01/02/Rust%E6%89%80%E6%9C%89%E6%9D%83/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">Rust</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/Rust//" class="article-tag-list-link color5">Rust</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2023/01/02/Rust%E6%89%80%E6%9C%89%E6%9D%83/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
   
   
-    <nav id="page-nav">
-      <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/">Next</a>
-    </nav>
   
 
+  
+
+  
+
+  
 
 
           </div>
@@ -1058,8 +469,8 @@
     <script>
 	var yiliaConfig = {
 		mathjax: false,
-		isHome: true,
-		isPost: false,
+		isHome: false,
+		isPost: true,
 		isArchive: false,
 		isTag: false,
 		isCategory: false,
