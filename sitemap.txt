@@ -1,3 +1,4 @@
+https://www.jackhuang.cc/2023/01/25/closure-and-iter/
 https://www.jackhuang.cc/about/index.html
 https://www.jackhuang.cc/2023/01/21/rust-test/
 https://www.jackhuang.cc/2023/01/19/rust-lifetime/
@@ -17,6 +18,8 @@ https://www.jackhuang.cc/
 https://www.jackhuang.cc/tags/Rust/
 https://www.jackhuang.cc/tags/C/
 https://www.jackhuang.cc/tags/Test/
+https://www.jackhuang.cc/tags/Closure/
+https://www.jackhuang.cc/tags/Iterator/
 https://www.jackhuang.cc/categories/Rust/
 https://www.jackhuang.cc/categories/%E6%83%B3%E6%B3%95/
 https://www.jackhuang.cc/categories/C/
