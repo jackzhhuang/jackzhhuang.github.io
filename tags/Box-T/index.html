@@ -6,19 +6,15 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="https://www.jackhuang.cc">
-  <title>Rust的模块化管理 | Jack Huang的技术生活</title>
+  <title>Tag: Box&lt;T&gt; | Jack Huang的技术生活</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="任何语言都离不开一个基本概念——包，Rust当然也不例外。按照官方文档教程说法，Rust最基本的包叫crate，它包含了一个或若干个library文件（库文件）或者binary文件（执行文件）。">
-<meta property="og:type" content="article">
-<meta property="og:title" content="Rust的模块化管理">
-<meta property="og:url" content="https://www.jackhuang.cc/2023/01/10/mod-and-crate/index.html">
+  <meta property="og:type" content="website">
+<meta property="og:title" content="Jack Huang的技术生活">
+<meta property="og:url" content="https://www.jackhuang.cc/tags/Box-T/index.html">
 <meta property="og:site_name" content="Jack Huang的技术生活">
-<meta property="og:description" content="任何语言都离不开一个基本概念——包，Rust当然也不例外。按照官方文档教程说法，Rust最基本的包叫crate，它包含了一个或若干个library文件（库文件）或者binary文件（执行文件）。">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2023-01-10T15:18:55.000Z">
-<meta property="article:modified_time" content="2023-01-19T07:32:21.480Z">
 <meta property="article:author" content="Jack Huang">
-<meta property="article:tag" content="Rust">
+<meta property="article:tag" content="C&#x2F;C++,RUST,Python,nodejs,Java,Mysql">
 <meta name="twitter:card" content="summary">
   
     <link rel="alternative" href="/atom.xml" title="Jack Huang的技术生活" type="application/atom+xml">
@@ -145,159 +141,36 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-mod-and-crate" class="article article-type-post " itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
+            
   
-    <h1 class="article-title" itemprop="name">
-      Rust的模块化管理
+  
+    
+    
+      
+      
+      <section class="archives-wrap">
+        <div class="archive-year-wrap">
+          <a href="/archives/2023" class="archive-year">2023</a>
+        </div>
+        <div class="archives">
+    
+    <article class="archive-article archive-type-post">
+  <div class="archive-article-inner">
+    <header class="archive-article-header">
+      	<div class="article-meta">
+	      	<a href="/2023/01/28/rust-box/" class="archive-article-date">
+  	<time datetime="2023-01-28T00:22:51.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-01-28</time>
+</a>
+        </div>
+    	 
+  
+    <h1 itemprop="name">
+      <a class="archive-article-title" href="/2023/01/28/rust-box/">Rust的box容器</a>
     </h1>
   
 
-        
-        <a href="/2023/01/10/mod-and-crate/" class="archive-article-date">
-  	<time datetime="2023-01-10T15:18:55.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-01-10</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>任何语言都离不开一个基本概念——包，Rust当然也不例外。按照官方文档教程说法，Rust最基本的包叫crate，它包含了一个或若干个library文件（库文件）或者binary文件（执行文件）。</p>
-<span id="more"></span>
-
-<h2 id="1-从最简单的包演化说起"><a href="#1-从最简单的包演化说起" class="headerlink" title="1. 从最简单的包演化说起"></a>1. 从最简单的包演化说起</h2><p>任何项目都不可能一个main文件写到底，我们总是要分成几个文件，甚至还要给文件放进不同目录，甚至会事先编译一些文件来管理项目文件。为了学习Rust的相关概念，我们从最简单的一个文件说起，慢慢把它演化成我们常见的项目管理方式，首先来个最简单的main.rs：</p>
-<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#[derive(Debug)]</span></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">Person</span> &#123;</span><br><span class="line">    name: <span class="type">String</span>,</span><br><span class="line">    age: <span class="type">u32</span>,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">p</span> = Person &#123;</span><br><span class="line">        name: <span class="string">&quot;jack&quot;</span>.<span class="title function_ invoke__">to_string</span>(),</span><br><span class="line">        age: <span class="number">100</span></span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;p = &#123;:?&#125;&quot;</span>, p);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>这个main.rs文件没有任何模块化管理的概念，Person结构体直接就能用。</p>
-<h3 id="1-1-第一个mod"><a href="#1-1-第一个mod" class="headerlink" title="1.1 第一个mod"></a>1.1 第一个mod</h3><p>现在我们把它放到一个module里面吧：</p>
-<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">mod</span> PersonData &#123;</span><br><span class="line">    <span class="meta">#[derive(Debug)]</span></span><br><span class="line">    <span class="keyword">struct</span> <span class="title class_">Person</span> &#123;</span><br><span class="line">        name: <span class="type">String</span>,</span><br><span class="line">        age: <span class="type">u32</span>,</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>这个就是我们第一个module了，这里的module很像C++的名字空间（但也不完全是），因此，想使用Person就必须加上PersonData：</p>
-<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">p</span> = PersonData::Person &#123;</span><br><span class="line">        name: <span class="string">&quot;jack&quot;</span>.<span class="title function_ invoke__">to_string</span>(),</span><br><span class="line">        age: <span class="number">100</span></span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;p = &#123;:?&#125;&quot;</span>, p);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>可惜这样是编译不通过的，因为任何一个mod里面的东西（也就是module），包括struct，字段，方法，函数甚至子mod都统统是私有的，想对mod外面暴露，就必须定义为pub，因此，我们给Person等名前都加上pub，意味共有的，可以个mod的外部使用：</p>
-<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">mod</span> PersonData &#123;</span><br><span class="line">    <span class="meta">#[derive(Debug)]</span></span><br><span class="line">    <span class="keyword">pub</span> <span class="keyword">struct</span> <span class="title class_">Person</span> &#123;</span><br><span class="line">        <span class="keyword">pub</span> name: <span class="type">String</span>,</span><br><span class="line">        <span class="keyword">pub</span> age: <span class="type">u32</span>,</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p> 这个时候Person以及他的字段都变成pub了，外部可以使用了。代码可以通过编译。</p>
-<p>可见，一个mod关键字，可以声明一个module。</p>
-<h3 id="1-2-把mod放到别的文件"><a href="#1-2-把mod放到别的文件" class="headerlink" title="1.2 把mod放到别的文件"></a>1.2 把mod放到别的文件</h3><p>以上代码我们都是在main.rs文件里面写的，显然我们应该独立出来，假设独立出来的文件名就叫PersonData.rs，那么我们不需要在文件中声明mod PersonData了（如果声明了mod PersonData，那么就是PersonData的子包也叫PersonData）：</p>
-<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#[derive(Debug)]</span></span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">struct</span> <span class="title class_">Person</span> &#123;</span><br><span class="line">    <span class="keyword">pub</span> name: <span class="type">String</span>,</span><br><span class="line">    <span class="keyword">pub</span> age: <span class="type">u32</span>,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>此时，main.rs的改动就是mod一下这个文件名，从而引入Person结构：</p>
-<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">mod</span> PersonData;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">p</span> = PersonData::Person &#123;</span><br><span class="line">        name: <span class="string">&quot;jack&quot;</span>.<span class="title function_ invoke__">to_string</span>(),</span><br><span class="line">        age: <span class="number">100</span>,</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;p = &#123;:?&#125;&quot;</span>, p);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>其它地方并没有什么改变。</p>
-<p>可见，一个rs文件，可以被当作一个module。</p>
-<h3 id="1-3-把mod放到别的目录"><a href="#1-3-把mod放到别的目录" class="headerlink" title="1.3 把mod放到别的目录"></a>1.3 把mod放到别的目录</h3><p>如果文件PersonData.rs放到别的文件夹呢？假设我们把PersonData.rs移动到DataSet目录里面，那么，此时目录结构如下：</p>
-<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">├── DataSet</span><br><span class="line">│   └── PersonData.rs</span><br><span class="line">└── main.rs</span><br></pre></td></tr></table></figure>
-
-<p>此时，main.rs怎么找到PersonData这个模块呢？</p>
-<p>有两种方法：</p>
-<p>1、和main.rs同目录建一个DataSet同名的rs文件，在里面pub mod PersonData，pub表示这个DataSet包要公开PersonData这个module了。</p>
-<p>DataSet.rs内容如下：</p>
-<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">pub</span> <span class="keyword">mod</span> PersonData;</span><br></pre></td></tr></table></figure>
-
-<p>此时，目录结构如下：</p>
-<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">.</span><br><span class="line">├── DataSet</span><br><span class="line">│   └── PersonData.rs</span><br><span class="line">├── DataSet.rs</span><br><span class="line">└── main.rs</span><br></pre></td></tr></table></figure>
-
-<p>而main.rs中，mod DataSet（此时不需要pub mod，因为和main.rs是同一个文件，表示引入DataSet），且由于Person被放到了DataSet目录的PersonDate.rs文件中，因此需要修改一下访问它的路径了：</p>
-<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">mod</span> DataSet;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">p</span> = DataSet::PersonData::Person &#123;</span><br><span class="line">        name: <span class="string">&quot;jack&quot;</span>.<span class="title function_ invoke__">to_string</span>(),</span><br><span class="line">        age: <span class="number">100</span>,</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;p = &#123;:?&#125;&quot;</span>, p);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>可见，如果一个目录想变成module，就必须在目录同一级目录中，创建一个相同名字的rs文件，并通过它来里面的pub语句来决定公开目录中哪个module。</p>
-<p>第二种方法，我个人认为更简便，即在目录中创建mod.rs，里面干和上面DataSet.rs同样的事情，即决定对外公开目录中哪个module。</p>
-<p>此时目录结构如下：</p>
-<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">.</span><br><span class="line">├── DataSet</span><br><span class="line">│   ├── PersonData.rs</span><br><span class="line">│   └── <span class="keyword">mod</span>.rs</span><br><span class="line">└── main.rs</span><br></pre></td></tr></table></figure>
-
-<p>其中，mod.rs的内容和之前第一种方法的DataSet.rs内容一样。这两个方法都是等效的。</p>
-<p>可见，目录想变成module，还可以在目录中创建mod.rs文件来达到这个目的。</p>
-<h2 id="2-模块的路径"><a href="#2-模块的路径" class="headerlink" title="2.  模块的路径"></a>2.  模块的路径</h2><h3 id="2-1-根目录、绝对路径和相对路径"><a href="#2-1-根目录、绝对路径和相对路径" class="headerlink" title="2.1 根目录、绝对路径和相对路径"></a>2.1 根目录、绝对路径和相对路径</h3><p>前面我们演化并展示了，一个struct类型如何变成不同位置的mod，以及我们的main.rs如何引用它。那么，Rust这些模块路径是通过什么原则去寻找的呢？</p>
-<p>回顾一下，我们新建一个Rust工程的时候使用的是cargo new命令，例如，cargo new greeting，即创建了名为greeting的工程，进入greeting目录，tree命令可以看到创建的工程结构：</p>
-<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">.</span><br><span class="line">├── Cargo.lock</span><br><span class="line">├── Cargo.toml</span><br><span class="line">├── src</span><br><span class="line">│   ├── DataSet</span><br><span class="line">│   │   ├── PersonData.rs</span><br><span class="line">│   │   └── <span class="keyword">mod</span>.rs</span><br><span class="line">│   └── main.rs</span><br></pre></td></tr></table></figure>
-
-<p>其中src是自动生成的，main.rs是自动生成的，而 DateSet目录是后来添加的。</p>
-<p>Cargo.toml则是工程描述文件，包含版本，工程名已经工程的外部依赖项。</p>
-<p>需要编译编译的时候，在greeting目录中，执行cargo build就可以生成二进制文件。如果想生成库文件，则需要加上–lib命令选项，且不需要写main函数。</p>
-<p>这里主要讲的是，在用cargo new生成工程的时候，src目录即为改工程的根目录。在使用mod关键字去引入工程时，会以src为起点作为根目录，去寻找引用的模块。根目录其实可以用crate来代替，例如上面对Person的访问可以写成：</p>
-<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> <span class="variable">h</span> = crate::DataSet::House::HouseData::HouseInfo &#123;</span><br><span class="line">    address: <span class="type">String</span>::<span class="title function_ invoke__">from</span>(<span class="string">&quot;shenzhen&quot;</span>),</span><br><span class="line">    no: <span class="number">8000</span>,</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
-<p>除了从根目录找，当然还会找同文件的mod模块，即本文一开始写的第一个mod，它写在main.rs文件中。</p>
-<p>还有一个寻找路径就是相对路径，即如果在子目录，那么，也会从子目录开始寻找引用的模块。例如我们新增一个House模块在DataSet目录下，并在Hous模块中添加HoseData.rs文件，文件内容如下：</p>
-<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#[derive(Debug)]</span></span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">struct</span> <span class="title class_">HouseInfo</span> &#123;</span><br><span class="line">    <span class="keyword">pub</span> address: <span class="type">String</span>,</span><br><span class="line">    <span class="keyword">pub</span> no: <span class="type">u32</span>, </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>此时，我们的根目录开始的tree命令输出是这样的：</p>
-<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">.</span><br><span class="line">├── DataSet</span><br><span class="line">│   ├── House</span><br><span class="line">│   │   ├── HouseData.rs</span><br><span class="line">│   │   └── <span class="keyword">mod</span>.rs</span><br><span class="line">│   ├── PersonData.rs</span><br><span class="line">│   └── <span class="keyword">mod</span>.rs</span><br><span class="line">└── main.rs</span><br></pre></td></tr></table></figure>
-
-<p>那么如果我们在DataSet模块输出House模块路径是怎么样的呢？直接以DataSet目录为起点（即相对路径）输入出House模块即可：</p>
-<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">pub</span> <span class="keyword">mod</span> PersonData;</span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">mod</span> House;</span><br></pre></td></tr></table></figure>
-
-<p> 这样DataeSet模块就可以对外输出House模块了。当然House模块也需要对外输出它的HouseData模块，即House目录下的mod.rs文件需要：</p>
-<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">pub</span> <span class="keyword">mod</span> HouseData;</span><br></pre></td></tr></table></figure>
-
-<p>因为任何模块里面的东西都是私有的，需要显示的说它是pub的才行。</p>
-<p>此时我们在main.rs中就能直接访问House模块了：</p>
-<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">mod</span> DataSet;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">p</span> = crate::DataSet::PersonData::Person &#123;</span><br><span class="line">        name: <span class="string">&quot;jack&quot;</span>.<span class="title function_ invoke__">to_string</span>(),</span><br><span class="line">        age: <span class="number">100</span>,</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">h</span> = crate::DataSet::House::HouseData::HouseInfo &#123;</span><br><span class="line">        address: <span class="type">String</span>::<span class="title function_ invoke__">from</span>(<span class="string">&quot;shenzhen&quot;</span>),</span><br><span class="line">        no: <span class="number">8000</span>,</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;p = &#123;:?&#125;&quot;</span>, p);</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;h = &#123;:?&#125;&quot;</span>, h);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>总结，Rust的寻找路径可以这样：</p>
-<p>1、从根目录开始寻找；</p>
-<p>2、从相对路径开始寻找</p>
-<p>3、从当前兄弟模块开始寻找。</p>
-<p>根目录即src目录，在代码中可以省略或者以crate开头。</p>
-<h3 id="2-2-使用use"><a href="#2-2-使用use" class="headerlink" title="2.2 使用use"></a>2.2 使用use</h3><p>但如此长的名字确实不好打，Rust给我们提供了一个关键字use，我们只写一次就可以：</p>
-<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">use</span> DataSet::House::HouseData::HouseInfo;</span><br></pre></td></tr></table></figure>
-
-<p>这样，我们的h指针在初始化的时候就不需要写这么多层级了：</p>
-<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> <span class="variable">h</span> = HouseInfo &#123;</span><br><span class="line">    address: <span class="type">String</span>::<span class="title function_ invoke__">from</span>(<span class="string">&quot;shenzhen&quot;</span>),</span><br><span class="line">    no: <span class="number">8000</span>,</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
-<h3 id="2-3-使用pub-use和as"><a href="#2-3-使用pub-use和as" class="headerlink" title="2.3 使用pub use和as"></a>2.3 使用pub use和as</h3><p>设想如果DataSet有更多更深的模块的话，我们的每次使用这些又深名字又长的模块都要写一次use，实在太麻烦，此时我们可以在DataSet里面使用pub use来直接吧HouseInfo导出去：</p>
-<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">pub</span> <span class="keyword">mod</span> PersonData;</span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">mod</span> House;</span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">use</span> House::HouseData::HouseInfo;</span><br></pre></td></tr></table></figure>
-
-<p>用了上面第三行的pub use，HouseInfo就如同DataSet的一个struct一样被导到外面去了：</p>
-<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">mod</span> DataSet;</span><br><span class="line"></span><br><span class="line"><span class="keyword">use</span> DataSet::HouseInfo;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">p</span> = crate::DataSet::PersonData::Person &#123;</span><br><span class="line">        name: <span class="string">&quot;jack&quot;</span>.<span class="title function_ invoke__">to_string</span>(),</span><br><span class="line">        age: <span class="number">100</span>,</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">h</span> = HouseInfo &#123;</span><br><span class="line">        address: <span class="type">String</span>::<span class="title function_ invoke__">from</span>(<span class="string">&quot;shenzhen&quot;</span>),</span><br><span class="line">        no: <span class="number">8000</span>,</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;p = &#123;:?&#125;&quot;</span>, p);</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;h = &#123;:?&#125;&quot;</span>, h);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>在用，不管子模块有多深，只要使用一次pub use，后续都不需要重新use一遍长路径。</p>
-<p>在使用use的时候还可以给导出的struct或者模块起个新名字：</p>
-<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">use</span> DataSet::HouseInfo <span class="keyword">as</span> DHI;</span><br></pre></td></tr></table></figure>
-
-<p>  此时，使用HouseInfo的时候我们可以用DHI代替了。</p>
-<h3 id="2-4-使用super"><a href="#2-4-使用super" class="headerlink" title="2.4 使用super"></a>2.4 使用super</h3><p>和crate不同，crate是表示根目录，而super则表示当前目录的上一级目录。</p>
-<p>例如我们在House中想使用PersonData：</p>
-<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">use</span> super::super::PersonData::Person; </span><br><span class="line"></span><br><span class="line"><span class="meta">#[derive(Debug)]</span></span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">struct</span> <span class="title class_">HouseInfo</span> &#123;</span><br><span class="line">    <span class="keyword">pub</span> address: <span class="type">String</span>,</span><br><span class="line">    <span class="keyword">pub</span> no: <span class="type">u32</span>, </span><br><span class="line">    <span class="keyword">pub</span> someone: Person,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>  这里用了两个super，从之前的tree看到，第一个super是PersonData.rs的父目录House，第二个super就是House的父目录DataSet，而PersonData.rs就在DataSet下。我们当然也可以用crate目录（也即根节点去引用PersonData）：</p>
-<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">use</span> crate::DataSet::PersonData::Person; </span><br><span class="line"></span><br><span class="line"><span class="meta">#[derive(Debug)]</span></span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">struct</span> <span class="title class_">HouseInfo</span> &#123;</span><br><span class="line">    <span class="keyword">pub</span> address: <span class="type">String</span>,</span><br><span class="line">    <span class="keyword">pub</span> no: <span class="type">u32</span>, </span><br><span class="line">    <span class="keyword">pub</span> someone: Person,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-
-<h2 id="2-5-pub-struct和pub-enum"><a href="#2-5-pub-struct和pub-enum" class="headerlink" title="2.5 pub struct和pub enum"></a>2.5 pub struct和pub enum</h2><p>最后要提的是，pub struct和pub enum不同点：</p>
-<p>pub struct只是把struct导出，它的字段，方法还需要再pub来确定是否导出。而enum一旦pub了，它的字段都会变成共有的，都会被导出。</p>
-<h2 id="3-同时引入多个模块"><a href="#3-同时引入多个模块" class="headerlink" title="3. 同时引入多个模块"></a>3. 同时引入多个模块</h2><p>如果需要引入一个模块中多个struct或者其它什么的，可以用大括号来在一行中表示，例如，我们既需要Person也需要HouseInfo，除了写两行use外，还可以这样：</p>
-<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">use</span> DataSet::House::HouseData::HouseInfo;</span><br><span class="line"><span class="keyword">use</span> DataSet::PersonData::Person;</span><br></pre></td></tr></table></figure>
-
-<p>改写成：</p>
-<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">use</span> DataSet::&#123;House::HouseData::HouseInfo, PersonData::Person&#125;;</span><br></pre></td></tr></table></figure>
-
-<p> 甚至一个*号来表示所有的可以导出的DataSet的东西：</p>
-<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">use</span> DataSet::*;</span><br></pre></td></tr></table></figure>
-
-<p> 但星号还是谨慎使用，因为比较随意，可能不经意引起名字冲突。</p>
-<h2 id="4-总结"><a href="#4-总结" class="headerlink" title="4. 总结"></a>4. 总结</h2><p>这一节从main.rs分裂出一个子模块，并把它放到一个目录中，再新建一个子模块到子子目录中，并通过使用mod（引入一个模块），pub（声明struct，方法，字段，enum为公有，或者用来导出struct，函数或者enum）来控制访问模块。</p>
-<p>使用use来引入复杂的层级，使用pub use来导出一个复杂的层级，还可以使用as来给导出或者引入的模块或者类型定义一个新名字。</p>
-<p>再简化总结一下：</p>
-<p>一个crate可以有多个模块，crate的根在src目录。</p>
-<p>使用方：用mod+use来引入模块，mod引入顶层模块，use引入模块中更复杂的层级结构。如果是引入父级目录，则不需要mod，直接use即可。</p>
-<p>导出方：用pub导出字段，struct，方法函数等，用pub use导出层级深的目录结构。</p>
-<p>as可以提供改名的便利。</p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
+        <div class="article-info info-on-right">
+          
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
@@ -305,11 +178,15 @@
         		<li class="article-tag-list-item">
         			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">Rust</a>
         		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Box<T></a>
+        		</li>
       		
 		</ul>
 	</div>
 
-      
+          
 	<div class="article-category tagcloud">
 		<i class="icon-book icon"></i>
 		<ul class="article-tag-list">
@@ -322,126 +199,18 @@
 	</div>
 
 
-      
-
-      
-        
-<div class="share-btn share-icons tooltip-left">
-  <div class="tooltip tooltip-east">
-    <span class="tooltip-item">
-      <a href="javascript:;" class="share-sns share-outer">
-        <i class="icon icon-share"></i>
-      </a>
-    </span>
-    <span class="tooltip-content">
-      <div class="share-wrap">
-        <div class="share-icons">
-          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
-            <i class="icon icon-weibo"></i>
-          </a>
-          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
-            <i class="icon icon-weixin"></i>
-          </a>
-          <a class="qq share-sns" href="javascript:;" data-type="qq">
-            <i class="icon icon-qq"></i>
-          </a>
-          <a class="douban share-sns" href="javascript:;" data-type="douban">
-            <i class="icon icon-douban"></i>
-          </a>
-          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
-            <i class="icon icon-qzone"></i>
-          </a>
-          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
-            <i class="icon icon-facebook"></i>
-          </a>
-          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
-            <i class="icon icon-twitter"></i>
-          </a>
-          <a class="google share-sns" href="javascript:;" data-type="google">
-            <i class="icon icon-google"></i>
-          </a>
         </div>
-      </div>
-    </span>
-  </div>
-</div>
-
-<div class="page-modal wx-share js-wx-box">
-    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
-    <p>扫一扫，分享到微信</p>
-    <div class="wx-qrcode">
-      <img src="//pan.baidu.com/share/qrcode?url=https://www.jackhuang.cc/2023/01/10/mod-and-crate/" alt="微信分享二维码">
-    </div>
-</div>
-
-<div class="mask js-mask"></div>
-      
-      <div class="clearfix"></div>
-    </div>
+        <div class="clearfix"></div>
+    </header>
   </div>
 </article>
-
-  
-<nav id="article-nav">
-  
-    <a href="/2023/01/12/collection/" id="article-nav-newer" class="article-nav-link-wrap">
-      <i class="icon-circle-left"></i>
-      <div class="article-nav-title">
-        
-          Rust的容器
-        
-      </div>
-    </a>
   
   
-    <a href="/2023/01/08/enum-and-match/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">Rust中的enum和match</div>
-      <i class="icon-circle-right"></i>
-    </a>
-  
-</nav>
-
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-        <div class="toc-container tooltip-left">
-            <i class="icon-font icon-category"></i>
-            <div class="tooltip tooltip-east">
-                <span class="tooltip-item">
-                </span>
-                <span class="tooltip-content">
-                    <div class="toc-article">
-                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-%E4%BB%8E%E6%9C%80%E7%AE%80%E5%8D%95%E7%9A%84%E5%8C%85%E6%BC%94%E5%8C%96%E8%AF%B4%E8%B5%B7"><span class="toc-number">1.</span> <span class="toc-text">1. 从最简单的包演化说起</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-1-%E7%AC%AC%E4%B8%80%E4%B8%AAmod"><span class="toc-number">1.1.</span> <span class="toc-text">1.1 第一个mod</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-2-%E6%8A%8Amod%E6%94%BE%E5%88%B0%E5%88%AB%E7%9A%84%E6%96%87%E4%BB%B6"><span class="toc-number">1.2.</span> <span class="toc-text">1.2 把mod放到别的文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-3-%E6%8A%8Amod%E6%94%BE%E5%88%B0%E5%88%AB%E7%9A%84%E7%9B%AE%E5%BD%95"><span class="toc-number">1.3.</span> <span class="toc-text">1.3 把mod放到别的目录</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-%E6%A8%A1%E5%9D%97%E7%9A%84%E8%B7%AF%E5%BE%84"><span class="toc-number">2.</span> <span class="toc-text">2.  模块的路径</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-%E6%A0%B9%E7%9B%AE%E5%BD%95%E3%80%81%E7%BB%9D%E5%AF%B9%E8%B7%AF%E5%BE%84%E5%92%8C%E7%9B%B8%E5%AF%B9%E8%B7%AF%E5%BE%84"><span class="toc-number">2.1.</span> <span class="toc-text">2.1 根目录、绝对路径和相对路径</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-%E4%BD%BF%E7%94%A8use"><span class="toc-number">2.2.</span> <span class="toc-text">2.2 使用use</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-%E4%BD%BF%E7%94%A8pub-use%E5%92%8Cas"><span class="toc-number">2.3.</span> <span class="toc-text">2.3 使用pub use和as</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-4-%E4%BD%BF%E7%94%A8super"><span class="toc-number">2.4.</span> <span class="toc-text">2.4 使用super</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-5-pub-struct%E5%92%8Cpub-enum"><span class="toc-number">3.</span> <span class="toc-text">2.5 pub struct和pub enum</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-%E5%90%8C%E6%97%B6%E5%BC%95%E5%85%A5%E5%A4%9A%E4%B8%AA%E6%A8%A1%E5%9D%97"><span class="toc-number">4.</span> <span class="toc-text">3. 同时引入多个模块</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-%E6%80%BB%E7%BB%93"><span class="toc-number">5.</span> <span class="toc-text">4. 总结</span></a></li></ol>
-                    </div>
-                </span>
-            </div>
-        </div>
-        
-    </div>
-</aside>
-
-
-
-  
-  
+    </div></section>
   
 
-  
+    
 
-  
-
-  
 
 
           </div>
@@ -464,9 +233,9 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: true,
+		isPost: false,
 		isArchive: false,
-		isTag: false,
+		isTag: true,
 		isCategory: false,
 		open_in_new: false,
 		toc_hide_index: true,
