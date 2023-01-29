@@ -1,3 +1,4 @@
+https://www.jackhuang.cc/2023/01/29/rust-rc/
 https://www.jackhuang.cc/2023/01/28/rust-box/
 https://www.jackhuang.cc/2023/01/26/rust-workspace/
 https://www.jackhuang.cc/2023/01/25/closure-and-iter/
@@ -24,6 +25,7 @@ https://www.jackhuang.cc/tags/Closure/
 https://www.jackhuang.cc/tags/Iterator/
 https://www.jackhuang.cc/tags/workspace/
 https://www.jackhuang.cc/tags/Box-T/
+https://www.jackhuang.cc/tags/Smart-Pointer/
 https://www.jackhuang.cc/categories/Rust/
 https://www.jackhuang.cc/categories/%E6%83%B3%E6%B3%95/
 https://www.jackhuang.cc/categories/C/
