@@ -16,7 +16,7 @@
 <meta property="og:description" content="Box&lt;T&gt;就是模仿Rust的指针行为： 1、可以解引用访问，即*a操作； 2、超出生命范围区域会主动释放资源。 Rust还提供了Rc&lt;T&gt;，RefCell&lt;T&gt;等专门为各种场景使用的容器类，内容太多太细节，打算都当作单独的一节来讲，这一节就专注于box&lt;T&gt;。">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2023-01-28T00:22:51.000Z">
-<meta property="article:modified_time" content="2023-01-29T02:05:18.655Z">
+<meta property="article:modified_time" content="2023-01-29T13:56:17.878Z">
 <meta property="article:author" content="Jack Huang">
 <meta property="article:tag" content="Rust">
 <meta property="article:tag" content="Box&lt;T&gt;">
@@ -226,7 +226,7 @@
 
 
 
-<h2 id="什么时候需要使用-Box-lt-T-gt"><a href="#什么时候需要使用-Box-lt-T-gt" class="headerlink" title="什么时候需要使用 Box&lt;T&gt;"></a>什么时候需要使用 Box&lt;T&gt;</h2><p>总结看来，Box&lt;T&gt; 是一个返回不可变引用，所有权会 move 的封装 struct。其内部其实是对 unsafe 指针的封装，那么什么时候会使用Box&lt;T&gt; 呢？一般以下几种情况可以使用：</p>
+<h2 id="什么时候需要使用-Box-lt-T-gt"><a href="#什么时候需要使用-Box-lt-T-gt" class="headerlink" title="什么时候需要使用 Box&lt;T&gt;"></a>什么时候需要使用 Box&lt;T&gt;</h2><p>总结看来，Box&lt;T&gt; 是一个返回引用，所有权会 move 的封装 struct。其内部其实是对 unsafe 指针的封装，那么什么时候会使用Box&lt;T&gt; 呢？一般以下几种情况可以使用：</p>
 <p>1、当 T 是一个大 size 类型时，可以减少拷贝；</p>
 <p>2、需要实现堆的内存特性，即如果资源超出作用域依然不想析构，此时可以用 Box&lt;T&gt; 传递出去；例如在函数中分配内存，在函数外使用，如果不使用 Box&lt;T&gt;，那么代码看起来像这样： </p>
 <figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">fn</span> <span class="title function_">school_maker</span>(t: SchoolType) <span class="punctuation">-&gt;</span> <span class="keyword">dyn</span> SelfIntroduce &#123;</span><br><span class="line">    <span class="keyword">match</span> t &#123;</span><br><span class="line">        SchoolType::school_student =&gt; Student &#123;</span><br><span class="line">            name: <span class="type">String</span>::<span class="title function_ invoke__">from</span>(<span class="string">&quot;jack&quot;</span>),</span><br><span class="line">            no: <span class="number">47</span>,</span><br><span class="line">        &#125;,</span><br><span class="line">        SchoolType::school_teacher =&gt; Teacher &#123;</span><br><span class="line">        name: <span class="type">String</span>::<span class="title function_ invoke__">from</span>(<span class="string">&quot;bill&quot;</span>),</span><br><span class="line">        id: <span class="number">99265247</span>,</span><br><span class="line">        &#125;,   </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -238,9 +238,8 @@
 <p>3、正如上面的例子，Student 和 Teacher 都实现了 SelfIntroduce trait，因此可以使用 Box&lt;T&gt; 来实现多态；</p>
 <p>4、也正如最开始的例子，如果是一个无限大的 struct&#x2F;enum，那么也可以用 Box&lt;T&gt;，因为 Box&lt;T&gt; 是对指针的封装，大小总是固定的，可以在编译时确定。</p>
 <h2 id="Box-lt-T-gt-要留意的地方"><a href="#Box-lt-T-gt-要留意的地方" class="headerlink" title="Box&lt;T&gt; 要留意的地方"></a>Box&lt;T&gt; 要留意的地方</h2><p>1、Box&lt;T&gt; 只能有一个所有权方；</p>
-<p>2、Box&lt;T&gt; 只能返回不可变引用;</p>
-<p>3、Box&lt;T&gt; 只能单线程使用。</p>
-<p>那么如果需要多个所有权，且可变引用的话，就需要后面讲的 Rc&lt;T&gt; 和 RefCell&lt;T&gt; 了。</p>
+<p>2、Box&lt;T&gt; 只能单线程使用。</p>
+<p>那么如果需要多个所有权就需要后面讲的 Rc&lt;T&gt; 。</p>
 
       
 
