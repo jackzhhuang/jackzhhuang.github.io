@@ -1,3 +1,4 @@
+https://www.jackhuang.cc/2023/01/31/rust-multiple-thread/
 https://www.jackhuang.cc/about/index.html
 https://www.jackhuang.cc/2023/02/01/rust-my-error/
 https://www.jackhuang.cc/2023/01/16/rust-err/
@@ -30,6 +31,7 @@ https://www.jackhuang.cc/tags/Box-T/
 https://www.jackhuang.cc/tags/Smart-Pointer/
 https://www.jackhuang.cc/tags/RefCell/
 https://www.jackhuang.cc/tags/%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88/
+https://www.jackhuang.cc/tags/multiple-thread/
 https://www.jackhuang.cc/categories/Rust/
 https://www.jackhuang.cc/categories/%E6%83%B3%E6%B3%95/
 https://www.jackhuang.cc/categories/C/
