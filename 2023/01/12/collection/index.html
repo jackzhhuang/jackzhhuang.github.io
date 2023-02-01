@@ -6,13 +6,13 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="https://www.jackhuang.cc">
-  <title>Rust的容器 | Jack Huang的技术生活</title>
+  <title>Rust的容器 | 热爱积累与沉淀</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="description" content="今天熟悉一下Rust的常见容器和其用法。当然本节介绍的容器只是Rust众多数据结构中的一角，只能算是起个头，未来使用容器时，都应该多翻翻文档，并且每次都应该想想： 1、用来做什么？（是数组还是字符串，是需要哈希还是需要有序） 2、对数据访问有什么特别的要求？（顺序访问还是随机访问，要经常插入删除还是多是遍历） 3、其它各种先决条件。 总之，选择容器一定要看上下文的需求，选择最合适的容器去解决问题。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Rust的容器">
 <meta property="og:url" content="https://www.jackhuang.cc/2023/01/12/collection/index.html">
-<meta property="og:site_name" content="Jack Huang的技术生活">
+<meta property="og:site_name" content="热爱积累与沉淀">
 <meta property="og:description" content="今天熟悉一下Rust的常见容器和其用法。当然本节介绍的容器只是Rust众多数据结构中的一角，只能算是起个头，未来使用容器时，都应该多翻翻文档，并且每次都应该想想： 1、用来做什么？（是数组还是字符串，是需要哈希还是需要有序） 2、对数据访问有什么特别的要求？（顺序访问还是随机访问，要经常插入删除还是多是遍历） 3、其它各种先决条件。 总之，选择容器一定要看上下文的需求，选择最合适的容器去解决问题。">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://www.jackhuang.cc/svg/Vec.svg">
@@ -23,7 +23,7 @@
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://www.jackhuang.cc/svg/Vec.svg">
   
-    <link rel="alternative" href="/atom.xml" title="Jack Huang的技术生活" type="application/atom+xml">
+    <link rel="alternative" href="/atom.xml" title="热爱积累与沉淀" type="application/atom+xml">
   
   
     <link rel="icon" href="/favicon.png">

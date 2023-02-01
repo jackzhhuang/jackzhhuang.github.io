@@ -6,18 +6,18 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="https://www.jackhuang.cc">
-  <title>Jack Huang的技术生活</title>
+  <title>热爱积累与沉淀</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta property="og:type" content="website">
-<meta property="og:title" content="Jack Huang的技术生活">
+<meta property="og:title" content="热爱积累与沉淀">
 <meta property="og:url" content="https://www.jackhuang.cc/index.html">
-<meta property="og:site_name" content="Jack Huang的技术生活">
+<meta property="og:site_name" content="热爱积累与沉淀">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:author" content="Jack Huang">
-<meta property="article:tag" content="C&#x2F;C++,RUST,Python,nodejs,Java,Mysql">
+<meta property="article:tag" content="C&#x2F;C++,RUST,Python,Mysql,Linux,Database">
 <meta name="twitter:card" content="summary">
   
-    <link rel="alternative" href="/atom.xml" title="Jack Huang的技术生活" type="application/atom+xml">
+    <link rel="alternative" href="/atom.xml" title="热爱积累与沉淀" type="application/atom+xml">
   
   
     <link rel="icon" href="/favicon.png">
@@ -142,6 +142,68 @@
           </div>
           <div id="js-content" class="content-ll">
             
+  
+    <article id="post-rust-my-error" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2023/02/01/rust-my-error/">rust-my-error</a>
+    </h1>
+  
+
+        
+        <a href="/2023/02/01/rust-my-error/" class="archive-article-date">
+  	<time datetime="2023-02-01T03:49:09.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-02-01</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2023/02/01/rust-my-error/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
   
     <article id="post-rust-refcell" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
@@ -947,98 +1009,6 @@
       
         <p class="article-more-link">
           <a class="article-more-a" href="/2023/01/16/rust-err/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-collection" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2023/01/12/collection/">Rust的容器</a>
-    </h1>
-  
-
-        
-        <a href="/2023/01/12/collection/" class="archive-article-date">
-  	<time datetime="2023-01-12T14:42:05.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-01-12</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>今天熟悉一下Rust的常见容器和其用法。当然本节介绍的容器只是Rust众多数据结构中的一角，只能算是起个头，未来使用容器时，都应该多翻翻文档，并且每次都应该想想：</p>
-<p>1、用来做什么？（是数组还是字符串，是需要哈希还是需要有序）</p>
-<p>2、对数据访问有什么特别的要求？（顺序访问还是随机访问，要经常插入删除还是多是遍历）</p>
-<p>3、其它各种先决条件。</p>
-<p>总之，选择容器一定要看上下文的需求，选择最合适的容器去解决问题。同时，多看文档，多翻文档。</p>
-<p>现在我们就从最常用的容器开始吧。</p>
-        
-          <a class="article-more-a" href="/2023/01/12/collection/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">Rust</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/Rust//" class="article-tag-list-link color5">Rust</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2023/01/12/collection/">展开全文 >></a>
         </p>
       
 

@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
-  <title>Jack Huang的技术生活</title>
+  <title>热爱积累与沉淀</title>
   
-  <subtitle>一些关于技术的思考，想法和积累</subtitle>
+  <subtitle>这里将记录一些关于技术的积累和沉淀</subtitle>
   <link href="https://www.jackhuang.cc/atom.xml" rel="self"/>
   
   <link href="https://www.jackhuang.cc/"/>
-  <updated>2023-01-31T05:36:42.424Z</updated>
+  <updated>2023-02-01T03:49:09.251Z</updated>
   <id>https://www.jackhuang.cc/</id>
   
   <author>
@@ -15,6 +15,19 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>rust-my-error</title>
+    <link href="https://www.jackhuang.cc/2023/02/01/rust-my-error/"/>
+    <id>https://www.jackhuang.cc/2023/02/01/rust-my-error/</id>
+    <published>2023-02-01T03:49:09.000Z</published>
+    <updated>2023-02-01T03:49:09.251Z</updated>
+    
+    
+    
+    
+    
+  </entry>
   
   <entry>
     <title>Rust的RefCell容器</title>
