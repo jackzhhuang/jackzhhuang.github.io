@@ -4,7 +4,7 @@
   <url>
     <loc>https://www.jackhuang.cc/2023/01/31/rust-multiple-thread/</loc>
     
-    <lastmod>2023-02-01</lastmod>
+    <lastmod>2023-02-02</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -202,7 +202,7 @@
 
   <url>
     <loc>https://www.jackhuang.cc/</loc>
-    <lastmod>2023-02-01</lastmod>
+    <lastmod>2023-02-02</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
@@ -210,77 +210,77 @@
   
   <url>
     <loc>https://www.jackhuang.cc/tags/Rust/</loc>
-    <lastmod>2023-02-01</lastmod>
+    <lastmod>2023-02-02</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://www.jackhuang.cc/tags/C/</loc>
-    <lastmod>2023-02-01</lastmod>
+    <lastmod>2023-02-02</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://www.jackhuang.cc/tags/Test/</loc>
-    <lastmod>2023-02-01</lastmod>
+    <lastmod>2023-02-02</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://www.jackhuang.cc/tags/Closure/</loc>
-    <lastmod>2023-02-01</lastmod>
+    <lastmod>2023-02-02</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://www.jackhuang.cc/tags/Iterator/</loc>
-    <lastmod>2023-02-01</lastmod>
+    <lastmod>2023-02-02</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://www.jackhuang.cc/tags/workspace/</loc>
-    <lastmod>2023-02-01</lastmod>
+    <lastmod>2023-02-02</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://www.jackhuang.cc/tags/Box-T/</loc>
-    <lastmod>2023-02-01</lastmod>
+    <lastmod>2023-02-02</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://www.jackhuang.cc/tags/Smart-Pointer/</loc>
-    <lastmod>2023-02-01</lastmod>
+    <lastmod>2023-02-02</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://www.jackhuang.cc/tags/RefCell/</loc>
-    <lastmod>2023-02-01</lastmod>
+    <lastmod>2023-02-02</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://www.jackhuang.cc/tags/%E6%99%BA%E8%83%BD%E6%8C%87%E9%92%88/</loc>
-    <lastmod>2023-02-01</lastmod>
+    <lastmod>2023-02-02</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://www.jackhuang.cc/tags/multiple-thread/</loc>
-    <lastmod>2023-02-01</lastmod>
+    <lastmod>2023-02-02</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
@@ -289,21 +289,21 @@
   
   <url>
     <loc>https://www.jackhuang.cc/categories/Rust/</loc>
-    <lastmod>2023-02-01</lastmod>
+    <lastmod>2023-02-02</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://www.jackhuang.cc/categories/%E6%83%B3%E6%B3%95/</loc>
-    <lastmod>2023-02-01</lastmod>
+    <lastmod>2023-02-02</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://www.jackhuang.cc/categories/C/</loc>
-    <lastmod>2023-02-01</lastmod>
+    <lastmod>2023-02-02</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
