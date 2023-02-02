@@ -6,7 +6,7 @@
   <link href="https://www.jackhuang.cc/atom.xml" rel="self"/>
   
   <link href="https://www.jackhuang.cc/"/>
-  <updated>2023-02-01T03:49:09.251Z</updated>
+  <updated>2023-02-02T02:28:24.430Z</updated>
   <id>https://www.jackhuang.cc/</id>
   
   <author>
@@ -15,19 +15,6 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
-  
-  <entry>
-    <title>rust-my-error</title>
-    <link href="https://www.jackhuang.cc/2023/02/01/rust-my-error/"/>
-    <id>https://www.jackhuang.cc/2023/02/01/rust-my-error/</id>
-    <published>2023-02-01T03:49:09.000Z</published>
-    <updated>2023-02-01T03:49:09.251Z</updated>
-    
-    
-    
-    
-    
-  </entry>
   
   <entry>
     <title>无惧并发</title>
