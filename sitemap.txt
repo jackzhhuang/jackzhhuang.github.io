@@ -1,3 +1,4 @@
+https://www.jackhuang.cc/2023/02/05/rust-my-error/
 https://www.jackhuang.cc/2023/01/01/%E6%9F%A5%E7%9C%8B%E7%B1%BB%E5%9E%8B/
 https://www.jackhuang.cc/2023/01/28/rust-box/
 https://www.jackhuang.cc/2023/01/25/closure-and-iter/
