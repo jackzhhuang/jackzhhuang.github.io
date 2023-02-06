@@ -6,13 +6,15 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="https://www.jackhuang.cc">
-  <title>Jack 热爱积累与沉淀</title>
+  <title>git-reset-revert | Jack 热爱积累与沉淀</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="Jack 热爱积累与沉淀">
-<meta property="og:url" content="https://www.jackhuang.cc/index.html">
+  <meta property="og:type" content="article">
+<meta property="og:title" content="git-reset-revert">
+<meta property="og:url" content="https://www.jackhuang.cc/2023/02/06/git-reset-revert/index.html">
 <meta property="og:site_name" content="Jack 热爱积累与沉淀">
 <meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-02-05T16:43:48.000Z">
+<meta property="article:modified_time" content="2023-02-05T16:43:48.403Z">
 <meta property="article:author" content="Jack Huang">
 <meta property="article:tag" content="C&#x2F;C++,RUST,Python,Mysql,Linux,Database">
 <meta name="twitter:card" content="summary">
@@ -141,16 +143,14 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-    <article id="post-git-reset-revert" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+            <article id="post-git-reset-revert" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
-    <h1 itemprop="name">
-      <a class="article-title" href="/2023/02/06/git-reset-revert/">git-reset-revert</a>
+    <h1 class="article-title" itemprop="name">
+      git-reset-revert
     </h1>
   
 
@@ -174,16 +174,75 @@
       
 
       
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2023/02/06/git-reset-revert/">展开全文 >></a>
-        </p>
-      
 
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
+        </div>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//pan.baidu.com/share/qrcode?url=https://www.jackhuang.cc/2023/02/06/git-reset-revert/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
       
       <div class="clearfix"></div>
     </div>
   </div>
 </article>
+
+  
+<nav id="article-nav">
+  
+  
+    <a href="/2023/02/05/rust-my-error/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">如何构造自定义错误类型和向下转化</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
 
 <aside class="wrap-side-operation">
     <div class="mod-side-operation">
@@ -198,712 +257,33 @@
         </div>
         
         
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-rust-my-error" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2023/02/05/rust-my-error/">如何构造自定义错误类型和向下转化</a>
-    </h1>
-  
-
-        
-        <a href="/2023/02/05/rust-my-error/" class="archive-article-date">
-  	<time datetime="2023-02-05T07:02:44.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-02-05</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>Rust 所有的错误都是实现了 std::error::Error 这个trait，因此我们只要也实现这个 trait 就可以自定义自己的错误类型了。</p>
-        
-          <a class="article-more-a" href="/2023/02/05/rust-my-error/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/Rust//" class="article-tag-list-link color5">Rust</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2023/02/05/rust-my-error/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
+        <div class="toc-container tooltip-left">
+            <i class="icon-font icon-category"></i>
+            <div class="tooltip tooltip-east">
+                <span class="tooltip-item">
+                </span>
+                <span class="tooltip-content">
+                    <div class="toc-article">
+                    目录，不存在的…
+                    </div>
+                </span>
             </div>
         </div>
         
-        
     </div>
 </aside>
 
 
 
-
-  
-    <article id="post-rust-advance" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2023/02/03/rust-advance/">Rust 的高级特性</a>
-    </h1>
-  
-
-        
-        <a href="/2023/02/03/rust-advance/" class="archive-article-date">
-  	<time datetime="2023-02-03T10:57:38.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-02-03</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>今天讲一下 Rust 的高级特性。</p>
-<p>包括：</p>
-<p>1、unsafe 代码；</p>
-<p>2、高级trait；</p>
-<p>3、高级类型；</p>
-<p>4、高级函数和闭包；</p>
-<p>5、宏。</p>
-        
-          <a class="article-more-a" href="/2023/02/03/rust-advance/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/Rust//" class="article-tag-list-link color5">Rust</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2023/02/03/rust-advance/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-rust-multiple-thread" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2023/01/31/rust-multiple-thread/">无惧并发</a>
-    </h1>
-  
-
-        
-        <a href="/2023/01/31/rust-multiple-thread/" class="archive-article-date">
-  	<time datetime="2023-01-31T09:46:41.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-01-31</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>前面所有的例子，都是单线程的，现在我们来看看 Rust 都提供了什么多线程能力。</p>
-        
-          <a class="article-more-a" href="/2023/01/31/rust-multiple-thread/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/Rust//" class="article-tag-list-link color5">Rust</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2023/01/31/rust-multiple-thread/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-rust-refcell" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2023/01/29/rust-refcell/">Rust的RefCell容器</a>
-    </h1>
-  
-
-        
-        <a href="/2023/01/29/rust-refcell/" class="archive-article-date">
-  	<time datetime="2023-01-29T13:43:59.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-01-29</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>前面讲了Box&lt;T&gt; 和 Rc&lt;T&gt; 两个指针容器，本节要讲的是 RefCell&lt;T&gt; ，和 Box&lt;T&gt; 一样，都是单所有权属性，且都可以维护可变资源，那么到底 RefCell&lt;T&gt; 和  Box&lt;T&gt;有什么不一样呢？</p>
-        
-          <a class="article-more-a" href="/2023/01/29/rust-refcell/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/Rust//" class="article-tag-list-link color5">Rust</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2023/01/29/rust-refcell/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-rust-rc" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2023/01/29/rust-rc/">Rust的Rc容器</a>
-    </h1>
-  
-
-        
-        <a href="/2023/01/29/rust-rc/" class="archive-article-date">
-  	<time datetime="2023-01-29T02:14:33.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-01-29</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>前面讲了 Box&lt;T&gt; ，和一般的变量一样，它只能有一个所有权方，如果需要有多个所有权，即实现类似（不完全一样，因为Rust只要你不说，都是不可变的）python那样的所有权复制，就需要Rc&lt;T&gt;了。</p>
-        
-          <a class="article-more-a" href="/2023/01/29/rust-rc/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/Rust//" class="article-tag-list-link color5">Rust</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2023/01/29/rust-rc/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-rust-box" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2023/01/28/rust-box/">Rust的box容器</a>
-    </h1>
-  
-
-        
-        <a href="/2023/01/28/rust-box/" class="archive-article-date">
-  	<time datetime="2023-01-28T00:22:51.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-01-28</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>Box&lt;T&gt;就是模仿Rust的指针行为：</p>
-<p>1、可以解引用访问，即*a操作；</p>
-<p>2、超出生命范围区域会主动释放资源。</p>
-<p>Rust还提供了Rc&lt;T&gt;，RefCell&lt;T&gt;等专门为各种场景使用的容器类，内容太多太细节，打算都当作单独的一节来讲，这一节就专注于box&lt;T&gt;。</p>
-        
-          <a class="article-more-a" href="/2023/01/28/rust-box/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/Rust//" class="article-tag-list-link color5">Rust</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2023/01/28/rust-box/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-rust-workspace" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2023/01/26/rust-workspace/">Rust的工作空间（workspace）</a>
-    </h1>
-  
-
-        
-        <a href="/2023/01/26/rust-workspace/" class="archive-article-date">
-  	<time datetime="2023-01-26T09:27:20.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-01-26</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>前面的例子，都是通过cargo new命令来创建的单一工程，但实际开发中，每一个模块都是由多个单独的领域组合起来构建的，因此这里引入workspace概念。有了workspace概念，一个项目才可以方便的划分成不同的领域，每一个领域能做到单元测试，单独构建，而整个workspace又能做集成测试，集成构建。这样，单人工作和团队协作才能有机结合起来。</p>
-        
-          <a class="article-more-a" href="/2023/01/26/rust-workspace/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/Rust//" class="article-tag-list-link color5">Rust</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2023/01/26/rust-workspace/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-closure-and-iter" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2023/01/25/closure-and-iter/">闭包和迭代器</a>
-    </h1>
-  
-
-        
-        <a href="/2023/01/25/closure-and-iter/" class="archive-article-date">
-  	<time datetime="2023-01-25T06:44:32.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-01-25</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>闭包和迭代器很多语言都有，Rust也不例外，并且，数量掌握闭包和迭代器是写出一手好代码的必要因素。今天就把这两个概念拿出来说说。</p>
-        
-          <a class="article-more-a" href="/2023/01/25/closure-and-iter/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/Rust//" class="article-tag-list-link color5">Rust</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2023/01/25/closure-and-iter/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-rust-test" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2023/01/21/rust-test/">Rust的测试框架</a>
-    </h1>
-  
-
-        
-        <a href="/2023/01/21/rust-test/" class="archive-article-date">
-  	<time datetime="2023-01-21T01:16:18.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-01-21</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>测试（testing）是软件开发关键一环，重中之重，任何好的代码都离不开一个严格的测试，Rust也不例外。测试可以找出bug，可以证明某种情况下的正确性。本节介绍怎么在Rust测试框架下写测试代码。</p>
-        
-          <a class="article-more-a" href="/2023/01/21/rust-test/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/Rust//" class="article-tag-list-link color5">Rust</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2023/01/21/rust-test/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
   
   
-    <nav id="page-nav">
-      <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/2/">Next</a>
-    </nav>
   
 
+  
+
+  
+
+  
 
 
           </div>
@@ -925,8 +305,8 @@
     <script>
 	var yiliaConfig = {
 		mathjax: false,
-		isHome: true,
-		isPost: false,
+		isHome: false,
+		isPost: true,
 		isArchive: false,
 		isTag: false,
 		isCategory: false,
