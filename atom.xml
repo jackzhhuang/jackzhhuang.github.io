@@ -6,7 +6,7 @@
   <link href="https://www.jackhuang.cc/atom.xml" rel="self"/>
   
   <link href="https://www.jackhuang.cc/"/>
-  <updated>2023-02-05T16:43:48.403Z</updated>
+  <updated>2023-02-05T07:02:47.727Z</updated>
   <id>https://www.jackhuang.cc/</id>
   
   <author>
@@ -15,19 +15,6 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
-  
-  <entry>
-    <title>git-reset-revert</title>
-    <link href="https://www.jackhuang.cc/2023/02/06/git-reset-revert/"/>
-    <id>https://www.jackhuang.cc/2023/02/06/git-reset-revert/</id>
-    <published>2023-02-05T16:43:48.000Z</published>
-    <updated>2023-02-05T16:43:48.403Z</updated>
-    
-    
-    
-    
-    
-  </entry>
   
   <entry>
     <title>如何构造自定义错误类型和向下转化</title>
@@ -405,6 +392,25 @@
     
     
     <summary type="html">&lt;p&gt;在进一步研究右值引用或者说&amp;amp;&amp;amp;符号之前，先稍微说一下C++中如何查看一个变量的类型。&lt;/p&gt;</summary>
+    
+    
+    
+    <category term="C++" scheme="https://www.jackhuang.cc/categories/C/"/>
+    
+    
+  </entry>
+  
+  <entry>
+    <title>快速说一下C++右值引用</title>
+    <link href="https://www.jackhuang.cc/2022/12/31/%E5%BF%AB%E9%80%9F%E8%AF%B4%E4%B8%80%E4%B8%8B%E5%8F%B3%E5%80%BC%E5%BC%95%E7%94%A8/"/>
+    <id>https://www.jackhuang.cc/2022/12/31/%E5%BF%AB%E9%80%9F%E8%AF%B4%E4%B8%80%E4%B8%8B%E5%8F%B3%E5%80%BC%E5%BC%95%E7%94%A8/</id>
+    <published>2022-12-31T12:43:52.000Z</published>
+    <updated>2023-02-05T02:49:58.852Z</updated>
+    
+    <content type="html"><![CDATA[<p>希望用最简单的话把右值引用说清楚。</p><span id="more"></span><p>什么是右值引用：右值引用即资源传递，右值引用后，引用方会获得资源，被引用方，如同右值那样，被销毁，处于invalid状态。</p><p>为什么需要右值引用：在语义上表达资源传递。</p><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">MyString</span>&#123;</span><br><span class="line">    <span class="type">char</span>* s_&#123;<span class="literal">nullptr</span>&#125;;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="built_in">MyString</span>(<span class="type">const</span> <span class="type">char</span>* other) &#123;</span><br><span class="line">        <span class="built_in">copy</span>(other);</span><br><span class="line">    &#125;</span><br><span class="line">    ~<span class="built_in">MyString</span>() &#123;</span><br><span class="line">        <span class="built_in">release</span>();</span><br><span class="line">    &#125;</span><br><span class="line">  </span><br><span class="line">    <span class="comment">// 左值引用构造函数</span></span><br><span class="line">    <span class="built_in">MyString</span>(<span class="type">const</span> MyString&amp; other) &#123;</span><br><span class="line">        <span class="built_in">copy</span>(other.s_);</span><br><span class="line">    &#125;</span><br><span class="line">  </span><br><span class="line">    <span class="comment">// 右值引用构造函数</span></span><br><span class="line">    <span class="built_in">MyString</span>(MyString&amp;&amp; other) &#123;</span><br><span class="line">        <span class="built_in">copy</span>(other.s_);</span><br><span class="line">        other.<span class="built_in">release</span>();</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="type">const</span> <span class="type">char</span>* <span class="title">what</span><span class="params">()</span> <span class="type">const</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> s_;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">release</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">delete</span>[] s_;</span><br><span class="line">        s_ = <span class="literal">nullptr</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">copy</span><span class="params">(<span class="type">const</span> <span class="type">char</span>* other)</span> </span>&#123;</span><br><span class="line">        <span class="built_in">release</span>();</span><br><span class="line">        <span class="type">int</span> len = (<span class="type">int</span>)<span class="built_in">strlen</span>(other);</span><br><span class="line">        s_ = <span class="keyword">new</span> <span class="type">char</span>[len + <span class="number">1</span>];</span><br><span class="line">        <span class="built_in">strncpy</span>(s_, other, len);</span><br><span class="line">        s_[len] = <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 实现输出</span></span><br><span class="line">std::ostream&amp; <span class="keyword">operator</span>&lt;&lt;(std::ostream&amp; out, <span class="type">const</span> MyString&amp; s) &#123;</span><br><span class="line">    out &lt;&lt; s.<span class="built_in">what</span>();</span><br><span class="line">    <span class="keyword">return</span> out;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>例如上面的MyString类，构造函数分为左值引用构造函数和右值引用构造函数。</p><p>右值引用构造函数的实现中，需要release调other的指针，因为根据右值引用的协议，被引用的对象应该处于被销毁的状态。</p><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">MyString <span class="title">s</span><span class="params">(<span class="string">&quot;hello world!&quot;</span>)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function">MyString <span class="title">d</span><span class="params">(std::move(s))</span></span>;</span><br><span class="line"></span><br><span class="line">std::cout &lt;&lt; <span class="string">&quot;d = &quot;</span> &lt;&lt; d &lt;&lt; std::endl;</span><br><span class="line"><span class="comment">// panic!</span></span><br><span class="line">std::cout &lt;&lt; <span class="string">&quot;s = &quot;</span> &lt;&lt; s &lt;&lt; std::endl;</span><br></pre></td></tr></table></figure><p>例如执行以上的代码，std::move是强制把s转为右值，从而触发调用MyString的右值引用构造函数，之后，s将会变成invalid状态，此时打印s会出现未定义状态现象。</p><p>当然这个协议完全可以不去遵守，即MyString的右值引用构造函数中不调用release()，这是C++灵活之处，编译器不会强制你遵守这个协议。但不按约定去做，右值引用存在就没有意义了。C++标准库都遵守右值引用的协议。</p><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">std::string <span class="title">s</span><span class="params">(<span class="string">&quot;hello world!&quot;</span>)</span></span>;</span><br><span class="line"><span class="function">std::string <span class="title">d</span><span class="params">(std::move(s))</span></span>;</span><br><span class="line"></span><br><span class="line">std::cout &lt;&lt; <span class="string">&quot;d = &quot;</span> &lt;&lt; d &lt;&lt; std::endl;</span><br><span class="line">std::cout &lt;&lt; <span class="string">&quot;s = &quot;</span> &lt;&lt; s &lt;&lt; std::endl;</span><br></pre></td></tr></table></figure><p>例如上面这段代码，s会变成长度为0的空字符串。相比我写的MyString这样更安全，也达到了资源传递的语义目的。</p><p>后面研究一下万能引用，这又是另一个话题。</p><p>新年快乐！</p>]]></content>
+    
+    
+    <summary type="html">&lt;p&gt;希望用最简单的话把右值引用说清楚。&lt;/p&gt;</summary>
     
     
     
