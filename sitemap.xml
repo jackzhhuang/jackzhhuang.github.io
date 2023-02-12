@@ -2,6 +2,15 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://www.jackhuang.cc/2023/02/10/rust-futures-basic-concept/</loc>
+    
+    <lastmod>2023-02-12</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://www.jackhuang.cc/2023/01/31/rust-multiple-thread/</loc>
     
     <lastmod>2023-02-06</lastmod>
