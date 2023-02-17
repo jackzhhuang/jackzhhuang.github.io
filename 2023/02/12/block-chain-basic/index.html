@@ -20,7 +20,7 @@
 <meta property="og:image" content="https://www.jackhuang.cc/svg/merkle-tree.svg">
 <meta property="og:image" content="https://www.jackhuang.cc/svg/merkle-tree-verify.svg">
 <meta property="article:published_time" content="2023-02-12T12:47:38.000Z">
-<meta property="article:modified_time" content="2023-02-17T17:15:32.239Z">
+<meta property="article:modified_time" content="2023-02-17T17:39:47.388Z">
 <meta property="article:author" content="Jack Huang">
 <meta property="article:tag" content="C&#x2F;C++,RUST,Python,Mysql,Linux,Database">
 <meta name="twitter:card" content="summary">
@@ -207,13 +207,13 @@
 <p>默克尔（merkle）值，是用于检验交易数据的，我们马上讲到。由于有了默克尔值，后面的交易数我们就可以校验，这样我们标识一个区块的时候只需要头部sha256即可，并不需要整个区块 sha256。</p>
 <p>随机难度值和随机数是用于挖矿的，我们将来讲到。</p>
 <h2 id="默克尔树"><a href="#默克尔树" class="headerlink" title="默克尔树"></a>默克尔树</h2><h3 id="结构"><a href="#结构" class="headerlink" title="结构"></a>结构</h3><p>当我们有很多交易数据时，我们怎么校验它们是否被修改信得过呢？一种直观的方法当然是把它们放在一起然后算一次 sha256，如果有 n 个交易，那么算法时间和空间复杂度为 O(n)。</p>
-<p>默克尔树提供了一个更快更省空间的方案，即将每一笔交易数据做一次 sha256（比特币中是连续计算两次 sha256，以下简称算 sha256不特地强调），然后这些结果两两做一组再算一次 sha256，再两两做一组算 sha256，如此循环，最后只剩下一个sha256值，这个值就是默克尔树根值，有了这个值，我们就可以很快的校验交易是否被修改。其计算过程和结构如下：</p>
+<p>默克尔树提供了一个更快更省空间的方案，即将每一笔交易数据做一次 sha256（比特币中是连续计算两次 sha256，以下简称算 sha256 不特地强调），然后这些结果两两做一组再算一次 sha256，再两两做一组算 sha256，如此循环，最后只剩下一个 sha256 值，这个值就是默克尔树根值，有了这个值，我们就可以很快的校验交易是否被修改。其计算过程和结构如下：</p>
 <p><img src="https://www.jackhuang.cc/svg/merkle-tree.svg" alt="默克尔（merkle）树"></p>
-<p>从上面看出，默克尔树树叶节点即我们的交易数据，往上每一层都是下一层数据两两结合计算sha256的结果，直到我们算出默克尔树根为止。</p>
-<h3 id="校验交易"><a href="#校验交易" class="headerlink" title="校验交易"></a>校验交易</h3><p>我们需要校验某个交易是否被修改时，尤其是手机这种轻节点，只需要从全节点处拿到从下往上算的路径上的 sha256节点即可去验证某个交易是否在这个区块中或者是否被修改过。</p>
+<p>从上面看出，默克尔树树叶节点即我们的交易数据，往上每一层都是下一层数据两两结合计算 sha256 的结果，直到我们算出默克尔树根为止。</p>
+<h3 id="校验交易"><a href="#校验交易" class="headerlink" title="校验交易"></a>校验交易</h3><p>我们需要校验某个交易是否被修改时，尤其是手机这种轻节点，只需要从全节点处拿到从下往上算的路径上的 sha256 节点即可去验证某个交易是否在这个区块中或者是否被修改过。</p>
 <p>例如我们需要计算下图红色节点是否在区块交易数据中，轻节点只需要请求全节点下发黄色 sha256数据给它，它依次从下往上计算出蓝色节点的 sha256 值，直至计算出默克尔树树根值，对比区块头的默克尔树根值是否一致就可以知道交易是否在此区块中（区块头的sha256 我们是由区块标识符保证不被串改的，前面已经讨论）。</p>
 <p><img src="https://www.jackhuang.cc/svg/merkle-tree-verify.svg" alt="默克尔树校验交易过程"></p>
-<p>由于不需要全节点所有的交易数据，此时算法复杂度和空间复杂度只有 log<sub>2</sub>n 了。</p>
+<p>由于不需要全节点所有的交易数据，此时算法复杂度和空间复杂度只有 O(log<sub>2</sub>n) 了。</p>
 
       
 
