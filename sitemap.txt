@@ -1,3 +1,4 @@
+https://www.jackhuang.cc/2023/02/12/block-chain-basic/
 https://www.jackhuang.cc/2023/02/10/rust-futures-basic-concept/
 https://www.jackhuang.cc/2023/01/31/rust-multiple-thread/
 https://www.jackhuang.cc/2023/02/05/rust-my-error/
@@ -26,3 +27,4 @@ https://www.jackhuang.cc/
 https://www.jackhuang.cc/categories/Rust/
 https://www.jackhuang.cc/categories/%E6%83%B3%E6%B3%95/
 https://www.jackhuang.cc/categories/C/
+https://www.jackhuang.cc/categories/Blockchain/
