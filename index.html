@@ -157,6 +157,75 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-数字货币，double spending attack" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>数字货币，double spending attack</p>
+<p>央行需要维护数字货币和所有者关系</p>
+<p>中心化——央行，每次交易都需要去央行确认</p>
+<p>去中心化两个问题：1、如何发行货币；2、如何防范double spending attack</p>
+<p>铸币交易（coinbase transaction）</p>
+<p>每次交易都要有输入输出，出方私钥签名（保证交易被验证是出方的动作），入方地址（入方公钥哈希计算出来）</p>
+<p>如何验证出方私钥签名？即出方公钥怎么获取？防止别人伪造出方公钥</p>
+<p>铸币交易需要有公钥哈希，转账交易的公钥需要和铸币交易公钥哈希对得上</p>
+<p>前一个交易的输出脚本——后一个交易的输入脚本——对得上，bitcoins script</p>
+<p>全节点——所有区块链数据，full node， fully validated node</p>
+<p>轻节点——只有区块头，大部分都是轻节点，light weigh node</p>
+<p>所有人都可以记账，那么怎么保证账本数据一致性？取得共识？——分布式共识，distrubuted consensus</p>
+<p>共同维护分布式哈希表，distributed hash table</p>
+<p>impossibility result</p>
+<p>cap theorem——consistency一致性，availability可用性，partition tolerance分区耐受性</p>
+<p>分布式一致性共识协议——paxos</p>
+<p>consensus protocol in bitcoins——投票权，恶意节点产生大量账号获取压倒性投票权</p>
+<p>找到区块头的nonce字段，使头sha256小于target值，从而获得投票权sha256（block header）  &lt;  target</p>
+<p>分拆攻击forking attack——区块链必须接在最长的分支链上longest valid chain</p>
+<p>如果等长怎么办？orphan block</p>
+<p>coninbase transaction——发行比特币的唯一方法，获得记账权，加入铸币交易信息，产生新比特币，不需要证明币的来源</p>
+<p>初块50个比特币，21万区块后，减半，如此循环……</p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2023/02/18/%E6%95%B0%E5%AD%97%E8%B4%A7%E5%B8%81%EF%BC%8Cdouble%20spending%20attack/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-block-chain-basic" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -821,82 +890,6 @@
       
         <p class="article-more-link">
           <a class="article-more-a" href="/2023/01/26/rust-workspace/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-closure-and-iter" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2023/01/25/closure-and-iter/">闭包和迭代器</a>
-    </h1>
-  
-
-        
-        <a href="/2023/01/25/closure-and-iter/" class="archive-article-date">
-  	<time datetime="2023-01-25T06:44:32.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-01-25</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>闭包和迭代器很多语言都有，Rust也不例外，并且，数量掌握闭包和迭代器是写出一手好代码的必要因素。今天就把这两个概念拿出来说说。</p>
-        
-          <a class="article-more-a" href="/2023/01/25/closure-and-iter/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/Rust//" class="article-tag-list-link color5">Rust</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2023/01/25/closure-and-iter/">展开全文 >></a>
         </p>
       
 

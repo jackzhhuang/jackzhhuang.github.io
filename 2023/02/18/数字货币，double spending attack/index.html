@@ -6,25 +6,20 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="https://www.jackhuang.cc">
-  <title>区块链（一）：基本结构 | Jack 热爱积累与沉淀</title>
+  <title>Jack 热爱积累与沉淀</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="今天我们就开始总结一下区块链方面的知识吧，从最基本的区块链结构讲起。">
+  <meta name="description" content="数字货币，double spending attack 央行需要维护数字货币和所有者关系 中心化——央行，每次交易都需要去央行确认 去中心化两个问题：1、如何发行货币；2、如何防范double spending attack 铸币交易（coinbase transaction） 每次交易都要有输入输出，出方私钥签名（保证交易被验证是出方的动作），入方地址（入方公钥哈希计算出来） 如何验证出方私钥签">
 <meta property="og:type" content="article">
-<meta property="og:title" content="区块链（一）：基本结构">
-<meta property="og:url" content="https://www.jackhuang.cc/2023/02/12/block-chain-basic/index.html">
+<meta property="og:title" content="Jack 热爱积累与沉淀">
+<meta property="og:url" content="https://www.jackhuang.cc/2023/02/18/%E6%95%B0%E5%AD%97%E8%B4%A7%E5%B8%81%EF%BC%8Cdouble%20spending%20attack/index.html">
 <meta property="og:site_name" content="Jack 热爱积累与沉淀">
-<meta property="og:description" content="今天我们就开始总结一下区块链方面的知识吧，从最基本的区块链结构讲起。">
+<meta property="og:description" content="数字货币，double spending attack 央行需要维护数字货币和所有者关系 中心化——央行，每次交易都需要去央行确认 去中心化两个问题：1、如何发行货币；2、如何防范double spending attack 铸币交易（coinbase transaction） 每次交易都要有输入输出，出方私钥签名（保证交易被验证是出方的动作），入方地址（入方公钥哈希计算出来） 如何验证出方私钥签">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://www.jackhuang.cc/svg/blockchain-first-view.svg">
-<meta property="og:image" content="https://www.jackhuang.cc/svg/blockchain-head.svg">
-<meta property="og:image" content="https://www.jackhuang.cc/svg/merkle-tree.svg">
-<meta property="og:image" content="https://www.jackhuang.cc/svg/merkle-tree-verify.svg">
-<meta property="article:published_time" content="2023-02-12T12:47:38.000Z">
-<meta property="article:modified_time" content="2023-02-17T17:39:47.388Z">
+<meta property="article:published_time" content="2023-02-18T07:33:20.711Z">
+<meta property="article:modified_time" content="2023-02-18T08:53:11.627Z">
 <meta property="article:author" content="Jack Huang">
 <meta property="article:tag" content="C&#x2F;C++,RUST,Python,Mysql,Linux,Database">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://www.jackhuang.cc/svg/blockchain-first-view.svg">
   
     <link rel="alternative" href="/atom.xml" title="Jack 热爱积累与沉淀" type="application/atom+xml">
   
@@ -164,56 +159,33 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-block-chain-basic" class="article article-type-post " itemscope itemprop="blogPost">
+            <article id="post-数字货币，double spending attack" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 class="article-title" itemprop="name">
-      区块链（一）：基本结构
-    </h1>
-  
-
-        
-        <a href="/2023/02/12/block-chain-basic/" class="archive-article-date">
-  	<time datetime="2023-02-12T12:47:38.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-02-12</time>
-</a>
-        
-      </header>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>今天我们就开始总结一下区块链方面的知识吧，从最基本的区块链结构讲起。</p>
-<span id="more"></span>
-
-<h2 id="区块链基本信息"><a href="#区块链基本信息" class="headerlink" title="区块链基本信息"></a>区块链基本信息</h2><p>顾名思义，区块链，即一个个块连接起来的链表，但的确加了不少附加信息在上面，我们先看三个最基本的信息：</p>
-<p>1、创世区块；</p>
-<p>2、区块的高度；</p>
-<p>3、区块链难以修改的特性。</p>
-<p>我们先直观的看一下区块链的样子吧：</p>
-<p><img src="https://www.jackhuang.cc/svg/blockchain-first-view.svg"></p>
-<p>我们最先看到的是这是一个链表，但要注意，这个链表的增长方式是从创世区块开始的，也就是区块链和普通链表不一样，是反向增长的，即新增的区块指向最后一个区块，第一个区块是图中的创世区块。</p>
-<p>创世区块是一个很特殊的区块，它一般硬编码在代码中，万事总是要有一个起头，所以创世区块作为区块链的头，要特殊编码，再往后，每一个区块的加入都必须遵循区块链的规则了。</p>
-<p>区块中会分为区块头和与之相关的区块交易体，我们先关注一下区块头。可以看到每一个区块都有一个区块头，即上图红色框框部分，其中一个字段是前一个区块头的sha256结果，也即，每一个区块的标识符都用区块头的sha256来表示，这个结果会写在下一个区块的区块头的字段中，这样，这些区块就组成了一个有序且难以更改的区块链了。</p>
-<p>有序，是因为每一个区块的头部字段都记录前一个区块的头部sha256，因此区块顺序不能变。</p>
-<p>难以修改，是因为区块头一旦被修改，那么其sha256也被跟着改，也即区块的标识符被修改，这会影响下一个区块的区块头内容，也就导致下一个区块的标识也要修改，于是如此串联下去，一处改则处处改。随着区块的增多，修改难度会越来越大，这也就是难以修改的原因。也可以看出，越是古老的区块，修改的难度越大。</p>
-<p>尾部的区块它的头部sha256值，也即其标识符可以保存起来，这样，我们就可以验证整条区块链是否有被修改。例如轻客户端（比如手机）很难去保存所有的区块，但它又想验证最近几个区块是否被修改，这样只需要从全区块链那里获取最近几个区块的头部，然后验证区块链标识是否和所持有的区块链标识是否相等，即可知道这些区块是否被修改，是否信得过了。</p>
-<p>最后讲一下区块链的高度，区块链的高度即区块的多少，当然要注意，创世区块的高度是 0，也就是说，如果有 n 个区块，那么其高度是 n - 1。我们引用一个区块时，除了可以用它的标识符以外，还可以用它的所处高度来表达。例如高度为 0 的区块即创世区块。</p>
-<h2 id="区块头部"><a href="#区块头部" class="headerlink" title="区块头部"></a>区块头部</h2><p><img src="https://www.jackhuang.cc/svg/blockchain-head.svg" alt="区块头部"></p>
-<p>上面的头部是被我们简化的，区块链的头部不仅仅有前块标识字段，还有其它字段，我们放大看看：</p>
-<p>首先是版本，似乎没什么可说的。</p>
-<p>接着就是前面提到的前块区块的头部 sha256，即其区块标识。</p>
-<p>默克尔（merkle）值，是用于检验交易数据的，我们马上讲到。由于有了默克尔值，后面的交易数我们就可以校验，这样我们标识一个区块的时候只需要头部sha256即可，并不需要整个区块 sha256。</p>
-<p>随机难度值和随机数是用于挖矿的，我们将来讲到。</p>
-<h2 id="默克尔树"><a href="#默克尔树" class="headerlink" title="默克尔树"></a>默克尔树</h2><h3 id="结构"><a href="#结构" class="headerlink" title="结构"></a>结构</h3><p>当我们有很多交易数据时，我们怎么校验它们是否被修改信得过呢？一种直观的方法当然是把它们放在一起然后算一次 sha256，如果有 n 个交易，那么算法时间和空间复杂度为 O(n)。</p>
-<p>默克尔树提供了一个更快更省空间的方案，即将每一笔交易数据做一次 sha256（比特币中是连续计算两次 sha256，以下简称算 sha256 不特地强调），然后这些结果两两做一组再算一次 sha256，再两两做一组算 sha256，如此循环，最后只剩下一个 sha256 值，这个值就是默克尔树根值，有了这个值，我们就可以很快的校验交易是否被修改。其计算过程和结构如下：</p>
-<p><img src="https://www.jackhuang.cc/svg/merkle-tree.svg" alt="默克尔（merkle）树"></p>
-<p>从上面看出，默克尔树树叶节点即我们的交易数据，往上每一层都是下一层数据两两结合计算 sha256 的结果，直到我们算出默克尔树根为止。</p>
-<h3 id="校验交易"><a href="#校验交易" class="headerlink" title="校验交易"></a>校验交易</h3><p>我们需要校验某个交易是否被修改时，尤其是手机这种轻节点，只需要从全节点处拿到从下往上算的路径上的 sha256 节点即可去验证某个交易是否在这个区块中或者是否被修改过。</p>
-<p>例如我们需要计算下图红色节点是否在区块交易数据中，轻节点只需要请求全节点下发黄色 sha256数据给它，它依次从下往上计算出蓝色节点的 sha256 值，直至计算出默克尔树树根值，对比区块头的默克尔树根值是否一致就可以知道交易是否在此区块中（区块头的sha256 我们是由区块标识符保证不被串改的，前面已经讨论）。</p>
-<p><img src="https://www.jackhuang.cc/svg/merkle-tree-verify.svg" alt="默克尔树校验交易过程"></p>
-<p>由于不需要全节点所有的交易数据，此时算法复杂度和空间复杂度只有 O(log<sub>2</sub>n) 了。</p>
+        <p>数字货币，double spending attack</p>
+<p>央行需要维护数字货币和所有者关系</p>
+<p>中心化——央行，每次交易都需要去央行确认</p>
+<p>去中心化两个问题：1、如何发行货币；2、如何防范double spending attack</p>
+<p>铸币交易（coinbase transaction）</p>
+<p>每次交易都要有输入输出，出方私钥签名（保证交易被验证是出方的动作），入方地址（入方公钥哈希计算出来）</p>
+<p>如何验证出方私钥签名？即出方公钥怎么获取？防止别人伪造出方公钥</p>
+<p>铸币交易需要有公钥哈希，转账交易的公钥需要和铸币交易公钥哈希对得上</p>
+<p>前一个交易的输出脚本——后一个交易的输入脚本——对得上，bitcoins script</p>
+<p>全节点——所有区块链数据，full node， fully validated node</p>
+<p>轻节点——只有区块头，大部分都是轻节点，light weigh node</p>
+<p>所有人都可以记账，那么怎么保证账本数据一致性？取得共识？——分布式共识，distrubuted consensus</p>
+<p>共同维护分布式哈希表，distributed hash table</p>
+<p>impossibility result</p>
+<p>cap theorem——consistency一致性，availability可用性，partition tolerance分区耐受性</p>
+<p>分布式一致性共识协议——paxos</p>
+<p>consensus protocol in bitcoins——投票权，恶意节点产生大量账号获取压倒性投票权</p>
+<p>找到区块头的nonce字段，使头sha256小于target值，从而获得投票权sha256（block header）  &lt;  target</p>
+<p>分拆攻击forking attack——区块链必须接在最长的分支链上longest valid chain</p>
+<p>如果等长怎么办？orphan block</p>
+<p>coninbase transaction——发行比特币的唯一方法，获得记账权，加入铸币交易信息，产生新比特币，不需要证明币的来源</p>
+<p>初块50个比特币，21万区块后，减半，如此循环……</p>
 
       
 
@@ -223,17 +195,6 @@
       
       
       
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/Blockchain//" class="article-tag-list-link color1">Blockchain</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
 
       
 
@@ -283,7 +244,7 @@
     <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//pan.baidu.com/share/qrcode?url=https://www.jackhuang.cc/2023/02/12/block-chain-basic/" alt="微信分享二维码">
+      <img src="//pan.baidu.com/share/qrcode?url=https://www.jackhuang.cc/2023/02/18/%E6%95%B0%E5%AD%97%E8%B4%A7%E5%B8%81%EF%BC%8Cdouble%20spending%20attack/" alt="微信分享二维码">
     </div>
 </div>
 
@@ -297,18 +258,9 @@
   
 <nav id="article-nav">
   
-    <a href="/2023/02/18/%E6%95%B0%E5%AD%97%E8%B4%A7%E5%B8%81%EF%BC%8Cdouble%20spending%20attack/" id="article-nav-newer" class="article-nav-link-wrap">
-      <i class="icon-circle-left"></i>
-      <div class="article-nav-title">
-        
-          (no title)
-        
-      </div>
-    </a>
   
-  
-    <a href="/2023/02/10/rust-futures-basic-concept/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">Rust 异步编程（一）：基本概念和编程模型</div>
+    <a href="/2023/02/12/block-chain-basic/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">区块链（一）：基本结构</div>
       <i class="icon-circle-right"></i>
     </a>
   
@@ -335,7 +287,7 @@
                 </span>
                 <span class="tooltip-content">
                     <div class="toc-article">
-                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8C%BA%E5%9D%97%E9%93%BE%E5%9F%BA%E6%9C%AC%E4%BF%A1%E6%81%AF"><span class="toc-number">1.</span> <span class="toc-text">区块链基本信息</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8C%BA%E5%9D%97%E5%A4%B4%E9%83%A8"><span class="toc-number">2.</span> <span class="toc-text">区块头部</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%BB%98%E5%85%8B%E5%B0%94%E6%A0%91"><span class="toc-number">3.</span> <span class="toc-text">默克尔树</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BB%93%E6%9E%84"><span class="toc-number">3.1.</span> <span class="toc-text">结构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A0%A1%E9%AA%8C%E4%BA%A4%E6%98%93"><span class="toc-number">3.2.</span> <span class="toc-text">校验交易</span></a></li></ol></li></ol>
+                    目录，不存在的…
                     </div>
                 </span>
             </div>

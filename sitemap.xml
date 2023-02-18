@@ -2,6 +2,15 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://www.jackhuang.cc/2023/02/18/%E6%95%B0%E5%AD%97%E8%B4%A7%E5%B8%81%EF%BC%8Cdouble%20spending%20attack/</loc>
+    
+    <lastmod>2023-02-18</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://www.jackhuang.cc/2023/02/12/block-chain-basic/</loc>
     
     <lastmod>2023-02-17</lastmod>
@@ -229,7 +238,7 @@
 
   <url>
     <loc>https://www.jackhuang.cc/</loc>
-    <lastmod>2023-02-17</lastmod>
+    <lastmod>2023-02-18</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
@@ -239,28 +248,28 @@
   
   <url>
     <loc>https://www.jackhuang.cc/categories/Rust/</loc>
-    <lastmod>2023-02-17</lastmod>
+    <lastmod>2023-02-18</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://www.jackhuang.cc/categories/%E6%83%B3%E6%B3%95/</loc>
-    <lastmod>2023-02-17</lastmod>
+    <lastmod>2023-02-18</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://www.jackhuang.cc/categories/C/</loc>
-    <lastmod>2023-02-17</lastmod>
+    <lastmod>2023-02-18</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://www.jackhuang.cc/categories/Blockchain/</loc>
-    <lastmod>2023-02-17</lastmod>
+    <lastmod>2023-02-18</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
