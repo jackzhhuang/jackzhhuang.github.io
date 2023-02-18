@@ -1,4 +1,3 @@
-https://www.jackhuang.cc/2023/02/18/%E6%95%B0%E5%AD%97%E8%B4%A7%E5%B8%81%EF%BC%8Cdouble%20spending%20attack/
 https://www.jackhuang.cc/2023/02/12/block-chain-basic/
 https://www.jackhuang.cc/2023/02/10/rust-futures-basic-concept/
 https://www.jackhuang.cc/2023/01/31/rust-multiple-thread/
