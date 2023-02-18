@@ -2,6 +2,15 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://www.jackhuang.cc/about/index.html</loc>
+    
+    <lastmod>2023-02-18</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://www.jackhuang.cc/2023/02/18/blockchaion-protocol/</loc>
     
     <lastmod>2023-02-18</lastmod>
@@ -203,15 +212,6 @@
     <loc>https://www.jackhuang.cc/2022/12/31/%E5%BF%AB%E9%80%9F%E8%AF%B4%E4%B8%80%E4%B8%8B%E5%8F%B3%E5%80%BC%E5%BC%95%E7%94%A8/</loc>
     
     <lastmod>2023-02-05</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://www.jackhuang.cc/about/index.html</loc>
-    
-    <lastmod>2023-02-01</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
