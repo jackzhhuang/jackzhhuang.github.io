@@ -20,7 +20,7 @@
 <meta property="og:image" content="https://www.jackhuang.cc/svg/blockchain-fork.svg">
 <meta property="og:image" content="https://www.jackhuang.cc/svg/blockchain-fork-end.svg">
 <meta property="article:published_time" content="2023-02-18T12:24:26.000Z">
-<meta property="article:modified_time" content="2023-02-18T15:24:07.433Z">
+<meta property="article:modified_time" content="2023-02-19T06:45:21.784Z">
 <meta property="article:author" content="Jack Huang">
 <meta property="article:tag" content="C&#x2F;C++,RUST,Python,Mysql,Linux,Database">
 <meta name="twitter:card" content="summary">
@@ -211,17 +211,17 @@
 <p>校验通过后，交易信息将被写到区块中，交易就正式生效。如果此后 B 要转账给 D 和 E，那么同样也会进行上面的操作，画成图形，看起来像这这样：</p>
 <p><img src="https://www.jackhuang.cc/svg/blockchain-deal-verify-another.svg" alt="再一次交易"></p>
 <p>由此可见，每一次交易，都有输入和输出双方，每一个输入都是上某次的输出，每一个输出都是下某次的输入，这样就保证的“输入 &#x3D; 输出” ，账目是平的。</p>
-<h2 id="记账权的争夺"><a href="#记账权的争夺" class="headerlink" title="记账权的争夺"></a>记账权的争夺</h2><p>以上，当然会有不少问题，即，因为任何人都可以往区块链写入交易数据，那么，</p>
+<h2 id="记账权的争夺——共识机制"><a href="#记账权的争夺——共识机制" class="headerlink" title="记账权的争夺——共识机制"></a>记账权的争夺——共识机制</h2><p>以上，当然会有不少问题，即，因为任何人都可以往区块链写入交易数据，那么，</p>
 <p>1、到底谁去做这个写入操作呢？</p>
 <p>2、如果大家都写，那么势必会造成数据不一致，如果数据不一致了，那么又怎么做到以谁写入的为准呢？</p>
 <p>3、如果有恶意用户争夺到写入权但拒绝写入某个交易从而使某个人无法完成交易怎么办呢？</p>
 <p>这里就需要获得写入权的争夺了。在上一节讲到，区块头部有两个字段，一个是“目标难度值”，即 target，一个是随机字符串，即  nonce，它们就是用于控制记账权争夺的。</p>
 <p>其算法思想如下：为了获取记账权，必须找到一个 nonce值，使得头部的 sha256 值小于 target。由于找到这样一个 nonce 值计算出的  sha256 需要枚举 nonce，因此对争夺记账权的 就依赖于争夺者的算力，算力越高，获得记账权的机会就越大。</p>
-<p>这种依赖算力而不依赖投票的算法，有一个好处就是规避了恶意用户制造大量僵尸账户进行投票影响正常结果的攻击。当然有人会问，如果恶意用户有很强的算力怎么办，要知道，算力很高的用户意味着有很强大的计算机系统，绝非个人所能做到，而拥有强大计算机系统的用户都是希望系统稳定的，就好像一个有权势的国王，他肯定是希望他的国家泰平，不然他自己也就当不成国王了，所以，需要算力极强的计算机系统用户才能写入区块链，保证了区块链的稳定，单个恶意用户是无法撼动区块链的。</p>
+<p>这种依赖算力而不依赖投票的算法，我们叫做比特币的共识机制，它有一个好处就是规避了恶意用户制造大量僵尸账户进行投票影响正常结果的攻击。当然有人会问，如果恶意用户有很强的算力怎么办，要知道，算力很高的用户意味着有很强大的计算机系统，绝非个人所能做到，而拥有强大计算机系统的用户都是希望系统稳定的，就好像一个有权势的国王，他肯定是希望他的国家泰平，不然他自己也就当不成国王了，所以，需要算力极强的计算机系统用户才能写入区块链，保证了区块链的稳定，单个恶意用户是无法撼动区块链的。</p>
 <p>总之，只要找到了 nonce，满足 sha256(区块链头部) &lt; target，那么这个用户就可以写入区块链，他就会把结果广播给其它全节点。其它节点很快就可以验证他的结果，从而接受他的写入结果。</p>
 <h2 id="铸币交易"><a href="#铸币交易" class="headerlink" title="铸币交易"></a>铸币交易</h2><p>前面提到，交易的时候，算力高的用户会写入区块链，一般都是算力高的用户，他们绝非等闲之辈，因为能有这么高算力的人，现实中肯定也是很有能力的（不管是金钱还是权利），他们希望区块链系统稳定，以获取更多的好处，这个好处之一，就是铸币权。</p>
 <p>铸币权就是每次写入交易时，都可以收取交易的手续费和创造出额外的货币，这类似中心化的央行印钱。手续费不用说，额外的货币即每次都可以往区块链的池子里加更多的余额，这个余额不需要像转账那样通过上一次的输出获得，而是直接创造出来，只需要记录记账者本人的公钥和余额即可。像比特币的规则，初始阶段，每次写入交易都可以创造出 50 个比特币，而后每 21 万个区块后则减半，即只能创造出 25 个比特币了，然后如此循环递减，直至为 0。</p>
-<p>这就是区块链货币创造货币的规则。</p>
+<p>这就是区块链货币创造货币的规则。可见，区块链中主要有两种交易，一个是前面提到的转账交易，一个就是这里说的铸币交易。</p>
 <h2 id="区块链的分叉"><a href="#区块链的分叉" class="headerlink" title="区块链的分叉"></a>区块链的分叉</h2><p>前面说了通过算力来解决争夺的两个问题（记账权提出的 1 和 3 问题），问题 2 如果有两个算力都很强大的用户都算出 nonce，都往区块链中写怎么办？</p>
 <p>一种情况，是往中间写，例如下图中，红色节点也是一个找到对应 nonce 值的节点，也打算往区块链中写入，但它的前置节点是在区块链的中间而不是末尾，按照记账权的规则，它是有权写入的，但又很明显，如果允许红色节点写入，那么原本黄色节点后面的蓝色节点将会失效，这对于已经确认交易的用户来说是不可接受的。</p>
 <p><img src="https://www.jackhuang.cc/svg/blockchain-fork.svg" alt="区块链的分叉"></p>
@@ -340,7 +340,7 @@
                 </span>
                 <span class="tooltip-content">
                     <div class="toc-article">
-                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8E%BB%E4%B8%AD%E5%BF%83%E5%8C%96%E7%9A%84%E4%BA%A4%E6%98%93%E9%9C%80%E8%A6%81%E8%A7%A3%E5%86%B3%E7%9A%84%E9%97%AE%E9%A2%98"><span class="toc-number">1.</span> <span class="toc-text">去中心化的交易需要解决的问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8C%BA%E5%9D%97%E9%93%BE%E4%B8%AD%E7%9A%84%E4%BA%A4%E6%98%93%E8%BF%87%E7%A8%8B"><span class="toc-number">2.</span> <span class="toc-text">区块链中的交易过程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AE%B0%E8%B4%A6%E6%9D%83%E7%9A%84%E4%BA%89%E5%A4%BA"><span class="toc-number">3.</span> <span class="toc-text">记账权的争夺</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%93%B8%E5%B8%81%E4%BA%A4%E6%98%93"><span class="toc-number">4.</span> <span class="toc-text">铸币交易</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8C%BA%E5%9D%97%E9%93%BE%E7%9A%84%E5%88%86%E5%8F%89"><span class="toc-number">5.</span> <span class="toc-text">区块链的分叉</span></a></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8E%BB%E4%B8%AD%E5%BF%83%E5%8C%96%E7%9A%84%E4%BA%A4%E6%98%93%E9%9C%80%E8%A6%81%E8%A7%A3%E5%86%B3%E7%9A%84%E9%97%AE%E9%A2%98"><span class="toc-number">1.</span> <span class="toc-text">去中心化的交易需要解决的问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8C%BA%E5%9D%97%E9%93%BE%E4%B8%AD%E7%9A%84%E4%BA%A4%E6%98%93%E8%BF%87%E7%A8%8B"><span class="toc-number">2.</span> <span class="toc-text">区块链中的交易过程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AE%B0%E8%B4%A6%E6%9D%83%E7%9A%84%E4%BA%89%E5%A4%BA%E2%80%94%E2%80%94%E5%85%B1%E8%AF%86%E6%9C%BA%E5%88%B6"><span class="toc-number">3.</span> <span class="toc-text">记账权的争夺——共识机制</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%93%B8%E5%B8%81%E4%BA%A4%E6%98%93"><span class="toc-number">4.</span> <span class="toc-text">铸币交易</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8C%BA%E5%9D%97%E9%93%BE%E7%9A%84%E5%88%86%E5%8F%89"><span class="toc-number">5.</span> <span class="toc-text">区块链的分叉</span></a></li></ol>
                     </div>
                 </span>
             </div>
