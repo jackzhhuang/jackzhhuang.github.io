@@ -20,7 +20,7 @@
 <meta property="og:image" content="https://www.jackhuang.cc/svg/blockchain-fork.svg">
 <meta property="og:image" content="https://www.jackhuang.cc/svg/blockchain-fork-end.svg">
 <meta property="article:published_time" content="2023-02-18T12:24:26.000Z">
-<meta property="article:modified_time" content="2023-02-19T06:45:21.784Z">
+<meta property="article:modified_time" content="2023-02-20T07:49:28.485Z">
 <meta property="article:author" content="Jack Huang">
 <meta property="article:tag" content="C&#x2F;C++,RUST,Python,Mysql,Linux,Database">
 <meta name="twitter:card" content="summary">
@@ -227,7 +227,7 @@
 <p><img src="https://www.jackhuang.cc/svg/blockchain-fork.svg" alt="区块链的分叉"></p>
 <p>对于这种想在中间插入的动作，由于其比较短，因此会被认为是孤儿节点（orphan block），这样的孤儿节点是不会被接受的。采用最长的分叉区块链是防止恶意用户插入恶意节点的方法。那么等长的插入呢？即同时都想往区块链中的最后一个节点插入新的区块，比如下图两个红色节点都想往最后一个黄色插入：</p>
 <p><img src="https://www.jackhuang.cc/svg/blockchain-fork-end.svg" alt="等长区块插入"></p>
-<p>此时就属于分布式事务中的未决事务，即只能同时存在两个交易数据，那么什么时候能解决这个分叉呢？一般认为，某一个分叉后有超过 6 个区块节点，则认为另一个分叉的区块无法再超越它，因此短的分叉将会被大家舍弃掉（这种结论，是基于概率学得出来的，实际上，世界上没有 100% 能保证事务最终一致的设计，或者说数学上无法证明某个算法设计能 100% 保证数据最终一致，但实际经验告诉我们反超概率趋近于 0 的设计是可靠的），因此，区块链交易时，收入方会等待 T + 1日，保证交易已经写入区块链中且有了足够长的深度才会放心发货给出款方，这种在交易数额很大的时候会比较常见。</p>
+<p>此时就属于分布式事务中的未决事务，即只能同时存在两个交易数据，那么什么时候能解决这个分叉呢？一般认为，某一个分叉后有超过 6 个区块节点，则认为另一个分叉的区块无法再超越它，因此短的分叉将会被大家舍弃掉（这种结论，是基于概率学得出来的，实际上，世界上没有 100% 能保证事务最终一致的设计，或者说数学上无法证明某个算法设计能 100% 保证数据最终一致，但实际经验告诉我们反超概率趋近于 0 的设计是可靠的），因此，区块链交易时，收入方会等待 6 个节点确认写入（只需要一小时的时间，因为区块的写入难度控制在每 10 分钟一个区块）或 T + 1日后，即保证交易已经写入区块链中且有了足够长的深度才会放心发货给出款方，这种在交易数额很大的时候会比较常见。</p>
 
       
 
