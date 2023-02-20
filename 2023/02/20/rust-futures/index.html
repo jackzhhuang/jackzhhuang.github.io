@@ -18,7 +18,7 @@
 <meta property="og:image" content="https://www.jackhuang.cc/svg/rust-future-poll.svg">
 <meta property="og:image" content="https://www.jackhuang.cc/svg/rust-future-task.svg">
 <meta property="article:published_time" content="2023-02-20T01:56:48.000Z">
-<meta property="article:modified_time" content="2023-02-20T17:24:14.153Z">
+<meta property="article:modified_time" content="2023-02-20T17:27:40.235Z">
 <meta property="article:author" content="Jack Huang">
 <meta property="article:tag" content="C&#x2F;C++,RUST,Python,Mysql,Linux,Database">
 <meta name="twitter:card" content="summary">
@@ -224,7 +224,7 @@
 <p>4、主线程不停的在监听队列，又遇到了刚才的 Task，于是又去 poll 了一下，发现此时可以返回 Ready 了，于是拿到了“函数”的返回值。</p>
 <p>画成图是这样：</p>
 <p><img src="https://www.jackhuang.cc/svg/rust-future-poll.svg" alt="异步调用示例"></p>
-<p>可以看到，Task 和 Future 是相互包含，引用的。</p>
+<p>可以看到，Future 在处理阻塞的 IO 逻辑时，是采用线程来完成的，因为不能阻塞主线程，主线程需要处理下一个 Future（Task）。还可以看到，Task 和 Future 是相互包含，引用的。</p>
 <p>Task 实现了 Wake trait，放在 Future 中，当 Future 完成 IO 阻塞操作后，通过 Wake trait 调用 Task 的 wake_by_ref 函数激发 sender把 Task 重新放入队列中等待调度。</p>
 <p>Future trait 同样也包含在 Task 中，因为 Task 被放入队列后会被 Receiver 调度，即调用其 poll 方法，获得 Pending 状态或者 Ready。Pending 状态则 Task 一边执行去，不阻塞 Receiver，而 Ready 状态则绑定了返回值。</p>
 <p><img src="https://www.jackhuang.cc/svg/rust-future-task.svg" alt="Task 和 Future 的关系"></p>
