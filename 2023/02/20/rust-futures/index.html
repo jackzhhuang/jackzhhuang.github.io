@@ -18,7 +18,7 @@
 <meta property="og:image" content="https://www.jackhuang.cc/svg/rust-future-poll.svg">
 <meta property="og:image" content="https://www.jackhuang.cc/svg/rust-future-task.svg">
 <meta property="article:published_time" content="2023-02-20T01:56:48.000Z">
-<meta property="article:modified_time" content="2023-02-20T17:37:20.006Z">
+<meta property="article:modified_time" content="2023-02-21T05:16:12.472Z">
 <meta property="article:author" content="Jack Huang">
 <meta property="article:tag" content="C&#x2F;C++,RUST,Python,Mysql,Linux,Database">
 <meta name="twitter:card" content="summary">
@@ -237,7 +237,7 @@
 <p>我们日常编程当然不需要写这么复杂的代码，这里主要是在学习 Rust 的异步编程模型，实际上，Rust 的异步库都帮我们封装好了以上这些内容，我们在使用各个异步库的时候，只需要像前面一节课讲的那样，调用 Future 的 await 即可实现异步编程了。我们看看，如果把本节内容实现的东西写成 await 是什么样子，以下是伪代码：</p>
 <figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">  <span class="keyword">async</span> <span class="keyword">fn</span> <span class="title function_">SayHelloInPending</span>() <span class="punctuation">-&gt;</span> <span class="type">String</span> &#123;</span><br><span class="line">      <span class="comment">// ...</span></span><br><span class="line">  &#125;   </span><br><span class="line"><span class="keyword">let</span> <span class="variable">result</span> = <span class="title function_ invoke__">SayHelloInPending</span>().<span class="keyword">await</span>;</span><br><span class="line">  <span class="built_in">println!</span>(<span class="string">&quot;result = &#123;&#125;&quot;</span>, result);</span><br></pre></td></tr></table></figure>
 
-<p> 就一行 await 即可。当执行到 await 时，由于 SayHelloInPending 需要等待 IO 完成，此时主线程不会阻塞在 await 这个地方，此时相当于调用了 Future 的 poll 方法，主线程发现是Pending于是跑去执行别的 aysnc 函数（即下一个 Task 的 Future）去了，等到 await 返回才又继续往下执行println（即这个 Task wake 方法调用了 sender 把 Task 放入队列继续给调度器执行）。这段代码后面的奥妙，正式本节讲的内容。</p>
+<p> 就一行 await 即可。当执行到 await 时，由于 SayHelloInPending 需要等待 IO 完成，此时主线程不会阻塞在 await 这个地方，此时相当于调用了 Future 的 poll 方法，主线程发现是Pending于是跑去执行别的 aysnc 函数（即下一个 Task 的 Future）去了，等到 await 返回才又继续往下执行println（即这个 Task wake 方法调用了 sender 把 Task 放入队列继续给调度器执行）。这段代码后面的奥妙，正是本节讲的内容。</p>
 <h2 id="遗留问题"><a href="#遗留问题" class="headerlink" title="遗留问题"></a>遗留问题</h2><p>前面提到了一些我们直接忽略的东西，比如：Pin 这个类型，Pin 到底是什么，为什么 Future 放入 Box 的时候要变成 Pin&lt;Box&lt;T&gt;&gt;，也即 BoxFuture 呢？下一节我们继续前进吧！</p>
 
       
