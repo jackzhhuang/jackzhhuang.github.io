@@ -6,16 +6,26 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="https://www.jackhuang.cc">
-  <title>Category: Blockchain | Jack 热爱积累与沉淀</title>
+  <title>挖矿与脚本校验 | Jack 热爱积累与沉淀</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="Jack 热爱积累与沉淀">
-<meta property="og:url" content="https://www.jackhuang.cc/categories/Blockchain/index.html">
+  <meta name="description" content="今天再讲讲挖矿和交易校验的一些细节。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="挖矿与脚本校验">
+<meta property="og:url" content="https://www.jackhuang.cc/2023/02/25/blockchain-mining/index.html">
 <meta property="og:site_name" content="Jack 热爱积累与沉淀">
+<meta property="og:description" content="今天再讲讲挖矿和交易校验的一些细节。">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://www.jackhuang.cc/svg/blockchain-verify-dealing.svg">
+<meta property="og:image" content="https://www.jackhuang.cc/svg/blockchain-key1.svg">
+<meta property="og:image" content="https://www.jackhuang.cc/svg/blockchain-key2.svg">
+<meta property="og:image" content="https://www.jackhuang.cc/svg/blockchain-key3.svg">
+<meta property="og:image" content="https://www.jackhuang.cc/svg/blockchain-key4.svg">
+<meta property="article:published_time" content="2023-02-25T08:18:12.000Z">
+<meta property="article:modified_time" content="2023-02-25T10:52:10.684Z">
 <meta property="article:author" content="Jack Huang">
 <meta property="article:tag" content="C&#x2F;C++,RUST,Python,Mysql,Linux,Database">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://www.jackhuang.cc/svg/blockchain-verify-dealing.svg">
   
     <link rel="alternative" href="/atom.xml" title="Jack 热爱积累与沉淀" type="application/atom+xml">
   
@@ -155,37 +165,115 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
+            <article id="post-blockchain-mining" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
   
+    <h1 class="article-title" itemprop="name">
+      挖矿与脚本校验
+    </h1>
   
-    
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2023" class="archive-year">2023</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2023/02/25/blockchain-mining/" class="archive-article-date">
+
+        
+        <a href="/2023/02/25/blockchain-mining/" class="archive-article-date">
   	<time datetime="2023-02-25T08:18:12.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-02-25</time>
 </a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2023/02/25/blockchain-mining/">挖矿与脚本校验</a>
-    </h1>
-  
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>今天再讲讲挖矿和交易校验的一些细节。</p>
+<span id="more"></span>
+<h2 id="矿池"><a href="#矿池" class="headerlink" title="矿池"></a>矿池</h2><p>区块链诞生之初，一般的电脑都可以参与挖矿，但现在一般人已经很难参与挖矿了，因为比特币价值很高了（虽然最近一直熊市），参与挖矿的竞争对手越来越多，算力越来越强，大部分区块都是由非常有实力的矿池挖出的，比如写这篇文章时，最近 24 小时的出块前六情况如下（数据来自：<a target="_blank" rel="noopener" href="https://www.blockchain.com/explorer/charts/pools">https://www.blockchain.com/explorer/charts/pools</a> ）：</p>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th><strong>Miner / Pool</strong></th>
+<th><strong>Percent</strong></th>
+<th><strong>Blocks Mined</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Foundry USA</td>
+<td>32.679%</td>
+<td>516</td>
+</tr>
+<tr>
+<td>AntPool</td>
+<td>18.049%</td>
+<td>285</td>
+</tr>
+<tr>
+<td>F2Pool</td>
+<td>15.453%</td>
+<td>244</td>
+</tr>
+<tr>
+<td>Binance Pool</td>
+<td>10.260%</td>
+<td>162</td>
+</tr>
+<tr>
+<td>ViaBTC</td>
+<td>8.043%</td>
+<td>127</td>
+</tr>
+<tr>
+<td>Unknown</td>
+<td>2.723%</td>
+<td>43</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>可以看到，Foundry USA 这个区块节点已经有 32.679% 的算力了。当算力接近 51% 的时候就相当于有了很大的区块控制权，这样和去中心化的初衷违背，一般会调整难度，使得难度下降，让其它节点更有可能抢到出块权（前面说过，挖矿的概率是独立的，即使算力很强，挖到矿的概率大家都是均等的，这样，降低难度可以让其它节点更有机会挖到矿）。</p>
+<p>另外，即使挖到矿，也有可能不会获得出块奖励，因为如前面所说，区块链有可能出现分叉，这样自己挖到的那个区块可能不是出于最长链中，导致被回滚，这样也降低了区块链被中心化的概率。</p>
+<h3 id="挖矿设备"><a href="#挖矿设备" class="headerlink" title="挖矿设备"></a>挖矿设备</h3><p>第一代挖矿设备就是我们的一般计算机，其主要是靠 CPU 挖矿，在竞争不激烈的时代这么做是没问题的。但随着比特币价值的上升，竞争激烈后，大家升级了挖矿硬件，由 CPU 升级为 GPU，即提高了并行计算的能力。但即使如此， GPU 毕竟是显卡设备，第三代设备则升级为专业的挖矿芯片设备 ASIC： application specific integrated circus。并且，大家也不再单独挖矿，而是以矿池的运作方式进行挖矿。</p>
+<h3 id="矿主和矿工"><a href="#矿主和矿工" class="headerlink" title="矿主和矿工"></a>矿主和矿工</h3><p>所谓矿池，即分为矿主和矿工，矿主主要维护一个全节点，而矿工作为轻节点则只做区块头部的哈希运算，当矿工挖到区块后，就告诉矿主，由矿主提交给区块链。矿池在获得出块奖励后，会给各个矿工一部分奖励。</p>
+<h4 id="激励矿工和防止划水"><a href="#激励矿工和防止划水" class="headerlink" title="激励矿工和防止划水"></a>激励矿工和防止划水</h4><p>那么，这么做会不会有划水矿工呢？矿主为了激励矿工尽可能的挖到区块，除了挖到目标区块以外，还会稍微降低区块的难度，即增大 target 值，并告诉矿工，只要能挖到越过这个降低难度的 target 值，即使最后没有挖到区块而是由其它矿工挖到的，那么也会享受到一部分奖励，这样，矿工就会尽可能的去挖新的区块，如果划水，那么因为没有越过矿主规定的 target 值，也就分不到奖励了。一般来说，矿工提交的次数越多，奖励也就越多。</p>
+<h4 id="防止矿工独自提交区块获得奖励"><a href="#防止矿工独自提交区块获得奖励" class="headerlink" title="防止矿工独自提交区块获得奖励"></a>防止矿工独自提交区块获得奖励</h4><p>矿工挖到矿后，有没有可能自己提交到区块链并获得出块奖励呢？自己提交到区块链是有可能的，但获得出块奖励却不行。因为矿主给到矿工的区块头是包含了 merkle tree 的根哈希值的，这个 merkle tree 中，包含了铸币交易，而铸币交易中，填写的收款人地址（即矿主的公钥哈希值）是矿主，因此矿工如果越过矿主提交到区块链，那么，出块奖励还是会给到矿主而不是矿工。</p>
+<h4 id="矿工攻击"><a href="#矿工攻击" class="headerlink" title="矿工攻击"></a>矿工攻击</h4><p>矿主之间会存在竞争，一种恶性竞争就是，一个矿主给另一个矿主派去大量无用的矿工，这些矿工只是拉那个矿主的后腿，即使挖到了矿也不会提交给矿主，导致矿主分配出去的任务无效。</p>
+<h2 id="交易校验"><a href="#交易校验" class="headerlink" title="交易校验"></a>交易校验</h2><p>这一小节我们讲一下区块链的交易校验细节。我们知道，区块链交易分为两种，一种是出块奖励，此时称为铸币交易，这种交易的比特币是凭空产生的，当然金额是周期性递减直到为0。一种是转账交易，即多对多的转账，此时我们需要交易金额，即最基本的：</p>
+<script type="math/tex; mode=display">
+上一笔交易的输出金额 = 本次交易的输入金额</script><p>简单来说即“输出 = 输入”。校验是依赖于脚本实现的，上一笔交易中，会指定输出脚本，而本次交易中，会指定输入脚本，分别依次执行输入脚本和输出脚本，脚本不报错则认为交易校验通过。</p>
+<p>一笔简单的交易画成图如下：</p>
+<p><img src="https://www.jackhuang.cc/svg/blockchain-verify-dealing.svg" alt="交易的校验"></p>
+<p>如上图，A 给 B 转账后，会输出 A 和 B 的余额，已经手续费等信息，同时还会有输出脚本，同样，B 转给 C时，会产生 B 的输入金额和撕咬签名，以及用于校验的输入脚本，区块链系统会依次执行输入脚本和输出脚本，只要不返回异常，那么交易就算通过了。</p>
+<p>交易校验主要分为三种：</p>
+<h3 id="P2PK-Pay-to-Public-Key"><a href="#P2PK-Pay-to-Public-Key" class="headerlink" title="P2PK (Pay to Public Key)"></a>P2PK (Pay to Public Key)</h3><p>这是最简单的一种，虽然现在已经很少用，但实际上确可以易于我们理解，其过程为：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">input script:</span><br><span class="line">	<span class="title function_ invoke__">PUSHDATA</span>(Sig)</span><br><span class="line">output script:</span><br><span class="line">	<span class="title function_ invoke__">PUSHDATA</span>(PubKey)</span><br><span class="line">	CHECKSIG</span><br></pre></td></tr></table></figure>
+<p>其只有三个步骤，第一个步骤即输入脚本的 PUSHDATA(Sig)，即把出钱方的私钥签名压入栈中，然后执行上一个交易的输入脚本第一条语句：PUSHDATA(PubKey)，即把上一个交易的输出方的公钥压入栈中，最后执行 CHECKSIG，即校验栈中的两个私钥签名和公钥是否匹配，若匹配则校验通过。</p>
+<p>可以看出，区块链的这个脚本执行和汇编代码原理很像，即把数据压入栈中，相当于后面调用的函数的参数，然后调用参数同时出栈与之关联的参数。</p>
+<h3 id="P2PKH-Pay-to-Public-Key-Hash"><a href="#P2PKH-Pay-to-Public-Key-Hash" class="headerlink" title="P2PKH (Pay to Public Key Hash)"></a>P2PKH (Pay to Public Key Hash)</h3><p>前面一种仅校验了出款方的私钥，设想，如果有一个恶意用户重放这笔交易，但公私钥签名是恶意用户的，但出款方地址是受害者的，那么 P2PK 方式是无法校验出来的。因此，输入脚本除了需要校验出款方的公私钥签名以外，还需要校验出款方的地址是否和输出脚本中的一致：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">input script:</span><br><span class="line">	<span class="title function_ invoke__">PUSHDATA</span>(Sig)</span><br><span class="line">	<span class="title function_ invoke__">PUSHDATA</span>(PubKey)</span><br><span class="line">output script:</span><br><span class="line">	DUP </span><br><span class="line">	HASH160 </span><br><span class="line">	<span class="title function_ invoke__">PUSHDATA</span>(PubKeyHash) </span><br><span class="line">	EQUALVERIFY </span><br><span class="line">	CHECKSIG</span><br></pre></td></tr></table></figure>
+<p>上面的代码中，首先执行输入脚本的 PUSHDATA(Sig) 将出款方的私钥签名压入栈中，然后 PUSHDATA(PubKey) 压入出款方的公钥。接着执行输出脚本的 DUP，DUP函数会把栈顶数据复制一份，即此时，栈如下：</p>
+<p><img src="https://www.jackhuang.cc/svg/blockchain-key1.svg" alt=""></p>
+<p>接着执行 HASH160，即把顶端的公钥进行哈希，而后 PUSHDATA(PubKeyHash) 压入出款方的公钥哈希，这里特别提示，公钥哈希即出款方的地址：</p>
+<p><img src="https://www.jackhuang.cc/svg/blockchain-key2.svg" alt=""></p>
+<p>EQUALVERIFY 指令则是将 栈顶的两个哈希值对比是否相等，即地址校验，成功后栈如下：</p>
+<p><img src="https://www.jackhuang.cc/svg/blockchain-key3.svg" alt=""></p>
+<p>因此，CHECKSIG 即校验公私钥签名完成校验。</p>
+<h3 id="P2SH-Pay-to-Script-Hash-和-P2PKH-结合"><a href="#P2SH-Pay-to-Script-Hash-和-P2PKH-结合" class="headerlink" title="P2SH (Pay to Script Hash) 和 P2PKH 结合"></a>P2SH (Pay to Script Hash) 和 P2PKH 结合</h3><p>P2SH 是在 P2PKH 的基础上增加了 redeem 脚本，即赎回脚本，稍微解释即：出款方在输出的时候会指定校验细节，这个细节写入redeem 脚本供下一次交易校验。简单来说，即想用使用出款方的钱，就必须满足上一次交易时出款方定下的规则，否则不予交易。例如这么一个场景，A 获得比特币时，在输出脚本的 redeem 脚本中指定要想使用 A 的余额，B 也要出钱，如此 redeem 脚本会校验 B 的私钥签名和地址。</p>
+<p>下面拿一个例子讲：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">redeemScript：</span><br><span class="line">	<span class="title function_ invoke__">PUSHDATA</span>(Sig_A)</span><br><span class="line">  <span class="title function_ invoke__">PUSHDATA</span>(Sig_B)</span><br><span class="line">  <span class="number">2</span></span><br><span class="line">	<span class="title function_ invoke__">PUSHDATA</span>(PubKey_B)</span><br><span class="line">  <span class="title function_ invoke__">PUSHDATA</span>(PubKey_A)</span><br><span class="line">  <span class="number">2</span></span><br><span class="line">	CHECKSIG</span><br><span class="line">input script:</span><br><span class="line">	<span class="title function_ invoke__">PUSHDATA</span>(serialized redeemScript)</span><br><span class="line">output script:</span><br><span class="line">	HASH160 </span><br><span class="line">	<span class="title function_ invoke__">PUSHDATA</span>(redeemScriptHash) </span><br><span class="line">	EQUAL</span><br></pre></td></tr></table></figure>
+<p>首先，从输入脚本开始，PUSHDATA(serialized redeemScript) 分别压入出款方的私钥签名和 redeem 脚本，然后 HASH160 将序列化后的 redeem 脚本做一次哈希，然后输出脚本的 PUSHDATA(redeemScriptHash) 指令也把自己的 redeem 脚本哈希压入栈：</p>
+<p><img src="https://www.jackhuang.cc/svg/blockchain-key4.svg" alt=""></p>
+<p>此时执行 EQUAL 就可以对比两个 redeem 是否一致，保证本次交易 redeem 的代码时执行出款方的意愿。完成后，进入 redeemScript片段，片段中即将 A 和 B 的私钥及公钥压入栈中，然后进行验签，其原理大致同前不再赘述，通过后交易校验即通过。</p>
+<h3 id="Proof-of-Burn"><a href="#Proof-of-Burn" class="headerlink" title="Proof of Burn"></a>Proof of Burn</h3><p>有一种特殊的输出脚本，它不管怎么样都会执行 RETURN 语句，这个语句会返回错误，也就是说，如果进行交易校验，那么一定会失败，也即校验不通过。相当于上一个交易的输出金额将无法使用。那么这种脚本有什么用呢？因为 RETURN 语句一定返回失败，因此，RETURN 语句后面的内容无论如何都无法执行，因此可以写入任何东西，例如，某人预测足球比赛的结果，他会把足球比赛的结果取哈希后写入输出脚本中，这个交易就相当于一个用来记一个不可篡改的信息的交易。当然，这样做的话，会给 UTXO 系统造成负担，毕竟， UTXO 是全节点所有的输出记录集合，如果大量写入这种无法使用的输出记录，那么 UTXO 会变得难以维护。</p>
 
-        <div class="article-info info-on-right">
-          
-          
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
 	<div class="article-category tagcloud">
 		<i class="icon-book icon"></i>
 		<ul class="article-tag-list">
@@ -198,132 +286,117 @@
 	</div>
 
 
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
         </div>
-        <div class="clearfix"></div>
-    </header>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//pan.baidu.com/share/qrcode?url=https://www.jackhuang.cc/2023/02/25/blockchain-mining/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
+
   
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2023/02/21/blockchain-target-network/" class="archive-article-date">
-  	<time datetime="2023-02-21T05:14:27.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-02-21</time>
-</a>
+<nav id="article-nav">
+  
+  
+    <a href="/2023/02/21/blockchain-target-network/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">区块链（三）：挖矿难度和网络部署</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
         </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2023/02/21/blockchain-target-network/">区块链（三）：挖矿难度和网络部署</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-          
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/Blockchain//" class="article-tag-list-link color1">Blockchain</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
+        
+        
+        <div class="toc-container tooltip-left">
+            <i class="icon-font icon-category"></i>
+            <div class="tooltip tooltip-east">
+                <span class="tooltip-item">
+                </span>
+                <span class="tooltip-content">
+                    <div class="toc-article">
+                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9F%BF%E6%B1%A0"><span class="toc-number">1.</span> <span class="toc-text">矿池</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8C%96%E7%9F%BF%E8%AE%BE%E5%A4%87"><span class="toc-number">1.1.</span> <span class="toc-text">挖矿设备</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%9F%BF%E4%B8%BB%E5%92%8C%E7%9F%BF%E5%B7%A5"><span class="toc-number">1.2.</span> <span class="toc-text">矿主和矿工</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%BF%80%E5%8A%B1%E7%9F%BF%E5%B7%A5%E5%92%8C%E9%98%B2%E6%AD%A2%E5%88%92%E6%B0%B4"><span class="toc-number">1.2.1.</span> <span class="toc-text">激励矿工和防止划水</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%98%B2%E6%AD%A2%E7%9F%BF%E5%B7%A5%E7%8B%AC%E8%87%AA%E6%8F%90%E4%BA%A4%E5%8C%BA%E5%9D%97%E8%8E%B7%E5%BE%97%E5%A5%96%E5%8A%B1"><span class="toc-number">1.2.2.</span> <span class="toc-text">防止矿工独自提交区块获得奖励</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%9F%BF%E5%B7%A5%E6%94%BB%E5%87%BB"><span class="toc-number">1.2.3.</span> <span class="toc-text">矿工攻击</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%A4%E6%98%93%E6%A0%A1%E9%AA%8C"><span class="toc-number">2.</span> <span class="toc-text">交易校验</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#P2PK-Pay-to-Public-Key"><span class="toc-number">2.1.</span> <span class="toc-text">P2PK (Pay to Public Key)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#P2PKH-Pay-to-Public-Key-Hash"><span class="toc-number">2.2.</span> <span class="toc-text">P2PKH (Pay to Public Key Hash)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#P2SH-Pay-to-Script-Hash-%E5%92%8C-P2PKH-%E7%BB%93%E5%90%88"><span class="toc-number">2.3.</span> <span class="toc-text">P2SH (Pay to Script Hash) 和 P2PKH 结合</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Proof-of-Burn"><span class="toc-number">2.4.</span> <span class="toc-text">Proof of Burn</span></a></li></ol></li></ol>
+                    </div>
+                </span>
+            </div>
         </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2023/02/18/blockchaion-protocol/" class="archive-article-date">
-  	<time datetime="2023-02-18T12:24:26.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-02-18</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2023/02/18/blockchaion-protocol/">区块链（二）：区块链的交易协议</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-          
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/Blockchain//" class="article-tag-list-link color1">Blockchain</a>
-        		</li>
-      		
-		</ul>
-	</div>
+        
+    </div>
+</aside>
 
 
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
+
   
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2023/02/12/block-chain-basic/" class="archive-article-date">
-  	<time datetime="2023-02-12T12:47:38.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-02-12</time>
-</a>
-        </div>
-    	 
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2023/02/12/block-chain-basic/">区块链（一）：基本结构</a>
-    </h1>
   
 
-        <div class="article-info info-on-right">
-          
-          
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/Blockchain//" class="article-tag-list-link color1">Blockchain</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-  
-    </div></section>
   
 
-    
+  
 
+  
 
 
           </div>
@@ -346,10 +419,10 @@
 	var yiliaConfig = {
 		mathjax: true,
 		isHome: false,
-		isPost: false,
+		isPost: true,
 		isArchive: false,
 		isTag: false,
-		isCategory: true,
+		isCategory: false,
 		open_in_new: false,
 		toc_hide_index: true,
 		root: "/",
