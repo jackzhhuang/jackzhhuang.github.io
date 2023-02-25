@@ -21,7 +21,7 @@
 <meta property="og:image" content="https://www.jackhuang.cc/svg/blockchain-key3.svg">
 <meta property="og:image" content="https://www.jackhuang.cc/svg/blockchain-key4.svg">
 <meta property="article:published_time" content="2023-02-25T08:18:12.000Z">
-<meta property="article:modified_time" content="2023-02-25T10:57:51.371Z">
+<meta property="article:modified_time" content="2023-02-25T11:01:29.933Z">
 <meta property="article:author" content="Jack Huang">
 <meta property="article:tag" content="C&#x2F;C++,RUST,Python,Mysql,Linux,Database">
 <meta name="twitter:card" content="summary">
@@ -264,6 +264,7 @@
 <p>首先，从输入脚本开始，PUSHDATA(serialized redeemScript) 分别压入出款方的私钥签名和 redeem 脚本，然后 HASH160 将序列化后的 redeem 脚本做一次哈希，然后输出脚本的 PUSHDATA(redeemScriptHash) 指令也把自己的 redeem 脚本哈希压入栈：</p>
 <p><img src="https://www.jackhuang.cc/svg/blockchain-key4.svg" alt=""></p>
 <p>此时执行 EQUAL 就可以对比两个 redeem 是否一致，保证本次交易 redeem 的代码时执行出款方的意愿。完成后，进入 redeemScript片段，片段中即将 A 和 B 的私钥及公钥压入栈中，然后进行验签，其原理大致同前不再赘述，通过后交易校验即通过。</p>
+<p>这里有一个小细节，即 redeem 脚本的哈希值，本次交易时，出款方只提供哈希值本身，因为收钱方无需关注 redemm 脚本的内容，因此他只会看到 redeem 脚本的哈希值，区块链系统会去上一次输出那里找到 redeem 内容来计算哈希值和执行里面的内容。</p>
 <h3 id="Proof-of-Burn"><a href="#Proof-of-Burn" class="headerlink" title="Proof of Burn"></a>Proof of Burn</h3><p>有一种特殊的输出脚本，它不管怎么样都会执行 RETURN 语句，这个语句会返回错误，也就是说，如果进行交易校验，那么一定会失败，也即校验不通过。相当于上一个交易的输出金额将无法使用。那么这种脚本有什么用呢？因为 RETURN 语句一定返回失败，因此，RETURN 语句后面的内容无论如何都无法执行，因此可以写入任何东西，例如，某人预测足球比赛的结果，他会把足球比赛的结果取哈希后写入输出脚本中，这个交易就相当于一个用来记一个不可篡改的信息的交易。当然，这样做的话，会给 UTXO 系统造成负担，毕竟， UTXO 是全节点所有的输出记录集合，如果大量写入这种无法使用的输出记录，那么 UTXO 会变得难以维护。</p>
 
       
