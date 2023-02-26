@@ -233,6 +233,85 @@
 
 
   
+    <article id="post-rust-pin" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2023/02/23/rust-pin/">Rust 异步编程（三）：Pin 详解</a>
+    </h1>
+  
+
+        
+        <a href="/2023/02/23/rust-pin/" class="archive-article-date">
+  	<time datetime="2023-02-22T16:58:13.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-02-23</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>本节不讲异步编程。但 Pin 最先出现的地方就是在我们使用 Future 的时候，因此放入 异步编程里面讲了。</p>
+<p>Pin 的确是一个很特殊的容器，官方文档和其它查到的资料实在晦涩难懂，即使看中文版我也觉得没有解释太清楚（可能自己笨）。还是那一句话，如果文档和各种资料都看不懂的话，那么，看源码就可以了。</p>
+<p>通过对源码的了解，Pin 却又是非常简单的容器，甚至可以这么说，它的特殊之处就是因为它比较简单。Pin 只是实现了这么一个特殊功能的容器：若发现 T 是一个 pinned struct，即禁止内存移动的结构体，则 Pin 禁止返回 &amp;mut T。</p>
+<p>下面，我们把官方文档拆开来讲，深入浅出的彻底搞懂 Pin 吧。</p>
+        
+          <a class="article-more-a" href="/2023/02/23/rust-pin/#more">more >></a>
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+	<div class="article-category tagcloud">
+		<i class="icon-book icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/Rust//" class="article-tag-list-link color5">Rust</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2023/02/23/rust-pin/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-blockchain-target-network" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -824,82 +903,6 @@
       
         <p class="article-more-link">
           <a class="article-more-a" href="/2023/01/31/rust-multiple-thread/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-rust-refcell" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2023/01/29/rust-refcell/">Rust的RefCell容器</a>
-    </h1>
-  
-
-        
-        <a href="/2023/01/29/rust-refcell/" class="archive-article-date">
-  	<time datetime="2023-01-29T13:43:59.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-01-29</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>前面讲了Box&lt;T&gt; 和 Rc&lt;T&gt; 两个指针容器，本节要讲的是 RefCell&lt;T&gt; ，和 Box&lt;T&gt; 一样，都是单所有权属性，且都可以维护可变资源，那么到底 RefCell&lt;T&gt; 和  Box&lt;T&gt;有什么不一样呢？</p>
-        
-          <a class="article-more-a" href="/2023/01/29/rust-refcell/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/Rust//" class="article-tag-list-link color5">Rust</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2023/01/29/rust-refcell/">展开全文 >></a>
         </p>
       
 

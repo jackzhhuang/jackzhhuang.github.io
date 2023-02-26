@@ -1,3 +1,4 @@
+https://www.jackhuang.cc/2023/02/23/rust-pin/
 https://www.jackhuang.cc/2023/02/25/blockchain-mining/
 https://www.jackhuang.cc/2023/02/21/blockchain-target-network/
 https://www.jackhuang.cc/2023/02/20/rust-futures/
