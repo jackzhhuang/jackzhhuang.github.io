@@ -11,12 +11,12 @@
   <meta name="description" content="本节不讲异步编程。但 Pin 最先出现的地方就是在我们使用 Future 的时候，因此放入 异步编程里面讲了。 Pin 的确是一个很特殊的容器，官方文档和其它查到的资料实在晦涩难懂，即使看中文版我也觉得没有解释太清楚（可能自己笨）。还是那一句话，如果文档和各种资料都看不懂的话，那么，看源码就可以了。 通过对源码的了解，Pin 却又是非常简单的容器，甚至可以这么说，它的特殊之处就是因为它比较简单。P">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Rust 异步编程（三）：Pin 详解">
-<meta property="og:url" content="https://www.jackhuang.cc/2023/02/23/rust-pin/index.html">
+<meta property="og:url" content="https://www.jackhuang.cc/2023/02/26/rust-pin/index.html">
 <meta property="og:site_name" content="Jack 热爱积累与沉淀">
 <meta property="og:description" content="本节不讲异步编程。但 Pin 最先出现的地方就是在我们使用 Future 的时候，因此放入 异步编程里面讲了。 Pin 的确是一个很特殊的容器，官方文档和其它查到的资料实在晦涩难懂，即使看中文版我也觉得没有解释太清楚（可能自己笨）。还是那一句话，如果文档和各种资料都看不懂的话，那么，看源码就可以了。 通过对源码的了解，Pin 却又是非常简单的容器，甚至可以这么说，它的特殊之处就是因为它比较简单。P">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2023-02-22T16:58:13.000Z">
-<meta property="article:modified_time" content="2023-02-26T08:05:00.754Z">
+<meta property="article:published_time" content="2023-02-26T08:07:13.000Z">
+<meta property="article:modified_time" content="2023-02-26T08:08:05.456Z">
 <meta property="article:author" content="Jack Huang">
 <meta property="article:tag" content="C&#x2F;C++,RUST,Python,Mysql,Linux,Database">
 <meta name="twitter:card" content="summary">
@@ -171,8 +171,8 @@
   
 
         
-        <a href="/2023/02/23/rust-pin/" class="archive-article-date">
-  	<time datetime="2023-02-22T16:58:13.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-02-23</time>
+        <a href="/2023/02/26/rust-pin/" class="archive-article-date">
+  	<time datetime="2023-02-26T08:07:13.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-02-26</time>
 </a>
         
       </header>
@@ -323,7 +323,7 @@
     <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//pan.baidu.com/share/qrcode?url=https://www.jackhuang.cc/2023/02/23/rust-pin/" alt="微信分享二维码">
+      <img src="//pan.baidu.com/share/qrcode?url=https://www.jackhuang.cc/2023/02/26/rust-pin/" alt="微信分享二维码">
     </div>
 </div>
 
@@ -337,18 +337,9 @@
   
 <nav id="article-nav">
   
-    <a href="/2023/02/25/blockchain-mining/" id="article-nav-newer" class="article-nav-link-wrap">
-      <i class="icon-circle-left"></i>
-      <div class="article-nav-title">
-        
-          区块链（四）：挖矿与脚本校验
-        
-      </div>
-    </a>
   
-  
-    <a href="/2023/02/21/blockchain-target-network/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">区块链（三）：挖矿难度和网络部署</div>
+    <a href="/2023/02/25/blockchain-mining/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">区块链（四）：挖矿与脚本校验</div>
       <i class="icon-circle-right"></i>
     </a>
   
