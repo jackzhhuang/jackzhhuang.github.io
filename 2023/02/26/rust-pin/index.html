@@ -16,7 +16,7 @@
 <meta property="og:description" content="本节不讲异步编程。但 Pin 最先出现的地方就是在我们使用 Future 的时候，因此放入 异步编程里面讲了。 Pin 的确是一个很特殊的容器，官方文档和其它查到的资料实在晦涩难懂，即使看中文版我也觉得没有解释太清楚（可能自己笨）。还是那一句话，如果文档和各种资料都看不懂的话，那么，看源码就可以了。 通过对源码的了解，Pin 却又是非常简单的容器，甚至可以这么说，它的特殊之处就是因为它比较简单。P">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2023-02-26T08:07:13.000Z">
-<meta property="article:modified_time" content="2023-02-26T08:27:33.906Z">
+<meta property="article:modified_time" content="2023-02-27T02:54:35.431Z">
 <meta property="article:author" content="Jack Huang">
 <meta property="article:tag" content="C&#x2F;C++,RUST,Python,Mysql,Linux,Database">
 <meta name="twitter:card" content="summary">
@@ -252,7 +252,7 @@
 <p>例如上面官方的例子，第四行会有 IO 阻塞，此时 poll（回忆上一节讲的，await 相当于调用了 poll 方法）返回 Pending，executor 收到返回值 Pending转去执行别的 Future 了，当 read_into_buf_fut 完成后，会重新被 send 进队列等待 executor 再次 poll 后继续执行第 5 行代码，此时上面的代码中，x 和第三行的 &amp;x 就相当于 self-reference，若没有 Pin，将会产生内存移动的坑。有了 Pin，内存移动就会像上一小节那样符合预期的进行移动。</p>
 <h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>1、Pin&lt;T&gt; 通过 trait bound 检查（new 和 get_mut 方法）或者返回新的 Pin 对象（as_mut 方法）来防止内存移动的坑；对于 pinned struct 结构产生编译报错，防止我们直接对 T 进行内存移动操作。</p>
 <p>2、由于 Pin 的封装，我们把 Pin&lt;T&gt; 看成一个整体移动内存的话，则符合预期；</p>
-<p>3、由于Pin 一方面阻止了 T 的内存移动bug，另一方面保证了 Pin&lt;T&gt; 可以符合预期的进行内存移动，因此，若出现 self-reference 的情况，我们应该用 Pin 封装一层，防止踩坑。</p>
+<p>3、由于Pin 一方面阻止了 T 的内存移动bug，另一方面保证了 Pin&lt;T&gt; 可以符合预期的进行内存移动，因此，若出现 self-reference 的情况，我们应该用 Pin 封装一层，并且在 struct 中使用 PhantomPinned 字段协助 Pin 防止踩坑。</p>
 <p>从上面的讨论可以看出， 尽管它的名字叫 Pin，Pin 并不是用来禁止内存移动的，而是保证内存移动能正常进行的类型。</p>
 
       
