@@ -1,4 +1,0 @@
-Sitemap: https://www.jackhuang.cc/sitemap.xml
-
-User-agent: *
-Disallow:
