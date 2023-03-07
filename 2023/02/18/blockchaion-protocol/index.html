@@ -19,8 +19,9 @@
 <meta property="og:image" content="https://www.jackhuang.cc/svg/blockchain-deal-verify-another.svg">
 <meta property="og:image" content="https://www.jackhuang.cc/svg/blockchain-fork.svg">
 <meta property="og:image" content="https://www.jackhuang.cc/svg/blockchain-fork-end.svg">
+<meta property="og:image" content="https://www.jackhuang.cc/svg/hardfork.svg">
 <meta property="article:published_time" content="2023-02-18T12:24:26.000Z">
-<meta property="article:modified_time" content="2023-03-07T16:10:23.257Z">
+<meta property="article:modified_time" content="2023-03-07T16:13:14.625Z">
 <meta property="article:author" content="Jack Huang">
 <meta property="article:tag" content="C&#x2F;C++,RUST,Python,Mysql,Linux,Database">
 <meta name="twitter:card" content="summary">
@@ -232,6 +233,7 @@
 <h3 id="硬分叉"><a href="#硬分叉" class="headerlink" title="硬分叉"></a>硬分叉</h3><p>硬分叉则是永久性的分叉，即区块链一分为二，一部分矿工升级程序，另一部分矿工不升级，导致两条区块都在增长，且由于新老程序不兼容，导致两边互不承认对方的分叉的区块链，久而久之，就永久分家了。</p>
 <p>这种情况一般是因为一些升级程序的规则没有统一导致的，比如，区块链的大小一般是 1 MB，这是因为区块链的传播是靠 flooding broadcast 的，即每一个节点向其它节点广播大量区块信息，小区块更容易传播，如果是大区块，则完整传播一个区块就相对比较耗时。但有些节点认为 1 MB还是太小了，会升级成更大的区块，这样区块链社区就分裂成了两个阵营，一个认为 1 MB 最合适，另一个认为可以调大一点，于是升级了程序，最终导致区块链永久性分叉。</p>
 <p>永久性分叉带来一个问题，就是如何解决 double spending，即 A 的输出是在原始链路上，由于硬分叉，那么就会出现一条链路 A 交易一次，另一条链路 A 也交易一次，那么 A 相当于余额变成了两倍，如图：</p>
+<p><img src="https://www.jackhuang.cc/svg/hardfork.svg" alt="硬分叉问题"></p>
 <p>从上图中可以看出，A 的钱给了 B 和 C 两次。为了防止这种情况发生，实际上，区块链会有一个 ID 号来标识区块，即如果出现硬分叉，那么，两边的区块信息由于 ID 不同，是互不承认的，相当于两条不同的区块链了。</p>
 
       
