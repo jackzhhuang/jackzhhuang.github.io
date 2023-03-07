@@ -20,7 +20,7 @@
 <meta property="og:image" content="https://www.jackhuang.cc/svg/blockchain-fork.svg">
 <meta property="og:image" content="https://www.jackhuang.cc/svg/blockchain-fork-end.svg">
 <meta property="article:published_time" content="2023-02-18T12:24:26.000Z">
-<meta property="article:modified_time" content="2023-02-20T07:49:28.485Z">
+<meta property="article:modified_time" content="2023-03-07T16:10:23.257Z">
 <meta property="article:author" content="Jack Huang">
 <meta property="article:tag" content="C&#x2F;C++,RUST,Python,Mysql,Linux,Database">
 <meta name="twitter:card" content="summary">
@@ -186,7 +186,6 @@
       
         <p>本节主要讲区块链的交易协议细节，即一笔交易是如何写入区块链的交易数据中的。</p>
 <span id="more"></span>
-
 <h2 id="去中心化的交易需要解决的问题"><a href="#去中心化的交易需要解决的问题" class="headerlink" title="去中心化的交易需要解决的问题"></a>去中心化的交易需要解决的问题</h2><p>我们先看看中心化的交易是怎么样的。中心化的交易，货币是靠央行发行的，发行货币和发行多少货币一切都是它说的算，交易的清结算也是以它的账簿为准，任何交易数据只要写进它的账簿那么就是生效的。相比下，去中心化的交易系统因此有两个问题需要解决：</p>
 <p>1、如何发行货币；</p>
 <p>2、交易怎么进行才能做到可信。</p>
@@ -210,7 +209,7 @@
 <p>4、付款方的公钥能验证交易签名。</p>
 <p>校验通过后，交易信息将被写到区块中，交易就正式生效。如果此后 B 要转账给 D 和 E，那么同样也会进行上面的操作，画成图形，看起来像这这样：</p>
 <p><img src="https://www.jackhuang.cc/svg/blockchain-deal-verify-another.svg" alt="再一次交易"></p>
-<p>由此可见，每一次交易，都有输入和输出双方，每一个输入都是上某次的输出，每一个输出都是下某次的输入，这样就保证的“输入 &#x3D; 输出” ，账目是平的。</p>
+<p>由此可见，每一次交易，都有输入和输出双方，每一个输入都是上某次的输出，每一个输出都是下某次的输入，这样就保证的“输入 = 输出” ，账目是平的。</p>
 <h2 id="记账权的争夺——共识机制"><a href="#记账权的争夺——共识机制" class="headerlink" title="记账权的争夺——共识机制"></a>记账权的争夺——共识机制</h2><p>以上，当然会有不少问题，即，因为任何人都可以往区块链写入交易数据，那么，</p>
 <p>1、到底谁去做这个写入操作呢？</p>
 <p>2、如果大家都写，那么势必会造成数据不一致，如果数据不一致了，那么又怎么做到以谁写入的为准呢？</p>
@@ -228,6 +227,12 @@
 <p>对于这种想在中间插入的动作，由于其比较短，因此会被认为是孤儿节点（orphan block），这样的孤儿节点是不会被接受的。采用最长的分叉区块链是防止恶意用户插入恶意节点的方法。那么等长的插入呢？即同时都想往区块链中的最后一个节点插入新的区块，比如下图两个红色节点都想往最后一个黄色插入：</p>
 <p><img src="https://www.jackhuang.cc/svg/blockchain-fork-end.svg" alt="等长区块插入"></p>
 <p>此时就属于分布式事务中的未决事务，即只能同时存在两个交易数据，那么什么时候能解决这个分叉呢？一般认为，某一个分叉后有超过 6 个区块节点，则认为另一个分叉的区块无法再超越它，因此短的分叉将会被大家舍弃掉（这种结论，是基于概率学得出来的，实际上，世界上没有 100% 能保证事务最终一致的设计，或者说数学上无法证明某个算法设计能 100% 保证数据最终一致，但实际经验告诉我们反超概率趋近于 0 的设计是可靠的），因此，区块链交易时，收入方会等待 6 个节点确认写入（只需要一小时的时间，因为区块的写入难度控制在每 10 分钟一个区块）或 T + 1日后，即保证交易已经写入区块链中且有了足够长的深度才会放心发货给出款方，这种在交易数额很大的时候会比较常见。</p>
+<h3 id="软分叉"><a href="#软分叉" class="headerlink" title="软分叉"></a>软分叉</h3><p>由上面可以看出，区块链分叉主要有两种形态，其中之一即为软分叉，即临时分叉。分叉除了可能是因为恶意节点攻击产生的意外，更多是因为各个矿工在竞争而引起的，这是区块链的常态，以太坊由于产生区块的频率更高，分叉的几率更大。</p>
+<p>产生软分叉的原因一般是因为区块链程序升级，大部分节点升级成新节点后，挖出来的区块都会集中在新区块节点链条上，这样新节点的区块链足够长的时候，另一条旧节点分叉就会被废除，挖到被废除的分叉得不到承认，因此无法获得出块奖励，此时被废除的节点矿工会主动升级程序以挖到新的区块。</p>
+<h3 id="硬分叉"><a href="#硬分叉" class="headerlink" title="硬分叉"></a>硬分叉</h3><p>硬分叉则是永久性的分叉，即区块链一分为二，一部分矿工升级程序，另一部分矿工不升级，导致两条区块都在增长，且由于新老程序不兼容，导致两边互不承认对方的分叉的区块链，久而久之，就永久分家了。</p>
+<p>这种情况一般是因为一些升级程序的规则没有统一导致的，比如，区块链的大小一般是 1 MB，这是因为区块链的传播是靠 flooding broadcast 的，即每一个节点向其它节点广播大量区块信息，小区块更容易传播，如果是大区块，则完整传播一个区块就相对比较耗时。但有些节点认为 1 MB还是太小了，会升级成更大的区块，这样区块链社区就分裂成了两个阵营，一个认为 1 MB 最合适，另一个认为可以调大一点，于是升级了程序，最终导致区块链永久性分叉。</p>
+<p>永久性分叉带来一个问题，就是如何解决 double spending，即 A 的输出是在原始链路上，由于硬分叉，那么就会出现一条链路 A 交易一次，另一条链路 A 也交易一次，那么 A 相当于余额变成了两倍，如图：</p>
+<p>从上图中可以看出，A 的钱给了 B 和 C 两次。为了防止这种情况发生，实际上，区块链会有一个 ID 号来标识区块，即如果出现硬分叉，那么，两边的区块信息由于 ID 不同，是互不承认的，相当于两条不同的区块链了。</p>
 
       
 
@@ -349,7 +354,7 @@
                 </span>
                 <span class="tooltip-content">
                     <div class="toc-article">
-                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8E%BB%E4%B8%AD%E5%BF%83%E5%8C%96%E7%9A%84%E4%BA%A4%E6%98%93%E9%9C%80%E8%A6%81%E8%A7%A3%E5%86%B3%E7%9A%84%E9%97%AE%E9%A2%98"><span class="toc-number">1.</span> <span class="toc-text">去中心化的交易需要解决的问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8C%BA%E5%9D%97%E9%93%BE%E4%B8%AD%E7%9A%84%E4%BA%A4%E6%98%93%E8%BF%87%E7%A8%8B"><span class="toc-number">2.</span> <span class="toc-text">区块链中的交易过程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AE%B0%E8%B4%A6%E6%9D%83%E7%9A%84%E4%BA%89%E5%A4%BA%E2%80%94%E2%80%94%E5%85%B1%E8%AF%86%E6%9C%BA%E5%88%B6"><span class="toc-number">3.</span> <span class="toc-text">记账权的争夺——共识机制</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%93%B8%E5%B8%81%E4%BA%A4%E6%98%93"><span class="toc-number">4.</span> <span class="toc-text">铸币交易</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8C%BA%E5%9D%97%E9%93%BE%E7%9A%84%E5%88%86%E5%8F%89"><span class="toc-number">5.</span> <span class="toc-text">区块链的分叉</span></a></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8E%BB%E4%B8%AD%E5%BF%83%E5%8C%96%E7%9A%84%E4%BA%A4%E6%98%93%E9%9C%80%E8%A6%81%E8%A7%A3%E5%86%B3%E7%9A%84%E9%97%AE%E9%A2%98"><span class="toc-number">1.</span> <span class="toc-text">去中心化的交易需要解决的问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8C%BA%E5%9D%97%E9%93%BE%E4%B8%AD%E7%9A%84%E4%BA%A4%E6%98%93%E8%BF%87%E7%A8%8B"><span class="toc-number">2.</span> <span class="toc-text">区块链中的交易过程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AE%B0%E8%B4%A6%E6%9D%83%E7%9A%84%E4%BA%89%E5%A4%BA%E2%80%94%E2%80%94%E5%85%B1%E8%AF%86%E6%9C%BA%E5%88%B6"><span class="toc-number">3.</span> <span class="toc-text">记账权的争夺——共识机制</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%93%B8%E5%B8%81%E4%BA%A4%E6%98%93"><span class="toc-number">4.</span> <span class="toc-text">铸币交易</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8C%BA%E5%9D%97%E9%93%BE%E7%9A%84%E5%88%86%E5%8F%89"><span class="toc-number">5.</span> <span class="toc-text">区块链的分叉</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BD%AF%E5%88%86%E5%8F%89"><span class="toc-number">5.1.</span> <span class="toc-text">软分叉</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A1%AC%E5%88%86%E5%8F%89"><span class="toc-number">5.2.</span> <span class="toc-text">硬分叉</span></a></li></ol></li></ol>
                     </div>
                 </span>
             </div>
