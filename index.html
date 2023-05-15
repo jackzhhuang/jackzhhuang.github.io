@@ -157,6 +157,131 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-concurrency-basic" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2023/04/16/concurrency-basic/">并发开发模型（一） —— 基本并发模型</a>
+    </h1>
+  
+
+        
+        <a href="/2023/04/16/concurrency-basic/" class="archive-article-date">
+  	<time datetime="2023-04-16T10:46:39.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-04-16</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="前置概念"><a href="#前置概念" class="headerlink" title="前置概念"></a>前置概念</h2><h3 id="并发与并行"><a href="#并发与并行" class="headerlink" title="并发与并行"></a>并发与并行</h3><p>并发，英文 concurrency，直译就是同时发生。并行，parallelism，直译就是平行。所以虽然一字之差，意思却是不同的，但也很好理解，前者是同时发生，后者是一起做事情。</p>
+<p>最简单的比喻就是肯德基点餐场景——几个顾客同时点餐，服务员们一个准备汉堡，一个准备咖啡。顾客同时点餐就是并发，服务员们分工去满足顾客就是并行。</p>
+<p>有了清楚的认识并行并发概念后，在处理异步问题的时，应该考虑，我们是解决了并行问题，还是解决了并发问题亦或都能解决？</p>
+<p>当然，为了不啰嗦或者咬文嚼字，偶尔我们可能会只用“并发”或者“并行”来代表“并发和并行”两个概念。</p>
+<h3 id="从大到小的并发场景"><a href="#从大到小的并发场景" class="headerlink" title="从大到小的并发场景"></a>从大到小的并发场景</h3><p>我们先从小到大的看一下我们都会遇到什么样的并行场景。</p>
+<h4 id="位级并行"><a href="#位级并行" class="headerlink" title="位级并行"></a>位级并行</h4><p>即 8 位或者 16 位等基本指令位数，例如相对于 8 位的 CUP，64 位的CPU 可以一次并行处理 8 个 8 位的数字。</p>
+<h4 id="指令级并行"><a href="#指令级并行" class="headerlink" title="指令级并行"></a>指令级并行</h4><p>CPU 执行指令的时候实际上会预先判断后续分支，先把可能的分支给执行了：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> number = <span class="number">0</span>;</span><br><span class="line"><span class="type">bool</span> is_set = <span class="literal">false</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">set_number</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  number = <span class="number">99</span>;</span><br><span class="line">  is_set = <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">check_number</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (is_set) &#123;</span><br><span class="line">    <span class="built_in">print</span>(number);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="built_in">start_thread</span>(set_number);</span><br><span class="line"><span class="built_in">start_thread</span>(check_number);</span><br></pre></td></tr></table></figure>
+<p> 上述伪代码中，check_number 有可能优先执行，且因为 is_set 和 number 没有必然的逻辑联系， CPU 可能会异步执行第 5 和第 6 行代码，即可能先执行 <em>is_set = true</em> ，因此 CPU 会先看到 is_set 是 true 了，然后打印 number 值，因此，有可能会输出：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">0</span></span><br></pre></td></tr></table></figure>
+<p>这就是指令集的并行优化。</p>
+<h4 id="任务级并行"><a href="#任务级并行" class="headerlink" title="任务级并行"></a>任务级并行</h4><p>即每个 CPU 或者每台服务器并行处理。</p>
+<p>CPU，cache 和内存的并行：</p>
+<p><img src="https://www.jackhuang.cc/svg/concurrency-memeory-cpu.drawio.svg" alt="CPU, cache 和 内存"></p>
+<p>网络各台服务器其实也是一个特大型计算机，它们的结构和计算机内部有点相似：</p>
+<p><img src="https://www.jackhuang.cc/svg/concurrency-network-task.svg" alt="网络的并行任务"></p>
+<h3 id="学习的过程应该考虑什么问题"><a href="#学习的过程应该考虑什么问题" class="headerlink" title="学习的过程应该考虑什么问题"></a>学习的过程应该考虑什么问题</h3><p>市面上五花八门的并行（并发）模型，几乎每个人都有他们看家秘诀去解决各种并行并发问题，但软件没有银弹，没有灵丹妙药，因此，过去，现在和将来，无论遇到什么并发模型，都应该谨慎而不是直接拥抱，每一种模型都一定是一种取舍方案，我们获得了什么好处，由此带来什么问题都应该考虑到，因此，我们学习完一个并发模型，都应该考虑：</p>
+<p>1、这个模型解决了并发还是并行还是都解决了？</p>
+<p>2、这个模型属于上述三级的哪个架构？</p>
+<p>3、这个模型是否有利于写出容错性强货解决分布式问题的代码？</p>
+<h2 id="锁与线程"><a href="#锁与线程" class="headerlink" title="锁与线程"></a>锁与线程</h2><h3 id="简单锁"><a href="#简单锁" class="headerlink" title="简单锁"></a>简单锁</h3><p>我们最常见的就是使用一把锁来控制资源的访问，例如：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> number = <span class="number">0</span>;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">incr_number</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  ++number;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">get_number</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> number;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">loop_incr_number</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  <span class="keyword">while</span> (<span class="built_in">get_number</span>() &lt; <span class="number">100</span>) &#123;</span><br><span class="line">    <span class="built_in">incr_number</span>();</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">check_large_number</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  <span class="keyword">while</span> (<span class="built_in">get_number</span>() &gt;= <span class="number">100</span>) &#123;</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;it is large than 100&quot;</span>);</span><br><span class="line">    <span class="keyword">break</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="built_in">start_thread</span>(<span class="built_in">loop_incr_number</span>());</span><br><span class="line"><span class="built_in">start_thread</span>(<span class="built_in">check_large_number</span>());</span><br></pre></td></tr></table></figure>
+<p>我们的本意是，一个线程增加 number，另一个线程看 number 是否大于等 100，满足条件后，第一个线程退出，第二个线程打印 “it is large than 100” 后也退出。</p>
+<p>目前看似乎这么写没什么问题。但有人会问：为什么第 11 行和第 17 行要写成不等式而不是等式呢？</p>
+<p>这就是前面说的，我们在处理多线程问题的时候，需要做到易于写出难以写错的代码，即使写错了，也要让错误尽早的暴露出来。这里，使用不等号就是为了防止当有多个线程调用 incr_number 时，while (get_number() != 100) 将有可能进入死循。</p>
+<p>因为假设 A 和 B 线程都调用 loop_incr_number，它们都通过 while (get_number() != 100) 的检查，此时假如 number 为 99，那么，A 和 B 都要去调用 incr_number，最后将可能导致 number 为 101。此时，while (get_number() != 100) 不可能再会满足，AB 线程都要进入死循环。</p>
+<p>是的，我们的代码对使用方没有任何限制，使用方可能会用多个线程来调用我们的 loop_incr_number，我们作为 loop_incr_number 的设计方，应该有所设计，而不能仅仅只是在文档上写出 —— 这个函数不允许多个线程调用（虽然我知道早期 C 函数有这样的做法，但这个不是挡箭牌。）</p>
+<p>那么，是不是使用不等号就没问题了呢？也未必。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">incr_number</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  ++number;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面的代码中，number 可能因为线程 cache 的原因，导致若有两个线程都在跑 incr_number 函数的话，可能前一个函数的结果被后一个函数的结果覆盖的情况。细节是，每一个线程都有自己的 cache，若第一个线程 number 的 cache 是 10，第二个也是 10，第一个线程执行 ++，变为 11，第二个也因为是 10 执行 ++，结果也是 11，那么最后虽然两个线程执行了两次 ++，但结果却是 11。</p>
+<p>为了告诉线程， number 是有多线程访问的，不要使用 cache 优化，需要给 incr_number 函数加锁：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="keyword">synchronized</span> <span class="title">incr_number</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  ++number;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>看上去对写操作进行加锁操作就可以了，但若读操作若不加锁，也是会被 cache 影响，所以，即使是读操作，也应该加上同步锁：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="keyword">synchronized</span> <span class="title">get_number</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> number;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p> 这时，loop_incr_number 和 check_large_number 应该都不会有问题了，但使用 synchronized 这样的基于代码的锁是非常有局限性的，因为它不能主动解锁，实际上最好使用 mutex 这样的：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">incr_number</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  mutex.<span class="built_in">lock</span>();</span><br><span class="line">  ++number;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">get_number</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  mutex.<span class="built_in">lock</span>();</span><br><span class="line">  <span class="keyword">return</span> number;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面的 mutex 用 RAII 的管理锁方式去加锁，可以主动释放锁。使用 mutex 的好处是可以探测是否会被阻塞，从而减少了死锁的风险：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">bool</span> <span class="title">incr_number</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  Lock lock = mutex.<span class="built_in">trylock</span>();</span><br><span class="line">  <span class="keyword">if</span> (!lock) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  ++number;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">get_number</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  Lock lock = mutex.<span class="built_in">trylock</span>();</span><br><span class="line">  <span class="keyword">if</span> (!lock) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> number;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="built_in">start_thread</span>(incr_number);</span><br><span class="line"><span class="built_in">start_thread</span>(get_number);</span><br></pre></td></tr></table></figure>
+<p>使用 trylock 可以给我们机会探测是否加锁成功。 相比最开始的 synchronize 就灵活很多。</p>
+<h3 id="两个锁引起的死锁"><a href="#两个锁引起的死锁" class="headerlink" title="两个锁引起的死锁"></a>两个锁引起的死锁</h3><p>一般来说，一个资源就需要一把锁，若两个资源，那么就需要两把锁来控制对它们的访问：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">bool</span> is_set = <span class="literal">false</span>;</span><br><span class="line"><span class="type">int</span> number = <span class="number">10</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">check</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  mutex_number.<span class="built_in">lock</span>();</span><br><span class="line">  number++;</span><br><span class="line">  mutex_is_set.<span class="built_in">lock</span>();</span><br><span class="line">  is_set = <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">print</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  mutex_is_set.<span class="built_in">lock</span>();</span><br><span class="line">  <span class="keyword">if</span> (is_set) &#123;</span><br><span class="line">    mutex_number.<span class="built_in">lock</span>();</span><br><span class="line">    <span class="built_in">print</span>(number)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">start_thread</span>(check);</span><br><span class="line"><span class="built_in">start_thread</span>(print);</span><br></pre></td></tr></table></figure>
+<p>上面的伪代码中，严格遵循了一个资源一把锁的原则，这当然是好的，但 check 和 print 加锁顺序正好相法，若两个线程各跑一个函数，极有可能造成死锁：check 线程获得了 mutex_number 锁，等 mutex_is_set，而 print 线程获得了 mutex_is_set 锁，等 mutex_number 锁，两边互等。</p>
+<p>当然可以用 trylock 的方式避免，但这样相当于加大了失败的概率，有一定的损耗。</p>
+<h3 id="好的并发编程建议"><a href="#好的并发编程建议" class="headerlink" title="好的并发编程建议"></a>好的并发编程建议</h3><p>以上算是简单的过了一遍使用简单锁和原始线程函数来解决问题的流程。可以看到，在实践编程中，若使用原始的锁和线程，往往会滋生很多潜在的危险：</p>
+<p>1、加锁没有考虑全面，造成出现由于 cache 优化的机制而有幻读的风险；</p>
+<p>2、使用 synchronize 这样的锁缺少灵活性；</p>
+<p>3、两个线程加锁顺序的不一致造成死锁。</p>
+<p>因此，一般情况下，尤其是应对复杂编程上下文环境时，不建议直接使用语言提供的原生 API 接口进行加锁和生成线程。应该使用有保障，封装优秀的并发编程库。</p>
+<p>此外，跑线程加锁这样的事情应该有章法可循。这里引入最经典最简单的模型：生产者和消费者模型。一方面标准化并发模型，另一方面杜绝了以上讨论到的坑点：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> number = <span class="number">10</span>;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">check</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  producer.<span class="built_in">lock</span>();</span><br><span class="line">  nunmber++;</span><br><span class="line">  producer.<span class="built_in">send</span>(number);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">print</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  consumer.<span class="built_in">lock</span>();</span><br><span class="line">  <span class="type">int</span> number = consumer.<span class="built_in">receive</span>();</span><br><span class="line">  <span class="built_in">print</span>(number);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以看到，原来简单使用 mutex 来做同步控制，现在使用了生产者-消费者（producer- consumer）来同步，其和原来最本质区别是，number 这个对象不再是两个函数共享，而是彻底解藕。这种编程模型相比使用原生的锁和线程来控制，更易于理解，维护，当然也就容易避免了潜在的 cache 优化和死锁问题。</p>
+<p>当然，不管怎么样，异步编程都是有潜在的死锁问题的。生产者消费者模型并不是灵丹妙药，我们还是要注意逻辑上的死锁问题。</p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+	<div class="article-category tagcloud">
+		<i class="icon-book icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/Concurrency//" class="article-tag-list-link color2">Concurrency</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2023/04/16/concurrency-basic/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-rust-pin" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -827,82 +952,6 @@
       
         <p class="article-more-link">
           <a class="article-more-a" href="/2023/02/03/rust-advance/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-rust-multiple-thread" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2023/01/31/rust-multiple-thread/">无惧并发</a>
-    </h1>
-  
-
-        
-        <a href="/2023/01/31/rust-multiple-thread/" class="archive-article-date">
-  	<time datetime="2023-01-31T09:46:41.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-01-31</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>前面所有的例子，都是单线程的，现在我们来看看 Rust 都提供了什么多线程能力。</p>
-        
-          <a class="article-more-a" href="/2023/01/31/rust-multiple-thread/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/Rust//" class="article-tag-list-link color5">Rust</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2023/01/31/rust-multiple-thread/">展开全文 >></a>
         </p>
       
 

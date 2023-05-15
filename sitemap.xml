@@ -2,6 +2,15 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://www.jackhuang.cc/2023/04/16/concurrency-basic/</loc>
+    
+    <lastmod>2023-05-15</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://www.jackhuang.cc/2023/02/18/blockchaion-protocol/</loc>
     
     <lastmod>2023-03-07</lastmod>
@@ -274,7 +283,7 @@
 
   <url>
     <loc>https://www.jackhuang.cc/</loc>
-    <lastmod>2023-05-13</lastmod>
+    <lastmod>2023-05-15</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
@@ -284,28 +293,35 @@
   
   <url>
     <loc>https://www.jackhuang.cc/categories/Rust/</loc>
-    <lastmod>2023-05-13</lastmod>
+    <lastmod>2023-05-15</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://www.jackhuang.cc/categories/%E6%83%B3%E6%B3%95/</loc>
-    <lastmod>2023-05-13</lastmod>
+    <lastmod>2023-05-15</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://www.jackhuang.cc/categories/C/</loc>
-    <lastmod>2023-05-13</lastmod>
+    <lastmod>2023-05-15</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>https://www.jackhuang.cc/categories/Blockchain/</loc>
-    <lastmod>2023-05-13</lastmod>
+    <lastmod>2023-05-15</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.jackhuang.cc/categories/Concurrency/</loc>
+    <lastmod>2023-05-15</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
