@@ -2,6 +2,33 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://www.jackhuang.cc/2023/02/10/rust-futures-basic-concept/</loc>
+    
+    <lastmod>2023-05-31</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.jackhuang.cc/2023/02/26/rust-pin/</loc>
+    
+    <lastmod>2023-05-31</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.jackhuang.cc/2023/02/20/rust-futures/</loc>
+    
+    <lastmod>2023-05-31</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://www.jackhuang.cc/2023/04/16/concurrency-basic/</loc>
     
     <lastmod>2023-05-31</lastmod>
@@ -14,15 +41,6 @@
     <loc>https://www.jackhuang.cc/2023/02/18/blockchaion-protocol/</loc>
     
     <lastmod>2023-03-07</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://www.jackhuang.cc/2023/02/26/rust-pin/</loc>
-    
-    <lastmod>2023-02-27</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -47,15 +65,6 @@
   </url>
   
   <url>
-    <loc>https://www.jackhuang.cc/2023/02/20/rust-futures/</loc>
-    
-    <lastmod>2023-02-21</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
     <loc>https://www.jackhuang.cc/about/index.html</loc>
     
     <lastmod>2023-02-18</lastmod>
@@ -68,15 +77,6 @@
     <loc>https://www.jackhuang.cc/2023/02/12/block-chain-basic/</loc>
     
     <lastmod>2023-02-17</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://www.jackhuang.cc/2023/02/10/rust-futures-basic-concept/</loc>
-    
-    <lastmod>2023-02-12</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -321,6 +321,13 @@
   
   <url>
     <loc>https://www.jackhuang.cc/categories/Concurrency/</loc>
+    <lastmod>2023-05-31</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.jackhuang.cc/categories/Rust/Concurrency/</loc>
     <lastmod>2023-05-31</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
