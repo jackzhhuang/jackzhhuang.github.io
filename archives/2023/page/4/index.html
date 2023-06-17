@@ -6,17 +6,13 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="https://www.jackhuang.cc">
-  <title>Rust的RefCell容器 | Jack 热爱积累与沉淀</title>
+  <title>Archives: 2023 | Jack 热爱积累与沉淀</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="前面讲了Box&lt;T&gt; 和 Rc&lt;T&gt; 两个指针容器，本节要讲的是 RefCell&lt;T&gt; ，和 Box&lt;T&gt; 一样，都是单所有权属性，且都可以维护可变资源，那么到底 RefCell&lt;T&gt; 和  Box&lt;T&gt;有什么不一样呢？">
-<meta property="og:type" content="article">
-<meta property="og:title" content="Rust的RefCell容器">
-<meta property="og:url" content="https://www.jackhuang.cc/2023/01/29/rust-refcell/index.html">
+  <meta property="og:type" content="website">
+<meta property="og:title" content="Jack 热爱积累与沉淀">
+<meta property="og:url" content="https://www.jackhuang.cc/archives/2023/page/4/index.html">
 <meta property="og:site_name" content="Jack 热爱积累与沉淀">
-<meta property="og:description" content="前面讲了Box&lt;T&gt; 和 Rc&lt;T&gt; 两个指针容器，本节要讲的是 RefCell&lt;T&gt; ，和 Box&lt;T&gt; 一样，都是单所有权属性，且都可以维护可变资源，那么到底 RefCell&lt;T&gt; 和  Box&lt;T&gt;有什么不一样呢？">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2023-01-29T13:43:59.000Z">
-<meta property="article:modified_time" content="2023-02-05T02:51:15.274Z">
 <meta property="article:author" content="Jack Huang">
 <meta property="article:tag" content="C&#x2F;C++,RUST,Python,Mysql,Linux,Database">
 <meta name="twitter:card" content="summary">
@@ -165,271 +161,65 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-rust-refcell" class="article article-type-post " itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
+            
   
-    <h1 class="article-title" itemprop="name">
-      Rust的RefCell容器
+  
+    
+    
+      
+      
+      <section class="archives-wrap">
+        <div class="archive-year-wrap">
+          <a href="/archives/2023" class="archive-year">2023</a>
+        </div>
+        <div class="archives">
+    
+    <article class="archive-article archive-type-post">
+  <div class="archive-article-inner">
+    <header class="archive-article-header">
+      	<div class="article-meta">
+	      	<a href="/2023/01/01/%E6%9F%A5%E7%9C%8B%E7%B1%BB%E5%9E%8B/" class="archive-article-date">
+  	<time datetime="2023-01-01T06:33:22.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-01-01</time>
+</a>
+        </div>
+    	 
+  
+    <h1 itemprop="name">
+      <a class="archive-article-title" href="/2023/01/01/%E6%9F%A5%E7%9C%8B%E7%B1%BB%E5%9E%8B/">C++查看类型</a>
     </h1>
   
 
-        
-        <a href="/2023/01/29/rust-refcell/" class="archive-article-date">
-  	<time datetime="2023-01-29T13:43:59.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-01-29</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>前面讲了Box&lt;T&gt; 和 Rc&lt;T&gt; 两个指针容器，本节要讲的是 RefCell&lt;T&gt; ，和 Box&lt;T&gt; 一样，都是单所有权属性，且都可以维护可变资源，那么到底 RefCell&lt;T&gt; 和  Box&lt;T&gt;有什么不一样呢？</p>
-<span id="more"></span>
-
-<h2 id="RefCell-lt-T-gt-和-Box-lt-T-gt-的区别"><a href="#RefCell-lt-T-gt-和-Box-lt-T-gt-的区别" class="headerlink" title="RefCell&lt;T&gt; 和 Box&lt;T&gt; 的区别"></a>RefCell&lt;T&gt; 和 Box&lt;T&gt; 的区别</h2><p>Rust 的优点（可能也是别人认为的缺点）就是尽可能的在编译时发现问题，令有可能产生问题的代码编译失败，强迫程序员按照既定的规则写代码，从而保证高质量代码。</p>
-<p>例如，Rust 有一条规则：引用一个资源，要么是可变且只允许一个可变引用，要么是不可变的但可以多个不可变引用，决不允许同时存在对一个资源进行可变引用和不可变引用：</p>
-<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#[derive(Debug)]</span></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">Person</span> &#123;</span><br><span class="line">    age: <span class="type">i32</span>,</span><br><span class="line">    name: <span class="type">String</span>,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">a</span> = Person &#123;</span><br><span class="line">        age: <span class="number">100</span>,</span><br><span class="line">        name: <span class="type">String</span>::<span class="title function_ invoke__">from</span>(<span class="string">&quot;jack&quot;</span>),</span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">b</span> = &amp;a;</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">c</span> = &amp;<span class="keyword">mut</span> a;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;b = &#123;:?&#125;, c = &#123;:?&#125;&quot;</span>, b, c);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>编译会产生失败：</p>
-<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">   |</span><br><span class="line"><span class="number">10</span> |     <span class="keyword">let</span> <span class="variable">b</span> = &amp;a;</span><br><span class="line">   |             -- immutable borrow occurs here</span><br><span class="line"><span class="number">11</span> |     <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">c</span> = &amp;<span class="keyword">mut</span> a;</span><br><span class="line">   |                 ^^^^^^ mutable borrow occurs here</span><br><span class="line"><span class="number">12</span> |</span><br><span class="line"><span class="number">13</span> |     <span class="built_in">println!</span>(<span class="string">&quot;b = &#123;:?&#125;, c = &#123;:?&#125;&quot;</span>, b, c);</span><br><span class="line">   |                                    - immutable borrow later used here</span><br></pre></td></tr></table></figure>
-
-<p>因为此时 b 是不可变引用，而 c 是可变引用，违反了 Rust 的编译规则。</p>
-<p>Box&lt;T&gt; 当然也遵循这点，编译时期 Rust 也检查：</p>
-<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#[derive(Debug)]</span></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">Person</span> &#123;</span><br><span class="line">    age: <span class="type">i32</span>,</span><br><span class="line">    name: <span class="type">String</span>,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">a</span> = <span class="type">Box</span>::<span class="title function_ invoke__">new</span>(Person &#123;</span><br><span class="line">        age: <span class="number">100</span>,</span><br><span class="line">        name: <span class="type">String</span>::<span class="title function_ invoke__">from</span>(<span class="string">&quot;jack&quot;</span>),</span><br><span class="line">    &#125;);    </span><br><span class="line">    <span class="keyword">let</span> <span class="variable">b</span> = a.<span class="title function_ invoke__">as_ref</span>();</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">c</span> = a.<span class="title function_ invoke__">as_mut</span>();</span><br><span class="line"></span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;b = &#123;:?&#125;, c = &#123;:?&#125;&quot;</span>, b, c);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>上面的第 10 行 b 从Box 那里得到了一个不可变的Person对象引用，这没问题。但 11 行又试图获得一个 可变的 Person 对象引用，这就违反了 Rust 最基本的规则。</p>
-<p>那么 RefCell&lt;T&gt;  呢？当然也遵守，因为一个可变引用和不可变引用同时存在是很危险的，这会导致数据或者逻辑不一致。但其区别就是，RefCell&lt;T&gt; 是运行时期才检查，编译时期是可以通过的，一旦运行时被发现违反了这个规则，程序就会panic：</p>
-<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">x</span> = RefCell::<span class="title function_ invoke__">new</span>(Person &#123;</span><br><span class="line">        age: <span class="number">99</span>,</span><br><span class="line">        name: <span class="type">String</span>::<span class="title function_ invoke__">from</span>(<span class="string">&quot;jack&quot;</span>),</span><br><span class="line">    &#125;);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">y</span> = x.<span class="title function_ invoke__">borrow_mut</span>();</span><br><span class="line">    y.age = <span class="number">100</span>;</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;x = &#123;:?&#125;, y = &#123;:?&#125;&quot;</span>, x, y);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">z</span> = x.<span class="title function_ invoke__">borrow</span>();</span><br><span class="line">    </span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;x = &#123;:?&#125;, y = &#123;:?&#125;, z = &#123;:?&#125;&quot;</span>, x, y, z);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>和 Box&lt;T&gt; 和 Rc&lt;T&gt; 不一样，RefCell&lt;T&gt; 不支持解引用操作（*a），必须显式调用 borrow_mut 方法才能获得其封装的 RefMut&lt;T&gt; 对象， RefMut&lt;T&gt; 才支持 Deref trait。出于可读性，这里不直接用 “&amp;*a.borrow_mut() ” 这样的写法，而是依赖  RefMut&lt;T&gt; 的封装，假设 y 就是 &amp;T （实际上是 RefMut&lt;T&gt;，但其表现得像 &amp;T一样）。</p>
-<p>编译上面的代码，不会像 Box&lt;T&gt; 那样出现失败，而是成功编译，但运行到 11行时，会产生 panic，因为 Rust 不允许可变引用和不可变引用同时存在：</p>
-<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">x = RefCell &#123; value: &lt;borrowed&gt; &#125;, y = Person &#123; age: <span class="number">100</span>, name: <span class="string">&quot;jack&quot;</span> &#125;</span><br><span class="line">thread <span class="symbol">&#x27;main</span>&#x27; panicked at <span class="symbol">&#x27;already</span> mutably borrowed: BorrowError&#x27;, src/main.rs:<span class="number">19</span>:<span class="number">15</span></span><br><span class="line">note: run with `RUST_BACKTRACE=<span class="number">1</span>` environment variable to display a backtrace</span><br></pre></td></tr></table></figure>
-
-<p>也可以看到，一旦 x 被可变引用了，其 value 状态变为被借用，如果两个不可变引用同时存在，那么一点问题都不会有：</p>
-<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">x</span> = RefCell::<span class="title function_ invoke__">new</span>(Person &#123;</span><br><span class="line">        age: <span class="number">99</span>,</span><br><span class="line">        name: <span class="type">String</span>::<span class="title function_ invoke__">from</span>(<span class="string">&quot;jack&quot;</span>),</span><br><span class="line">    &#125;);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">y</span> = x.<span class="title function_ invoke__">borrow</span>();</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;x = &#123;:?&#125;, y = &#123;:?&#125;&quot;</span>, x, y);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">z</span> = x.<span class="title function_ invoke__">borrow</span>();</span><br><span class="line"></span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;x = &#123;:?&#125;, y = &#123;:?&#125;, z = &#123;:?&#125;&quot;</span>, x, y, z);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>以上代码正常编译且运行无误。</p>
-<p>由此可见，RefCell和Box 本质区别就在于，虽然只能有唯一的所有权方，但前者是运行时期检查引用规则，若有违反，则panic，后者在编译时期检查引用规则，若有违反，则编译失败。</p>
-<p>当然方法的区别也是有的Box 两个获取 T 引用的方法是 as_ref 和as_mut，而 RefCell 的两个方法是 borrow 和 borrow_mut 。</p>
-<h2 id="RefCell-lt-T-gt-配合-Rc-lt-T-gt-实现多引用可变类型"><a href="#RefCell-lt-T-gt-配合-Rc-lt-T-gt-实现多引用可变类型" class="headerlink" title="RefCell&lt;T&gt; 配合 Rc&lt;T&gt; 实现多引用可变类型"></a>RefCell&lt;T&gt; 配合 Rc&lt;T&gt; 实现多引用可变类型</h2><p>我们可以利用Rc&lt;T&gt;的 clone 方法绕过 Rust 的运行时检查，从而获得同时存在多个可变引用的变量：</p>
-<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">x</span> = Rc::<span class="title function_ invoke__">new</span>(RefCell::<span class="title function_ invoke__">new</span>(Person &#123;</span><br><span class="line">        age: <span class="number">99</span>,</span><br><span class="line">        name: <span class="type">String</span>::<span class="title function_ invoke__">from</span>(<span class="string">&quot;jack&quot;</span>),</span><br><span class="line">    &#125;));</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">y</span> = Rc::<span class="title function_ invoke__">clone</span>(&amp;x);</span><br><span class="line">    y.<span class="title function_ invoke__">borrow_mut</span>().age = <span class="number">100</span>;</span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;x = &#123;:?&#125;, y = &#123;:?&#125;&quot;</span>, x, y);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">z</span> = Rc::<span class="title function_ invoke__">clone</span>(&amp;x);</span><br><span class="line">    z.<span class="title function_ invoke__">borrow_mut</span>().age = <span class="number">200</span>;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">println!</span>(<span class="string">&quot;x = &#123;:?&#125;, y = &#123;:?&#125;, z = &#123;:?&#125;&quot;</span>, x, y, z);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>可以看到，上面的代码首先用 Rc&lt;RefCell&lt;T&gt;&gt; 的方式创建了一个对象 x，它终究是Rc，因此，可以利用Rc::clone() 方法又获得一个 y 和 z，然后我们通过点操作直接调用放在 Rc 里面的 Refcell 的 borrow_mut 方法，最终达到了同时多个可变引用的目的。</p>
-<h2 id="RefCell-lt-T-gt-导致的内存泄漏问题"><a href="#RefCell-lt-T-gt-导致的内存泄漏问题" class="headerlink" title="RefCell&lt;T&gt; 导致的内存泄漏问题"></a>RefCell&lt;T&gt; 导致的内存泄漏问题</h2><p>由于我们可以使用RefCell&lt;Rc&lt;T&gt;&gt; 创建这么一种类型：即可变且多引用的类型，那么，如果有两个节点，相互引用，那么它们的 Rc 永远无法到达0，也就无法被析构，最终造成内存泄漏：</p>
- <figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">use</span> std::&#123;rc::Rc, cell::RefCell&#125;;</span><br><span class="line"></span><br><span class="line"><span class="meta">#[derive(Debug)]</span></span><br><span class="line"><span class="keyword">enum</span> <span class="title class_">Node</span> &#123;</span><br><span class="line">    <span class="title function_ invoke__">Next</span>(<span class="type">i32</span>, RefCell&lt;Rc&lt;Node&gt;&gt;),</span><br><span class="line">    Nil,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">use</span> Node::Next;</span><br><span class="line"><span class="keyword">use</span> Node::Nil;</span><br><span class="line"></span><br><span class="line"><span class="keyword">impl</span> <span class="title class_">Drop</span> <span class="keyword">for</span> <span class="title class_">Node</span> &#123;</span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">drop</span>(&amp;<span class="keyword">mut</span> <span class="keyword">self</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">let</span> <span class="variable">Next</span>(t, _) = <span class="keyword">self</span> &#123;</span><br><span class="line">            <span class="built_in">println!</span>(<span class="string">&quot;the node will be drop, &#123;&#125;&quot;</span>, t);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">x</span> = Rc::<span class="title function_ invoke__">new</span>(<span class="title function_ invoke__">Next</span>(<span class="number">1</span>, RefCell::<span class="title function_ invoke__">new</span>(Rc::<span class="title function_ invoke__">new</span>(Nil))));</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">y</span> = Rc::<span class="title function_ invoke__">new</span>(<span class="title function_ invoke__">Next</span>(<span class="number">2</span>, RefCell::<span class="title function_ invoke__">new</span>(Rc::<span class="title function_ invoke__">new</span>(Nil))));</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">let</span> <span class="variable">Next</span>(_, next) = x.<span class="title function_ invoke__">as_ref</span>() &#123;</span><br><span class="line">        *next.<span class="title function_ invoke__">borrow_mut</span>() = Rc::<span class="title function_ invoke__">clone</span>(&amp;y);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">let</span> <span class="variable">Next</span>(_, next) = y.<span class="title function_ invoke__">as_ref</span>() &#123;</span><br><span class="line">        *next.<span class="title function_ invoke__">borrow_mut</span>() = Rc::<span class="title function_ invoke__">clone</span>(&amp;x);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">p</span> = Rc::<span class="title function_ invoke__">new</span>(<span class="title function_ invoke__">Next</span>(<span class="number">999</span>, RefCell::<span class="title function_ invoke__">new</span>(Rc::<span class="title function_ invoke__">new</span>(Nil))));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>上面的代码中，首先 x 和 y 都是 Rc，然后它们内部又有指针指向另一个Rc，初始化的时候先都初始化为 Nil，然后通过RefCell&lt;T&gt; 的可变性，把它们都各指向对方，于是，main 函数结束的时候，x 的Rc减 1，但原始值为 2，因为 y 有它的引用，所以 2 - 1 &#x3D; 1，不为 0，x不析构，同理，y 也不会析构，于是内存泄漏了。</p>
-<p>上面的 p 是用于观察正常情况下析构是否进行的。上面的代码输出为：</p>
-<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">the node will be drop, <span class="number">999</span></span><br></pre></td></tr></table></figure>
-
-<p>x 和 y 不会被析构。</p>
-<p>解决方案是引入 weak&lt;T&gt; 。weak&lt;T&gt; 即若引用，相对于强引用，若引用首先并不获得所有权，也就是若引用计数是不是 0 并不影响对象的析构。因此，weak&lt;T&gt; 可能持有一个无效的 T 引用，所以 weak&lt;T&gt; 获取 T 引用的时候是返回的 Option&lt;T&gt; ，如果 weak&lt;T&gt; 已经无效，则返回 None，如果 weak&lt;T&gt; 依然有效，则返回Some(T) 。</p>
-<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">n <span class="title function_ invoke__">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">x</span> = Rc::<span class="title function_ invoke__">new</span>(<span class="title function_ invoke__">Next</span>(<span class="number">1</span>, RefCell::<span class="title function_ invoke__">new</span>(Weak::<span class="title function_ invoke__">new</span>())));</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">y</span> = Rc::<span class="title function_ invoke__">new</span>(<span class="title function_ invoke__">Next</span>(<span class="number">2</span>, RefCell::<span class="title function_ invoke__">new</span>(Weak::<span class="title function_ invoke__">new</span>())));</span><br><span class="line">  </span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">let</span> <span class="variable">Next</span>(_, next) = t.<span class="title function_ invoke__">as_ref</span>() &#123;</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">let</span> <span class="variable">None</span> = next.<span class="title function_ invoke__">borrow</span>().<span class="title function_ invoke__">upgrade</span>() &#123;</span><br><span class="line">            <span class="built_in">println!</span>(<span class="string">&quot;it is None initially&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">let</span> <span class="variable">Next</span>(_, next) = x.<span class="title function_ invoke__">as_ref</span>() &#123;</span><br><span class="line">        *next.<span class="title function_ invoke__">borrow_mut</span>() = Rc::<span class="title function_ invoke__">downgrade</span>(&amp;y);</span><br><span class="line">        <span class="built_in">println!</span>(<span class="string">&quot;the weak count of y is &#123;&#125; and strong count of y is &#123;&#125;&quot;</span>, Rc::<span class="title function_ invoke__">weak_count</span>(&amp;y), Rc::<span class="title function_ invoke__">strong_count</span>(&amp;y));</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">let</span> <span class="variable">Some</span>(other) = next.<span class="title function_ invoke__">borrow</span>().<span class="title function_ invoke__">upgrade</span>() &#123;</span><br><span class="line">            <span class="built_in">println!</span>(<span class="string">&quot;other = &#123;:?&#125;&quot;</span>, other);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">let</span> <span class="variable">Next</span>(_, next) = y.<span class="title function_ invoke__">as_ref</span>() &#123;</span><br><span class="line">        *next.<span class="title function_ invoke__">borrow_mut</span>() = Rc::<span class="title function_ invoke__">downgrade</span>(&amp;x);</span><br><span class="line">        <span class="built_in">println!</span>(<span class="string">&quot;the weak count of x is &#123;&#125; and strong count of x is &#123;&#125;&quot;</span>, Rc::<span class="title function_ invoke__">weak_count</span>(&amp;x), Rc::<span class="title function_ invoke__">strong_count</span>(&amp;x));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">p</span> = Rc::<span class="title function_ invoke__">new</span>(<span class="title function_ invoke__">Next</span>(<span class="number">999</span>, RefCell::<span class="title function_ invoke__">new</span>(Weak::<span class="title function_ invoke__">new</span>())));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>上面的代码中，首先第二三行的代码 RefCell::new(Rc::new(Nil)) 被修改为 RefCell::new(Weak::new()) ，可以看到我们直接用了weak::new() 初始化 weak&lt;T&gt; 指针，因为 weak&lt;T&gt; 并不需要主动初始化，它是 Rc 的弱引用，先有 Rc 才能有 weak&lt;T&gt;。</p>
-<p>先略过 5 到 9 行，x 和 y 初始化结束后，我们把 x 和 y 互相指向对方，注意第 12 行没有再使用 Rc::clone，而是 Rc::downgrade，与 Rc::clone 返回 Rc 不同，Rc::downgrade 返回一个 weak&lt;T&gt; 对象（这也是获得一个可能非None的 weak&lt;T&gt; 对象的方法），赋值给了 x 的 weak&lt;T&gt;。同理，y 这边也是这样。</p>
-<p>这样 x 和 y 都相互引用了对方，但由于是弱引用，因此，即是它们相互引用，也不妨碍最后离开 main 函数时被析构：</p>
-<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">it is <span class="literal">None</span> initially</span><br><span class="line">the weak count of y is <span class="number">1</span> and strong count of y is <span class="number">1</span></span><br><span class="line">other = <span class="title function_ invoke__">Next</span>(<span class="number">2</span>, RefCell &#123; value: (Weak) &#125;)</span><br><span class="line">the weak count of x is <span class="number">1</span> and strong count of x is <span class="number">1</span></span><br><span class="line">the node will be drop, <span class="number">999</span></span><br><span class="line">the node will be drop, <span class="number">2</span></span><br><span class="line">the node will be drop, <span class="number">1</span></span><br></pre></td></tr></table></figure>
-
-<p>可以看到，最后 x 和 y 都被析构了，我们也打印了weak count 和 strong count，都是 1， 结束的时候，x 和 y 都是Rc，因此 strong count 减 1，x 和 y 析构。weak count 不管多少，都不影响 Rc 被析构。 </p>
-<p>weak&lt;T&gt; 不拥有所有权，依靠调用 upgrade 来获取 T 引用，upgrade 返回 Option&lt;T&gt; ，若原 Rc 已经被析构，则返回 None，否则返回 Some(Rc&lt;T&gt;)。没有初始化的情况下，则直接返回None。</p>
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><table>
-<thead>
-<tr>
-<th align="left"></th>
-<th>Box&lt;T&gt;</th>
-<th>Rc&lt;T&gt;</th>
-<th>RefCell&lt;T&gt;</th>
-<th>RefMut&lt;T&gt;&#x2F;Ref&lt;T&gt;</th>
-<th>Weak&lt;T&gt;</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left">所有权规则</td>
-<td>只有一个所有权</td>
-<td>依靠强引用计数实现多个所有权</td>
-<td>只有一个所有权</td>
-<td>只有一个所有权</td>
-<td>依靠弱引用计数实现多个所有权，但实际并不获得所有权，依靠Option&lt;T&gt; 来判断资源是否有效</td>
-</tr>
-<tr>
-<td align="left">什么时候使用</td>
-<td>1、大资源，想减少拷贝的时候；2、实现多态；3、实现栈分配；4、实现无限大小的对象。</td>
-<td>需要多个所有权方时。</td>
-<td>若Box&lt;T&gt;编译时期规则（一个资源同一个时间内，要么只有一个可变引用，要么有多个不可变引用，禁止可变引用和不可变引用同时存在）检查无法满足需求，需要在运行时检查，则可以使用RefCell&lt;T&gt;。</td>
-<td>由RefCell&lt;T&gt;的borrow_mut&#x2F;borrow方法返回，一般不直接使用。一般情况下，用户不感知这个类的存在。可以认为borrow_mut&#x2F;borrow返回的就是对应的资源引用即可。</td>
-<td>由 Rc&lt;T&gt;的downgrade方法返回，相比Rc&lt;T&gt;的强引用，Weak&lt;T&gt;用于弱引用。</td>
-</tr>
-<tr>
-<td align="left">解引用方法</td>
-<td>实现Deref trait 和 Copy trait，即let b &#x3D; *a。</td>
-<td>因为有引用计数规则，不能直接拿走所有权，因此不能直接解引用获取资源，即禁止let b &#x3D; *a，必须通过 Rc::clone 和self.as_ref 方法对资源进行访问。当然写成 let b &#x3D; &amp;*a（这样没有拿走所有权，不违反规则） 也可以，但可读性差。</td>
-<td>同样不允许let b &#x3D; *a这样的操作。</td>
-<td>同样不允许let b &#x3D; *a这样的操作。</td>
-<td>同样不允许let b &#x3D; *a这样的操作。应该使用self.upgrade方法（返回Option）判断资源是否有效。</td>
-</tr>
-<tr>
-<td align="left">不可变引用方法</td>
-<td>as_ref</td>
-<td>as_ref</td>
-<td>borrow</td>
-<td>直接点运算操作即可</td>
-<td>upgrade判断返回值Option</td>
-</tr>
-<tr>
-<td align="left">可变引用方法</td>
-<td>as_mut</td>
-<td>不支持，但可以结合 RefCell&lt;T&gt; 实现，即Rc&lt;RefCell&lt;T&gt;&gt;</td>
-<td>borrow_mut</td>
-<td>直接点运算操作即可</td>
-<td>不支持，但可以结合Rc&lt;RefCell&lt;T&gt;&gt;实现。</td>
-</tr>
-</tbody></table>
-<p>注意，以上所有的容器都无法在多线程的时候使用。</p>
-<p>那么，多线程怎么办呢？下面就开始无惧并发的学习。</p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
+        <div class="article-info info-on-right">
+          
+          
 	<div class="article-category tagcloud">
 		<i class="icon-book icon"></i>
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="/categories/Rust//" class="article-tag-list-link color5">Rust</a>
+        			<a href="/categories/C//" class="article-tag-list-link color4">C++</a>
         		</li>
       		
 		</ul>
 	</div>
 
 
-      
-
-      
-        
-<div class="share-btn share-icons tooltip-left">
-  <div class="tooltip tooltip-east">
-    <span class="tooltip-item">
-      <a href="javascript:;" class="share-sns share-outer">
-        <i class="icon icon-share"></i>
-      </a>
-    </span>
-    <span class="tooltip-content">
-      <div class="share-wrap">
-        <div class="share-icons">
-          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
-            <i class="icon icon-weibo"></i>
-          </a>
-          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
-            <i class="icon icon-weixin"></i>
-          </a>
-          <a class="qq share-sns" href="javascript:;" data-type="qq">
-            <i class="icon icon-qq"></i>
-          </a>
-          <a class="douban share-sns" href="javascript:;" data-type="douban">
-            <i class="icon icon-douban"></i>
-          </a>
-          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
-            <i class="icon icon-qzone"></i>
-          </a>
-          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
-            <i class="icon icon-facebook"></i>
-          </a>
-          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
-            <i class="icon icon-twitter"></i>
-          </a>
-          <a class="google share-sns" href="javascript:;" data-type="google">
-            <i class="icon icon-google"></i>
-          </a>
         </div>
-      </div>
-    </span>
-  </div>
-</div>
-
-<div class="page-modal wx-share js-wx-box">
-    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
-    <p>扫一扫，分享到微信</p>
-    <div class="wx-qrcode">
-      <img src="//pan.baidu.com/share/qrcode?url=https://www.jackhuang.cc/2023/01/29/rust-refcell/" alt="微信分享二维码">
-    </div>
-</div>
-
-<div class="mask js-mask"></div>
-      
-      <div class="clearfix"></div>
-    </div>
+        <div class="clearfix"></div>
+    </header>
   </div>
 </article>
-
-  
-<nav id="article-nav">
-  
-    <a href="/2023/01/31/rust-multiple-thread/" id="article-nav-newer" class="article-nav-link-wrap">
-      <i class="icon-circle-left"></i>
-      <div class="article-nav-title">
-        
-          无惧并发
-        
-      </div>
-    </a>
   
   
-    <a href="/2023/01/29/rust-rc/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">Rust的Rc容器</div>
-      <i class="icon-circle-right"></i>
-    </a>
-  
-</nav>
-
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-        <div class="toc-container tooltip-left">
-            <i class="icon-font icon-category"></i>
-            <div class="tooltip tooltip-east">
-                <span class="tooltip-item">
-                </span>
-                <span class="tooltip-content">
-                    <div class="toc-article">
-                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#RefCell-lt-T-gt-%E5%92%8C-Box-lt-T-gt-%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="toc-number">1.</span> <span class="toc-text">RefCell&lt;T&gt; 和 Box&lt;T&gt; 的区别</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#RefCell-lt-T-gt-%E9%85%8D%E5%90%88-Rc-lt-T-gt-%E5%AE%9E%E7%8E%B0%E5%A4%9A%E5%BC%95%E7%94%A8%E5%8F%AF%E5%8F%98%E7%B1%BB%E5%9E%8B"><span class="toc-number">2.</span> <span class="toc-text">RefCell&lt;T&gt; 配合 Rc&lt;T&gt; 实现多引用可变类型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#RefCell-lt-T-gt-%E5%AF%BC%E8%87%B4%E7%9A%84%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F%E9%97%AE%E9%A2%98"><span class="toc-number">3.</span> <span class="toc-text">RefCell&lt;T&gt; 导致的内存泄漏问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">4.</span> <span class="toc-text">总结</span></a></li></ol>
-                    </div>
-                </span>
-            </div>
-        </div>
-        
-    </div>
-</aside>
-
-
-
-  
-  
+    </div></section>
   
 
+    
+    <nav id="page-nav">
+      <a class="extend prev" rel="prev" href="/archives/2023/page/3/">Prev</a><a class="page-number" href="/archives/2023/">1</a><a class="page-number" href="/archives/2023/page/2/">2</a><a class="page-number" href="/archives/2023/page/3/">3</a><span class="page-number current">4</span>
+    </nav>
   
 
-  
-
-  
 
 
           </div>
@@ -452,8 +242,8 @@
 	var yiliaConfig = {
 		mathjax: true,
 		isHome: false,
-		isPost: true,
-		isArchive: false,
+		isPost: false,
+		isArchive: true,
 		isTag: false,
 		isCategory: false,
 		open_in_new: false,

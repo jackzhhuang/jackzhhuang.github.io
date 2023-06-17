@@ -1,3 +1,5 @@
+https://www.jackhuang.cc/2023/06/17/rust-cargo-lock/
+https://www.jackhuang.cc/2023/06/10/rust-PhantomData/
 https://www.jackhuang.cc/2023/06/10/rust-async-flatten/
 https://www.jackhuang.cc/2023/05/31/rust-async/
 https://www.jackhuang.cc/2023/02/10/rust-futures-basic-concept/
@@ -32,6 +34,7 @@ https://www.jackhuang.cc/2022/12/31/%E5%BF%AB%E9%80%9F%E8%AF%B4%E4%B8%80%E4%B8%8
 https://www.jackhuang.cc/2022/12/30/%E4%BB%8A%E5%90%8E%E8%A6%81%E5%A5%BD%E5%A5%BD%E5%81%9A%E7%9A%84%E4%B8%80%E4%BA%9B%E4%BA%8B%E6%83%85/
 https://www.jackhuang.cc/googlefc1dce18b2b0d99a.html
 https://www.jackhuang.cc/
+https://www.jackhuang.cc/tags/Rust/
 https://www.jackhuang.cc/categories/Rust/
 https://www.jackhuang.cc/categories/%E6%83%B3%E6%B3%95/
 https://www.jackhuang.cc/categories/C/
